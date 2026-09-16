@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Link / asset checker for ECM_DOCS_DEV.
+ * Link / asset checker for Commissioning.
  *
  * Starts http-server, then runs linkinator against BOTH delivered platforms to verify
  * same-origin links and assets resolve.

@@ -30,7 +30,7 @@
 **For** an independent audit and implementation agent engaged to commission the DGO Digital
 Operations estate for production operations.
 
-**Baseline** the HEAD of `claude/system-remediation-gaps-ahpmsy` — the branch, not a commit.
+**Baseline** the HEAD of `digital-servant-commissioning` — the branch, not a commit.
 (`a547300` was its head when this was written; the branch has moved since, so read the branch.)
 
 **Measurement environment** Linux x86_64, Node v22.22.2, npm 10.9.7, 5 September 2026.
@@ -43,7 +43,7 @@ document disagree, the command governs.
 ## 1. Baseline
 
 ```
-$ git log --oneline -1 origin/claude/system-remediation-gaps-ahpmsy
+$ git log --oneline -1 origin/digital-servant-commissioning
 a547300 Merge c0sisf and the commissioning audit into the ahpmsy baseline
 ```
 

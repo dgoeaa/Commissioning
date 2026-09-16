@@ -26,7 +26,7 @@ tenant or hosting owner holds it).
 
 | Field | Value | Source |
 |---|---|---|
-| Repository | `https://github.com/dgoeaa/ECM_DOCS_DEV`, private; `LICENSE` proprietary, NITDA | `LICENSE` |
+| Repository | `https://github.com/dgoeaa/Commissioning`, private; `LICENSE` proprietary, NITDA | `LICENSE` |
 | Relevant branch | `claude/sharepoint-lists-gap-bqo7j7` @ `5b821e1`, 94 commits ahead of `main` (`63d79ee`), open as PR #25 | git |
 | Release | **not recorded** — no git tags, no release cut. `package.json` `version: 0.1.0`, `private: true`. Unit of delivery is a package from `npm run package` | `package.json` |
 | Applications | `document-portal/index.html` (public portal, PWA) · `index.html` (internal runtime, 29 routes) | `README.md` |

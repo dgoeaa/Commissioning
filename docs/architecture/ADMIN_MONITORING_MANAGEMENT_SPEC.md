@@ -406,7 +406,7 @@ additive; no existing permission changes meaning.
 ### 6.1 A third application
 
 ```
-ECM_DOCS_DEV/
+Commissioning/
   index.html                 P-A · Internal Runtime      31 routes, the operator platform
   document-portal/           P-B · Document Portal       public PWA, 4 pages
   console/                   P-E · DGO Control Console   ← this specification

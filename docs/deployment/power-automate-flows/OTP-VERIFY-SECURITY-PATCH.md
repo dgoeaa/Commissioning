@@ -72,10 +72,10 @@ Same PATCH, same result. Use it if the browser route is blocked.
 Install-Module -Name Microsoft.PowerApps.PowerShell -Scope CurrentUser -Force -AllowClobber
 Add-PowerAppsAccount
 
-cd $HOME\ECM_DOCS_DEV
-git fetch origin claude/sharepoint-lists-gap-bqo7j7
-git checkout claude/sharepoint-lists-gap-bqo7j7
-git pull origin claude/sharepoint-lists-gap-bqo7j7
+cd $HOME\Commissioning
+git fetch origin digital-servant-commissioning
+git checkout digital-servant-commissioning
+git pull origin digital-servant-commissioning
 
 # dry run — sends nothing, writes your rollback to *.before.json
 .\scripts\update-flow-definition.ps1 `

@@ -6,7 +6,7 @@
 > where things stand; this remains the narrative of how the repair phase went. Two figures
 > below were corrected by it and are marked inline.
 
-**As at** 6 August 2026 · **Repository** `dgoeaa/ECM_DOCS_DEV` (**private**)
+**As at** 6 August 2026 · **Repository** `dgoeaa/Commissioning` (**private**)
 **Interactive view:** [`visual/`](./visual/README.md) — architecture and status console, generated
 from the source tree and drift-tested by `npm run test:visual`. Where this document and the
 console disagree, the console is right: it is regenerated, this is written.

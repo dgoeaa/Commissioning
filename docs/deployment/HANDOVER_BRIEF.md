@@ -199,7 +199,7 @@ Run this before you change anything, and again after. Keep both outputs — the 
 them is what you actually changed.
 
 ```bash
-npm run test:node         # the gate: 139 stages, exit 0 when clean
+npm run test:node         # the gate: 140 stages, exit 0 when clean
 npm run commission        # the commissioning verdict, computed from the record
 npm run outstanding       # one total across the 5 declared sources
 ```
@@ -248,7 +248,7 @@ Stop and escalate — do not work around, and do not improvise — on any of the
 Not "all the steps were run". This:
 
 1. `npm run commission` reports **CLEARED**.
-2. `npm run test:node` still exits 0 — the same 139 stages, green.
+2. `npm run test:node` still exits 0 — the same 140 stages, green.
 3. The 8 carry-back values in §7 have been sent, and are in the repository.
 4. For every step you executed, you have returned: the relay line the script printed, the outcome
    (`COMPLETE`, `PARTIAL`, `BLOCKED` or `NOT ATTEMPTED`), and any deviation from what the section

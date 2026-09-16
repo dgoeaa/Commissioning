@@ -142,8 +142,8 @@ The patched definition is **in the repository**, at
 attachment, because that is the transport that has worked reliably on the operator's machine.
 
 ```powershell
-cd C:\ECM_DOCS_DEV
-git pull origin claude/sharepoint-lists-gap-bqo7j7
+cd C:\Commissioning
+git pull origin digital-servant-commissioning
 .\scripts\update-flow-definition.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -FlowId 3b69aa71-ffed-4956-9d20-2aa3021a8da0 -DefinitionPath .\docs\deployment\sharepoint\remediation\patched\Portal_Verify_Confirm.definition.json
 ```
 

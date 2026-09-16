@@ -41,8 +41,8 @@ What to give an agent picking this estate up, what to withhold, and the prompt t
 Neither fits. **Hand the agent a clone instead** — 33 MiB, and nothing here needs `npm install`:
 
 ```
-git clone https://github.com/dgoeaa/ECM_DOCS_DEV.git && cd ECM_DOCS_DEV
-git checkout claude/system-remediation-gaps-ahpmsy
+git clone https://github.com/dgoeaa/Commissioning.git && cd Commissioning
+git checkout digital-servant-commissioning
 ```
 
 Use the tiers below only if the harness genuinely cannot clone.

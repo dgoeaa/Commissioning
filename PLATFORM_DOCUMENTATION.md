@@ -1,6 +1,6 @@
 # DGO Digital Operations — Platform Documentation
 
-**Version** R11.6.0 `enterprise-domains` · **Repository** `dgoeaa/ECM_DOCS_DEV` (private) · **Date** 2 August 2026
+**Version** R11.6.0 `enterprise-domains` · **Repository** `dgoeaa/Commissioning` (private) · **Date** 2 August 2026
 
 Owner: National Information Technology Development Agency (NITDA), Federal Ministry of Communications, Innovation & Digital Economy, Nigeria.
 

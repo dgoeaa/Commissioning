@@ -111,12 +111,12 @@ action-ordering fix — is on `claude/sharepoint-lists-gap-bqo7j7`. Cloning the 
 following this walkthrough would execute against stale artifacts, and nothing would warn you.
 
 ```
-git clone -b claude/sharepoint-lists-gap-bqo7j7 https://github.com/dgoeaa/ECM_DOCS_DEV.git
-cd ECM_DOCS_DEV
+git clone -b digital-servant-commissioning https://github.com/dgoeaa/Commissioning.git
+cd Commissioning
 git rev-parse --abbrev-ref HEAD
 ```
 
-The third command must print `claude/sharepoint-lists-gap-bqo7j7`. If it prints anything else,
+The third command must print `digital-servant-commissioning`. If it prints anything else,
 stop — you are on the wrong tree.
 
 **Install the PowerApps module.** Do this in a **non-elevated** PowerShell, as the account that

@@ -518,9 +518,9 @@ Node v22.22.2 and npm 10.9.7.
 **Steps**
 
 \`\`\`bash
-git clone https://github.com/dgoeaa/ECM_DOCS_DEV.git
-cd ECM_DOCS_DEV
-git checkout claude/system-remediation-gaps-ahpmsy
+git clone https://github.com/dgoeaa/Commissioning.git
+cd Commissioning
+git checkout digital-servant-commissioning
 npm install
 \`\`\`
 

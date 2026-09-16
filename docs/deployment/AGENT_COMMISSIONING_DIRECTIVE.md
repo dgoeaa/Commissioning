@@ -30,7 +30,7 @@
 **You are commissioning the NITDA DGO Digital Operations estate.** This document and the
 repository you were given are your complete reference. Nothing else applies.
 
-**Baseline** the HEAD of `claude/system-remediation-gaps-ahpmsy`. **The branch is the baseline, not
+**Baseline** the HEAD of `digital-servant-commissioning`. **The branch is the baseline, not
 a commit.** This document once pinned `a547300`; the branch moved 18 commits past it while the
 pin stayed, so an agent reading it worked from a tree that no longer existed. Fetch the branch
 and read what is there — `git rev-parse HEAD` is your baseline, and every count below is a
@@ -43,7 +43,7 @@ produced by running the named command against this baseline and observing the ou
 
 ## 1. Baseline authority
 
-The baseline is the HEAD of `claude/system-remediation-gaps-ahpmsy`. (`a547300` / 1,695 tracked
+The baseline is the HEAD of `digital-servant-commissioning`. (`a547300` / 1,695 tracked
 files was the reading when this was written; confirm the current one with `git ls-files | wc -l`
 rather than trusting either number.)
 
@@ -346,7 +346,7 @@ npm run wiring                    # expect: 58/58 operations, 7/7 endpoints
 
 ## 11. Prohibitions
 
-- Do not use, reference, or request any branch other than `claude/ecm-docs-branch-audit-c0sisf`.
+- Do not use, reference, or request any branch other than `digital-servant-commissioning`.
 - Do not request `docs/reference/foundational/` or any signature.
 - Do not remediate the 9 withholding-induced failures in §6, or the 7 expected failures in §5.
 - Do not declare the platform live. That requires a posture decision by the agency on ~785

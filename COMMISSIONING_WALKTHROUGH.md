@@ -47,12 +47,12 @@ Consequence: **no command in this walkthrough can be run from `ecm_repo_clean`.*
 no code. It never did — it was a container for an export snapshot.
 
 **0.1** The platform's own documentation names the repository of record.
-`PLATFORM_DOCUMENTATION.md` header: *"Repository `dgoeaa/ECM_DOCS_DEV`"*. That repository is
+`PLATFORM_DOCUMENTATION.md` header: *"Repository `dgoeaa/Commissioning`"*. That repository is
 present and reachable, and is where every command below is run:
 
 ```bash
-git clone https://github.com/dgoeaa/ECM_DOCS_DEV.git
-cd ECM_DOCS_DEV
+git clone https://github.com/dgoeaa/Commissioning.git
+cd Commissioning
 ```
 
 **0.2** A clone is already a git work tree, so the failure mode described in Phase 2.4 does

@@ -1,5 +1,5 @@
 This is the **estate-wide** copy of the process documentation package. It is generated in
-`dgoeaa/ecm_docs_dev`, which holds the deployment documentation, the flow estate exports, the
+`dgoeaa/Commissioning`, which holds the deployment documentation, the flow estate exports, the
 published integration contracts, the captured run records and the system-of-record inventory,
 as well as the platform's own `config/`, `core/` and `modules/` trees.
 

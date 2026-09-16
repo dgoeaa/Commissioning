@@ -52,7 +52,7 @@ configuration. The internal platform is deployed at `https://activityweb.page.gd
 
 | Repository | Role | State |
 |---|---|---|
-| `dgoeaa/ecm_docs_dev` | Authoritative. Flow exports and contracts, generators that write tracked files, browser scripts an operator pastes into a SharePoint console, packaging tooling, runbooks, and a test chain of roughly 61 stages plus 150 browser tests. | 1,040 tracked files, 193 MB working tree |
+| `dgoeaa/Commissioning` | Authoritative. Flow exports and contracts, generators that write tracked files, browser scripts an operator pastes into a SharePoint console, packaging tooling, runbooks, and a test chain of roughly 61 stages plus 150 browser tests. | 1,040 tracked files, 193 MB working tree |
 | `dgoeaa/INTERNAL_PLATFORM` | The deployed operator front end. | 14 MB, 164 tracked files. No build by design — it is the site. A dependency-free verification suite and CI were added 2026-09-03; see item 6.9. |
 
 The operator is not a developer. They work in Windows PowerShell, execute by copy and paste, and

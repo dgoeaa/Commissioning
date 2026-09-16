@@ -88,12 +88,12 @@ with a syntax error, not a version message.
 
 ```bash
 cd ~
-git clone https://github.com/dgoeaa/ECM_DOCS_DEV.git ecm_docs_dev
-cd ~/ecm_docs_dev
-git checkout claude/system-remediation-gaps-ahpmsy
+git clone https://github.com/dgoeaa/Commissioning.git commissioning
+cd ~/commissioning
+git checkout digital-servant-commissioning
 ```
 
-Already have it? `cd ~/ecm_docs_dev && git checkout claude/system-remediation-gaps-ahpmsy && git pull`
+Already have it? `cd ~/commissioning && git checkout digital-servant-commissioning && git pull`
 
 Confirm:
 
@@ -102,7 +102,7 @@ pwd
 git branch --show-current
 ```
 
-Expected: a path ending in `ecm_docs_dev`, and `claude/system-remediation-gaps-ahpmsy`.
+Expected: a path ending in `commissioning`, and `digital-servant-commissioning`.
 
 **Every remaining command is typed in this terminal, in this folder.**
 

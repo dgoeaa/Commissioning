@@ -104,7 +104,7 @@ chat window, an email, or a document on the way.
 `npm test` in before:
 
 ```
-cd %USERPROFILE%\ECM_DOCS_DEV
+cd %USERPROFILE%\Commissioning
 ```
 
 If that is not where it is, find it: `dir /s /b %USERPROFILE%\package.json` and use the folder that
@@ -113,8 +113,8 @@ contains this project's `package.json`.
 **C2.** Take the latest work, which includes the register fix that makes C5 pass:
 
 ```
-git checkout claude/sharepoint-lists-gap-bqo7j7
-git pull origin claude/sharepoint-lists-gap-bqo7j7
+git checkout digital-servant-commissioning
+git pull origin digital-servant-commissioning
 ```
 
 **C3.** Open your existing values file:

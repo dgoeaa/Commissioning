@@ -125,26 +125,26 @@ Battery to **Unrestricted**.
 
 ```bash
 cd ~
-git clone https://github.com/dgoeaa/ECM_DOCS_DEV.git ecm_docs_dev
-cd ~/ecm_docs_dev
-git checkout claude/system-remediation-gaps-ahpmsy
+git clone https://github.com/dgoeaa/Commissioning.git commissioning
+cd ~/commissioning
+git checkout digital-servant-commissioning
 ```
 
 About **33 MiB**, unpacking to roughly 66 MB — use Wi-Fi if metered. With two-factor
 authentication on GitHub, `git` asks for a username and a **personal access token**, not your
 password.
 
-Already cloned? `cd ~/ecm_docs_dev && git checkout claude/system-remediation-gaps-ahpmsy && git pull`
+Already cloned? `cd ~/commissioning && git checkout digital-servant-commissioning && git pull`
 
 ```bash
 pwd
 git branch --show-current
 ```
 
-Expected: a path ending in `ecm_docs_dev`, and `claude/system-remediation-gaps-ahpmsy`.
+Expected: a path ending in `commissioning`, and `digital-servant-commissioning`.
 
 **Every remaining command is typed in Termux, in this folder.** If Termux restarts,
-`cd ~/ecm_docs_dev` first.
+`cd ~/commissioning` first.
 
 **You do not need `npm install`** — which is why this works on a phone at all.
 
@@ -301,7 +301,7 @@ that document's to carry.
 ### 4a.1 Put the bookmark on the clipboard
 
 ```bash
-cd ~/ecm_docs_dev
+cd ~/commissioning
 termux-clipboard-set < scripts/harvest-trigger-urls.bookmarklet.txt
 ```
 

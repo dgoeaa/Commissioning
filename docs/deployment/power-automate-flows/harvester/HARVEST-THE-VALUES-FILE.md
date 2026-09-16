@@ -83,10 +83,10 @@ harvesters were refused.
 anything in the browser — not just before the curl:
 
 ```bash
-cd ~/ecm_docs_dev
-git fetch origin claude/system-remediation-gaps-ahpmsy
-git checkout claude/system-remediation-gaps-ahpmsy
-git pull origin claude/system-remediation-gaps-ahpmsy
+cd ~/commissioning
+git fetch origin digital-servant-commissioning
+git checkout digital-servant-commissioning
+git pull origin digital-servant-commissioning
 termux-clipboard-set < docs/deployment/power-automate-flows/harvester/Scope_Endpoint_Values_Delivery.designer-paste.json
 ```
 
@@ -212,7 +212,7 @@ reported `empty string within braces`.
 So the command is short enough to type, and it reads the clipboard itself:
 
 ```bash
-cd ~/ecm_docs_dev
+cd ~/commissioning
 npm run fetch:values
 ```
 

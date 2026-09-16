@@ -1,4 +1,4 @@
-# Contributing to ECM_DOCS_DEV
+# Contributing to Commissioning
 
 Thank you for contributing! This document explains the branch → PR → CI → merge workflow.
 
@@ -9,8 +9,8 @@ Thank you for contributing! This document explains the branch → PR → CI → 
 ### 1. Clone and set up
 
 ```bash
-git clone https://github.com/dgoeaa/ECM_DOCS_DEV.git
-cd ECM_DOCS_DEV
+git clone https://github.com/dgoeaa/Commissioning.git
+cd Commissioning
 npm install
 npx playwright install --with-deps chromium
 ```

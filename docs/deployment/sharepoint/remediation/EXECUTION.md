@@ -7,8 +7,8 @@
 > of what each patch does.
 
 Environment: `Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1`
-Repository on your machine: `C:\ECM_DOCS_DEV`
-Branch: `claude/sharepoint-lists-gap-bqo7j7`
+Repository on your machine: `C:\Commissioning`
+Branch: `digital-servant-commissioning`
 
 ---
 
@@ -46,16 +46,16 @@ Open **Windows PowerShell** (not PowerShell 7). Then:
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 ```
 ```powershell
-cd C:\ECM_DOCS_DEV
+cd C:\Commissioning
 ```
 ```powershell
-git fetch origin claude/sharepoint-lists-gap-bqo7j7
+git fetch origin digital-servant-commissioning
 ```
 ```powershell
-git checkout claude/sharepoint-lists-gap-bqo7j7
+git checkout digital-servant-commissioning
 ```
 ```powershell
-git pull origin claude/sharepoint-lists-gap-bqo7j7
+git pull origin digital-servant-commissioning
 ```
 ```powershell
 node scripts/verify-portal-wiring.mjs
@@ -100,13 +100,13 @@ Same three commands every time. Only the `-WorkflowId` list changes.
 ### After visit 1
 
 ```powershell
-cd C:\ECM_DOCS_DEV
+cd C:\Commissioning
 ```
 ```powershell
-.\scripts\export-power-automate-flows.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -OutDir C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed -WorkflowId 86897b2f-9770-4efa-8486-2642f24bb947, 3b69aa71-ffed-4956-9d20-2aa3021a8da0
+.\scripts\export-power-automate-flows.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -OutDir C:\Commissioning\docs\reference\flow-contracts\deployed -WorkflowId 86897b2f-9770-4efa-8486-2642f24bb947, 3b69aa71-ffed-4956-9d20-2aa3021a8da0
 ```
 ```powershell
-.\scripts\redact-signed-urls.ps1 -Path C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed
+.\scripts\redact-signed-urls.ps1 -Path C:\Commissioning\docs\reference\flow-contracts\deployed
 ```
 ```powershell
 node scripts/flow-list-sweep.mjs --write ; node scripts/verify-portal-wiring.mjs
@@ -115,61 +115,61 @@ node scripts/flow-list-sweep.mjs --write ; node scripts/verify-portal-wiring.mjs
 Then zip **only the two files that changed** and attach them here:
 
 ```powershell
-Compress-Archive -Path C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed\Portal_Verify*.json -DestinationPath $HOME\Desktop\visit-01.zip -Force
+Compress-Archive -Path C:\Commissioning\docs\reference\flow-contracts\deployed\Portal_Verify*.json -DestinationPath $HOME\Desktop\visit-01.zip -Force
 ```
 
 ### After visit 2
 
 ```powershell
-.\scripts\export-power-automate-flows.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -OutDir C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed -WorkflowId 270fb295-b1de-40e2-b36d-889a61a887a0, de9ef13b-ae4c-42b0-9afa-20e71a180759
+.\scripts\export-power-automate-flows.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -OutDir C:\Commissioning\docs\reference\flow-contracts\deployed -WorkflowId 270fb295-b1de-40e2-b36d-889a61a887a0, de9ef13b-ae4c-42b0-9afa-20e71a180759
 ```
 ```powershell
-.\scripts\redact-signed-urls.ps1 -Path C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed
+.\scripts\redact-signed-urls.ps1 -Path C:\Commissioning\docs\reference\flow-contracts\deployed
 node scripts/flow-list-sweep.mjs --write ; node scripts/verify-portal-wiring.mjs
-Compress-Archive -Path "C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed\*SUBMISSION*.json","C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed\*UBMISSION*.json" -DestinationPath $HOME\Desktop\visit-02.zip -Force
+Compress-Archive -Path "C:\Commissioning\docs\reference\flow-contracts\deployed\*SUBMISSION*.json","C:\Commissioning\docs\reference\flow-contracts\deployed\*UBMISSION*.json" -DestinationPath $HOME\Desktop\visit-02.zip -Force
 ```
 
 ### After visit 3
 
 ```powershell
-.\scripts\export-power-automate-flows.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -OutDir C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed -WorkflowId e21e7b9f-58c3-45be-bd47-6754ce6a895f, badb65d8-f472-407e-8975-c29d77b855d7
+.\scripts\export-power-automate-flows.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -OutDir C:\Commissioning\docs\reference\flow-contracts\deployed -WorkflowId e21e7b9f-58c3-45be-bd47-6754ce6a895f, badb65d8-f472-407e-8975-c29d77b855d7
 ```
 ```powershell
-.\scripts\redact-signed-urls.ps1 -Path C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed
+.\scripts\redact-signed-urls.ps1 -Path C:\Commissioning\docs\reference\flow-contracts\deployed
 node scripts/flow-list-sweep.mjs --write ; node scripts/verify-portal-wiring.mjs
-Compress-Archive -Path "C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed\Portal_ECM_DOCS_STATUS*.json","C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed\Portal_Status_Enquiry*.json" -DestinationPath $HOME\Desktop\visit-03.zip -Force
+Compress-Archive -Path "C:\Commissioning\docs\reference\flow-contracts\deployed\Portal_ECM_DOCS_STATUS*.json","C:\Commissioning\docs\reference\flow-contracts\deployed\Portal_Status_Enquiry*.json" -DestinationPath $HOME\Desktop\visit-03.zip -Force
 ```
 
 ### After visit 4
 
 ```powershell
-.\scripts\export-power-automate-flows.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -OutDir C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed -WorkflowId df7ddff1-9275-4f23-acf6-e169525f4e2f
+.\scripts\export-power-automate-flows.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -OutDir C:\Commissioning\docs\reference\flow-contracts\deployed -WorkflowId df7ddff1-9275-4f23-acf6-e169525f4e2f
 ```
 ```powershell
-.\scripts\redact-signed-urls.ps1 -Path C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed
+.\scripts\redact-signed-urls.ps1 -Path C:\Commissioning\docs\reference\flow-contracts\deployed
 node scripts/flow-list-sweep.mjs --write ; node scripts/verify-portal-wiring.mjs
-Compress-Archive -Path C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed\ECM_DOCS_INTAKE*.json -DestinationPath $HOME\Desktop\visit-04.zip -Force
+Compress-Archive -Path C:\Commissioning\docs\reference\flow-contracts\deployed\ECM_DOCS_INTAKE*.json -DestinationPath $HOME\Desktop\visit-04.zip -Force
 ```
 
 ### After visit 5
 
 ```powershell
-.\scripts\export-power-automate-flows.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -OutDir C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed -WorkflowId ae4b2a44-2388-42c7-baaf-86de3d6fa664, 9bd6724c-5a8f-4e74-9d3e-3c1eeaef2d06, 39d65c5b-5539-43de-aec6-52bfcd31bcc1, 1b2c2e53-6c07-46a3-80b2-c43be1ef69db
+.\scripts\export-power-automate-flows.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -OutDir C:\Commissioning\docs\reference\flow-contracts\deployed -WorkflowId ae4b2a44-2388-42c7-baaf-86de3d6fa664, 9bd6724c-5a8f-4e74-9d3e-3c1eeaef2d06, 39d65c5b-5539-43de-aec6-52bfcd31bcc1, 1b2c2e53-6c07-46a3-80b2-c43be1ef69db
 ```
 ```powershell
-.\scripts\redact-signed-urls.ps1 -Path C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed
+.\scripts\redact-signed-urls.ps1 -Path C:\Commissioning\docs\reference\flow-contracts\deployed
 node scripts/flow-list-sweep.mjs --write ; node scripts/verify-portal-wiring.mjs
-Compress-Archive -Path "C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed\*UPLOAD*.json","C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed\Portal_Upload_HTTP*.json","C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed\Portal_ECM_DOCS_SUPPORT*.json" -DestinationPath $HOME\Desktop\visit-05.zip -Force
+Compress-Archive -Path "C:\Commissioning\docs\reference\flow-contracts\deployed\*UPLOAD*.json","C:\Commissioning\docs\reference\flow-contracts\deployed\Portal_Upload_HTTP*.json","C:\Commissioning\docs\reference\flow-contracts\deployed\Portal_ECM_DOCS_SUPPORT*.json" -DestinationPath $HOME\Desktop\visit-05.zip -Force
 ```
 
 ### After visit 0
 
 ```powershell
-.\scripts\export-power-automate-flows.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -OutDir C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed -WorkflowId 1abbe547-9d7e-430e-bc2d-3ed59bc738b9
+.\scripts\export-power-automate-flows.ps1 -EnvironmentName Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1 -OutDir C:\Commissioning\docs\reference\flow-contracts\deployed -WorkflowId 1abbe547-9d7e-430e-bc2d-3ed59bc738b9
 ```
 ```powershell
-.\scripts\redact-signed-urls.ps1 -Path C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed
-Compress-Archive -Path "C:\ECM_DOCS_DEV\docs\reference\flow-contracts\deployed\Universal*.json" -DestinationPath $HOME\Desktop\visit-00.zip -Force
+.\scripts\redact-signed-urls.ps1 -Path C:\Commissioning\docs\reference\flow-contracts\deployed
+Compress-Archive -Path "C:\Commissioning\docs\reference\flow-contracts\deployed\Universal*.json" -DestinationPath $HOME\Desktop\visit-00.zip -Force
 ```
 
 ### What to expect from the last command each time
@@ -269,7 +269,7 @@ git-ignored and never leaves it.
 On the machine that holds `config/config.local.js`:
 
 ```powershell
-Select-String -Path C:\ECM_DOCS_DEV\config\config.local.js -Pattern '/workflows/([a-f0-9]{32})/' -AllMatches | ForEach-Object { $_.Matches } | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
+Select-String -Path C:\Commissioning\config\config.local.js -Pattern '/workflows/([a-f0-9]{32})/' -AllMatches | ForEach-Object { $_.Matches } | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
 ```
 
 That prints ids only — no `sig` token, nothing that is a credential. Paste the list here with

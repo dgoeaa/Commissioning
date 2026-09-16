@@ -42,7 +42,7 @@ minimal pilot is still a public endpoint on the open internet; build the flows a
 ## 1 · Prepare — 10 minutes
 
 ```bash
-cd /path/to/ECM_DOCS_DEV
+cd /path/to/Commissioning
 git checkout main && git pull
 npm install
 ```

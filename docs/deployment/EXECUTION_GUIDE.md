@@ -17,8 +17,8 @@ current state to a working deployment. It is self-contained: every list GUID, co
 URL, request shape, response shape, rate limit, threshold and verification command needed to
 execute it is reproduced here.
 
-**Repository:** `dgoeaa/ECM_DOCS_DEV`
-**Branch:** `claude/sharepoint-lists-gap-bqo7j7`
+**Repository:** `dgoeaa/Commissioning`
+**Branch:** `digital-servant-commissioning`
 **Guide revision:** 2026-08-23
 
 **Two roles execute this guide.**
@@ -68,9 +68,9 @@ the older patch-track artifacts on top of a pasted package will silently undo th
 ### 0.2 Confirm the repository is at the right revision
 
 ```bash
-git clone https://github.com/dgoeaa/ECM_DOCS_DEV.git
-cd ECM_DOCS_DEV
-git checkout claude/sharepoint-lists-gap-bqo7j7
+git clone https://github.com/dgoeaa/Commissioning.git
+cd Commissioning
+git checkout digital-servant-commissioning
 npm install
 npm test
 ```

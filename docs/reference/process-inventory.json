@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-15",
+ "generated": "2026-09-16",
  "standard": "dgo-process-documentation/v2",
  "systems": [
   {
@@ -173349,7 +173349,7 @@
    "affectedSystem": "Both platforms",
    "subject": "Test cases assert implementation invariants, not per-process acceptance criteria",
    "missingInformation": "For each process, what it is required to do to be accepted.",
-   "availableEvidence": "106 test files asserting invariants over the implementation.",
+   "availableEvidence": "107 test files asserting invariants over the implementation.",
    "evidence": "Partially evidenced",
    "reasonRequired": "Without acceptance criteria, the implementation is the only definition of correct behaviour.",
    "impactOfAbsence": "A process cannot be judged correct or incorrect, only present or absent.",
@@ -173584,7 +173584,7 @@
    "id": "COV-014",
    "area": "Test cases and acceptance criteria",
    "status": "Partially documented",
-   "note": "106 test files are present and were reviewed. They establish invariants over the implementation — contracts, vocabularies, wiring, encoding, secrets. They do NOT state, per process, what that process is required to do to be accepted, so no process draws its completion criteria from them.",
+   "note": "107 test files are present and were reviewed. They establish invariants over the implementation — contracts, vocabularies, wiring, encoding, secrets. They do NOT state, per process, what that process is required to do to be accepted, so no process draws its completion criteria from them.",
    "processesIdentified": 0,
    "source": [
     "SRC-162"

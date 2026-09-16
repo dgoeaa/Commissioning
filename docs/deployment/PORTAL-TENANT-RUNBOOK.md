@@ -58,7 +58,7 @@ they were 3%. They are moved here because the steps for this domain belong in on
 Commit `ba7c94a` carries the `Portal_Verify` export that proves visit 1 landed. Until it is
 pushed, every repository-side measurement under-reports by **eight operations**.
 
-1. GitHub → `dgoeaa/ECM_DOCS_DEV` → **Settings** → **Collaborators and teams**.
+1. GitHub → `dgoeaa/Commissioning` → **Settings** → **Collaborators and teams**.
 2. **Add people** → the executing account → role **Write** → send invitation.
 3. The invited account accepts from their notifications or by email.
 4. From the clone holding commit `ba7c94a`:
@@ -181,9 +181,9 @@ tree that cannot even run `npm run wiring`.
 ### 1.3 Do it
 
 ```bash
-cd ~/ecm_docs_dev                       # your clone
+cd ~/commissioning                       # your clone
 git fetch origin
-git checkout claude/system-remediation-gaps-ahpmsy
+git checkout digital-servant-commissioning
 git pull --ff-only
 
 # 1. List exactly what main has that this branch does not.
@@ -210,7 +210,7 @@ git commit -m "Port the 34 files unique to main onto the remediation lineage
 main and this branch share no common ancestor. This branch is the superset in
 every direction that matters, so it becomes the trunk; these 34 files are what
 main held that it did not, chiefly 07-portal-provisioning.flow.json from PR #24."
-git push -u origin claude/system-remediation-gaps-ahpmsy
+git push -u origin digital-servant-commissioning
 ```
 
 ### 1.4 Promote it to `main`
@@ -393,7 +393,7 @@ paste a harvested URL into a ticket, an email, a chat message, or any file other
 `config.local.js`.
 
 ```bash
-cd ~/ecm_docs_dev
+cd ~/commissioning
 npm run rotation
 ```
 

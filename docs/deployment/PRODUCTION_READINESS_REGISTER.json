@@ -2,8 +2,8 @@
   "registerVersion": "1.2.5",
   "compiledUtc": "2026-09-15",
   "compiledAgainstCommit": "4608832",
-  "repository": "dgoeaa/ECM_DOCS_DEV",
-  "branch": "claude/system-remediation-gaps-ahpmsy",
+  "repository": "dgoeaa/Commissioning",
+  "branch": "digital-servant-commissioning",
   "purpose": "Every requirement standing between this estate and its intended production state, with the evidence for each status. Compiled from the repository's own registers and re-measured, not asserted: docs/deployment/sharepoint/OPEN_ITEMS.md, docs/STATUS_REPORT.md, and the output of npm run commission, npm run wiring and npm test. scripts/verify-readiness-register.mjs checks that every file this register cites exists and every command it names is a real npm script, so a citation cannot rot unnoticed.",
   "declaredGaps": [
     {

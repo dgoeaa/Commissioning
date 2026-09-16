@@ -12,7 +12,7 @@ verified. They are delivered through the repository rather than as chat attachme
 
 ## How to apply one
 
-From `C:\ECM_DOCS_DEV`, in the same Windows PowerShell window that holds your
+From `C:\Commissioning`, in the same Windows PowerShell window that holds your
 `Add-PowerAppsAccount` sign-in.
 
 **Dry run first — this sends nothing:**
