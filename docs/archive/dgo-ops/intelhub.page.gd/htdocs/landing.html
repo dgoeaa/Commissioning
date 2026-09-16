@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>NITDA Intelligent Portal – Landing</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'nitda-green': '#008751',
+            'nitda-deep': '#006A4E',
+            'nitda-accent': '#E6F6F0'
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <link href="brand.css" rel="stylesheet">
+</head>
+<body class="bg-slate-950 text-slate-50 font-inter">
+  <div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-slate-950/90 border-b border-slate-800 sticky top-0 z-30 backdrop-blur">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="landing.html" class="flex items-center gap-2">
+            <div class="h-9 w-9 rounded-2xl bg-nitda-green/10 flex items-center justify-center text-nitda-green">
+              <i class="fas fa-shield-alt text-lg" aria-hidden="true"></i>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-sm font-semibold text-slate-50 tracking-tight">NITDA Intelligent Portal</span>
+              <span class="text-[11px] text-slate-400 hidden sm:block">Digital Submission, Tracking &amp; Support</span>
+            </div>
+          </a>
+          <nav class="hidden md:flex items-center gap-6 text-sm text-slate-200">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit.html" class="nav-link">Submit</a>
+            <a href="track.html" class="nav-link">Track</a>
+            <a href="support.html" class="nav-link">Support</a>
+            <a href="ADMINdashboard.html" class="nav-link">Admin</a>
+          </nav>
+          <button id="nav-toggle" class="md:hidden inline-flex items-center justify-center rounded-xl border border-slate-700 px-2.5 py-1.5 text-slate-200 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-nitda-green focus:ring-offset-2 focus:ring-offset-slate-950" aria-label="Toggle navigation" aria-expanded="false">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+        <nav id="mobile-nav" class="md:hidden hidden border-t border-slate-800 pb-3">
+          <div class="flex flex-col gap-1 pt-2 text-sm text-slate-200">
+            <a href="index.html" class="mobile-nav-link">Home</a>
+            <a href="submit.html" class="mobile-nav-link">Submit</a>
+            <a href="track.html" class="mobile-nav-link">Track</a>
+            <a href="support.html" class="mobile-nav-link">Support</a>
+            <a href="ADMINdashboard.html" class="mobile-nav-link">Admin</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="flex-1">
+      <section class="relative overflow-hidden">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <p class="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/5 px-3 py-1 text-[11px] font-medium text-emerald-300 mb-4">
+              <span class="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              NITDA Intelligent Portal
+            </p>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-50 mb-4">
+              Digitizing Nigeria&apos;s <span class="text-nitda-green">public sector</span> workflows.
+            </h1>
+            <p class="text-sm sm:text-base text-slate-300 max-w-xl mb-6">
+              Securely submit, track, and manage official documents with full transparency. Built for Ministries, Departments &amp; Agencies to simplify compliance and governance.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+              <a href="index.html" class="inline-flex items-center justify-center rounded-2xl bg-nitda-green px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">
+                Enter Main Portal
+                <i class="fas fa-arrow-right ml-2 text-xs" aria-hidden="true"></i>
+              </a>
+              <button type="button" class="inline-flex items-center justify-center rounded-2xl border border-slate-700 px-4 py-2.5 text-xs sm:text-sm text-slate-200 hover:bg-slate-900/60">
+                <i class="fas fa-lock mr-1.5 text-[11px]" aria-hidden="true"></i>
+                Secured &amp; powered by NITDA
+              </button>
+            </div>
+            <p class="mt-4 text-[11px] text-slate-400">
+              Operational metrics and live workload statistics are available only to authorised administrators in the secure dashboard.
+            </p>
+          </div>
+          <div class="relative">
+            <div class="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-nitda-green/20 blur-3xl"></div>
+            <div class="relative rounded-3xl border border-slate-800 bg-slate-900/60 p-4 shadow-xl shadow-emerald-500/10">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+                  <span class="text-[11px] font-medium text-slate-300">Trusted digital services</span>
+                </div>
+                <span class="text-[11px] text-slate-500">NITDA</span>
+              </div>
+              <p class="text-[12px] text-slate-300">
+                This portal streamlines document intake, routing and tracking across MDAs, providing citizens and organisations with visibility while giving administrators a central view of workloads.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-slate-800 bg-slate-950/90">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500">
+        <p>&copy; 2025 NITDA Intelligent Portal. All rights reserved.</p>
+        <p class="flex items-center gap-2">
+          <span class="inline-flex h-1 w-1 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true"></span>
+          <span>Secure digital services for Nigeria&apos;s public sector.</span>
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function() {
+      const toggle = document.getElementById('nav-toggle');
+      const mobileNav = document.getElementById('mobile-nav');
+      if (!toggle || !mobileNav) return;
+      toggle.addEventListener('click', function () {
+        const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!isExpanded));
+        mobileNav.classList.toggle('hidden');
+      });
+    })();
+  </script>
+</body>
+</html>

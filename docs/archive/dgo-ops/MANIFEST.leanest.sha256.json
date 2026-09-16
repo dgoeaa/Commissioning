@@ -1,0 +1,272 @@
+{
+  "generated": "2026-07-30T19:02:35.838488+00:00",
+  "scope": "leanest operational package",
+  "file_count": 53,
+  "files": [
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/README.md",
+      "size": 1370,
+      "sha256": "df99910ebf65b1ace586ebcb0d97ddf3933a648ca2903184bf282788b90d3cef"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/config.example.js",
+      "size": 1100,
+      "sha256": "420a766570936f01bc5a881df6214bac3f314b51c03f88ed513d1978671650c3"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/index.html",
+      "size": 1967,
+      "sha256": "d238592a708329be3b4c08e33c6fdce25274074324893b1bd878f5bc23456ac1"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/api/client.js",
+      "size": 1112,
+      "sha256": "b02cf5c95831990edd8c2d48fff1f91ca618b5c393c707c0df701f7664a6a2a6"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/controllers/actions.js",
+      "size": 10423,
+      "sha256": "f10279b3191f14b3d52ada7eda01d4f79d4d7b1cc3a566f7bd2803a0a392cf79"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/core/config.js",
+      "size": 2332,
+      "sha256": "9a606a447c0414b09a102bb4f3cb7c403bef6f55f28b865d172dca7c87fefd48"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/core/router.js",
+      "size": 931,
+      "sha256": "d712b7fa74fc660907ae2bf95f1291db7cd25d484186f167c5ff149b3f9a27f2"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/core/store.js",
+      "size": 2878,
+      "sha256": "88eabf51b258515c8bed510b11feff51f4cb7c6751b9f36d7233d5a82435292d"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/data/demo.js",
+      "size": 3934,
+      "sha256": "32b51c258061f633a4ba21193dabc6b2bd14e88eb036fd0c8d6605146e6a1b2d"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/events/bindings.js",
+      "size": 991,
+      "sha256": "a7ce6340444017ac4e6ecf416edee0c79ac4dc8d4d0fc2135fd102b819ffab07"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/main.js",
+      "size": 1068,
+      "sha256": "5df6111f100cf300d106919e90a74e572bb1bd57a90e3df524032706119b390a"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/ai.js",
+      "size": 328,
+      "sha256": "1718684a8e0cf8b70717e617933d1eacea4b63503386307945e6ac4db279abe3"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/approvals.js",
+      "size": 991,
+      "sha256": "09c1c8782c56bd5920b4ac1c7ccbd9be1f23e3ed4a9af2c46bde3a5efbb4d0e4"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/bootstrap.js",
+      "size": 1270,
+      "sha256": "2f6535b123e48cdcf1afad1d823d148edc865c55e433254021278cb641877a70"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/briefs.js",
+      "size": 1916,
+      "sha256": "4c8db1f280d17ff2da52e86872fc115bb727a94fddfdee1c6b1c3764593095b3"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/correspondence.js",
+      "size": 2343,
+      "sha256": "7cd115659e2711d421f55e7647375aafd1505094da1f6bc81365c4322a582326"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/decisions.js",
+      "size": 1059,
+      "sha256": "b73b1d47f701eb089a1d84298963709ee1a1cca3ee58958bea66d023693398f5"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/inbox.js",
+      "size": 1694,
+      "sha256": "0f5263ca6df82addfd3615fbe41da2fabbeec3c9ebb90e505f00d5953a6001c1"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/kpi.js",
+      "size": 457,
+      "sha256": "7c6b71af3039c3f4d76106edab00013ebc66f183d14193cb9762029654cc0661"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/meetings.js",
+      "size": 1867,
+      "sha256": "c2be7159abc6be9d3037b738f31a73e70acfede10c0c4b8ca548b1de5e72a64b"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/minutes.js",
+      "size": 1967,
+      "sha256": "8e34dc43c6b658e4d5092b3a7da3d2760ba008373496b7b41b0dbbb403d0eae4"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/ops.js",
+      "size": 1686,
+      "sha256": "40dd742b36616d0ef4953f2efaee9fc4bf39cfecc44688002efdf40154224a89"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/projects.js",
+      "size": 818,
+      "sha256": "5795772137f214c6ecbd326ab077fc06a4305c6a88d974ed76ca3606c9430f1e"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/services/tasks.js",
+      "size": 1844,
+      "sha256": "2ee77c55050a284b1d9a6989c93e9a9a0ea075cfb8300d12a99f52a17c9ccbe3"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/utils/dom.js",
+      "size": 152,
+      "sha256": "8efd118764a25cb673d7f549955bc71fd809a3c9490965790ce0a4d5a7541f97"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/utils/fn.js",
+      "size": 848,
+      "sha256": "3e031be6241f7e6e5adc8849bb3efcf4fcea923108d69180ddeecda8fe263dcf"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/utils/toast.js",
+      "size": 359,
+      "sha256": "feea5092136730b3ade340820fbe253ec8f80562294a57734d5dc6eba8e85047"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/components/modals.js",
+      "size": 19736,
+      "sha256": "49cdf2b161a4ecf1dd988750d5d042557f8551a6bc57544d9411dc096831f568"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/components/ui.js",
+      "size": 3151,
+      "sha256": "d81aebd32068a3dcd303dd115903b6a9e9c90f76b1b756255f26de72e417e3be"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/header.js",
+      "size": 1242,
+      "sha256": "3ac8a9f6fca446d8a71d716ecff77559ab9191bf5b465cd887ac847cc591c847"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/layout.js",
+      "size": 1894,
+      "sha256": "fe05f08ce704bd005558b7ad5f852278d29dc336a058935ea4a9f2b573afabc6"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/admin.js",
+      "size": 1425,
+      "sha256": "b1b7706dc91c0d69b365ec2bbea5998f971855e035e2c9ae325a02067d00ce22"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/ai.js",
+      "size": 1293,
+      "sha256": "8d9a443f0ec49c8d0aa6e31a2d0af27f1664f9b58652e6e09bf049e5d4948d39"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/approvals.js",
+      "size": 1985,
+      "sha256": "e2c3beebf5506bfa5c38a07664ec3ed03cce6a257bb0d03a069e4aed890d155a"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/audit.js",
+      "size": 1401,
+      "sha256": "7352067c2428eeeb985241dfa5fd4e446f247a4103fea82d7a2f1228acfe7fad"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/briefs.js",
+      "size": 2242,
+      "sha256": "366525d20fc7c614b57e3bda147c01a3fd3b161e7fb3637e7db12a459a83f34d"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/dashboard.js",
+      "size": 2472,
+      "sha256": "56e7102bae6a926602d449f6d5da8fc56dd62035ad92700e5198394b4285a494"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/decisions.js",
+      "size": 1476,
+      "sha256": "ed46a08ed5a9830e5cc906e2b4a7e2bff7e27b1df803cab1c0ba81dee9ba6515"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/directory.js",
+      "size": 1346,
+      "sha256": "dd9c090206d91f12355aa8e1880d3c1b588778f42e6ce1272977e3d238e64de5"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/inbox.js",
+      "size": 3495,
+      "sha256": "2d853a01306fa011919d9f0c45f1a55927fc0c1cd48d3bb0b4ee122252aa10ec"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/inward.js",
+      "size": 2161,
+      "sha256": "9a81849e05e1a8068dac3a47085d39292adb813e3ae07b19f37657e6f2313e59"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/kpi.js",
+      "size": 1253,
+      "sha256": "c43097bfd86204cb59581c42d052bf7cc78da181455e1dcdbdb38f4a2865db8b"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/meetings.js",
+      "size": 2614,
+      "sha256": "2760eda669f0c50e8a1ca7973b847f77a5543282b142c614827fdc9c0aa94b49"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/minutes.js",
+      "size": 2191,
+      "sha256": "3af47756c40a4744820089a694c7075c63545e1336bedf862e3b344450c504aa"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/notfound.js",
+      "size": 190,
+      "sha256": "aec6fae304e42967b4480fde625fb08a35b977dbdf915d27ffc87a807bf959cf"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/notifications.js",
+      "size": 1738,
+      "sha256": "d96aa4368c81a1b6ac2986aa201df71db04bf00626ba42d1798c98bfaae95cf4"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/outward.js",
+      "size": 2115,
+      "sha256": "283c988bfef6ae589550c4b817049c2ff0a36494c1516d3855b92f5e2cff2df6"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/projects.js",
+      "size": 2368,
+      "sha256": "9e68b72e5f1a5a6492cc4324852e666f4441b84263534d8832eaa033a1d95627"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/reports.js",
+      "size": 942,
+      "sha256": "92e2359445c62b4d8f3c724bc2ceb5f8c017efcafc05507ba1f9341d52a2e044"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/pages/tasks.js",
+      "size": 2267,
+      "sha256": "d3b586ee17944d169b2c8bf9f9ba4095a3c6c74ee07e3c82979295e91822e62f"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/router.js",
+      "size": 1980,
+      "sha256": "723f3465adb9d2e981761e6fc1e07ccad2f4fbf7632cba87facc4ea0d745c8e0"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/js/views/sidebar.js",
+      "size": 3235,
+      "sha256": "999380ac21058fa51af4a06e275a5f1a412f835a2339d3989acdaeddab63b7aa"
+    },
+    {
+      "path": "ECM_ActivityHub_Portal/htdocs/powerAutomateClient.js",
+      "size": 1389,
+      "sha256": "dac8f37aa6cb87001a77de91806396539391efe248c9182093dbe917f7f26f96"
+    }
+  ]
+}

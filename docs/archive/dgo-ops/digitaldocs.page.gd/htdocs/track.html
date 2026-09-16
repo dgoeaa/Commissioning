@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>NITDA Intelligent Portal – Track Request</title>
+
+  <!-- Tailwind CSS CDN and Configuration -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'nitda-green': '#008751',
+            'nitda-deep': '#006A4E',
+            'nitda-accent': '#E6F6F0'
+          },
+          fontFamily: {
+            'inter': ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- External Fonts and Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+  <!-- Custom CSS (Merged from brand.css) -->
+  <style>
+    :root {
+      --nitda-green: #008751;
+      --nitda-deep: #006A4E;
+      --nitda-accent: #E6F6F0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    /* Navigation links */
+    .nav-link {
+      position: relative;
+      padding-bottom: 0.1rem;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -0.15rem;
+      width: 0;
+      height: 1px;
+      background: linear-gradient(to right, #34d399, #22c55e);
+      transition: width 0.18s ease-out;
+      opacity: 0.9;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    .mobile-nav-link {
+      display: block;
+      padding: 0.4rem 0;
+    }
+
+    /* Form controls */
+    .form-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: rgb(148 163 184);
+      margin-bottom: 0.25rem;
+    }
+    .form-input,
+    .form-textarea,
+    .form-file {
+      width: 100%;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      background-color: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: rgb(226 232 240);
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-file:focus {
+      border-color: rgba(16, 185, 129, 0.7);
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Data Theme Overrides (Light Mode) */
+    [data-theme='light'] {
+      --nitda-green: #008751;
+      --nitda-deep: #006A4E;
+      --nitda-accent: #E6F6F0;
+    }
+
+    [data-theme='light'] body {
+      background-color: rgb(241 245 249);
+      color: rgb(15 23 42);
+    }
+
+    /* Header/Nav overrides */
+    [data-theme='light'] .bg-slate-950\/90 { background-color: rgba(255, 255, 255, 0.9); }
+    [data-theme='light'] .border-slate-800 { border-color: rgb(226 232 240); }
+    [data-theme='light'] .text-slate-50 { color: rgb(15 23 42); }
+    [data-theme='light'] #mobile-nav-menu a { color: rgb(15 23 42); }
+    [data-theme='light'] #mobile-nav-menu a:hover { background-color: rgb(241 245 249); }
+
+    /* Form control overrides */
+    [data-theme='light'] .form-input {
+      background-color: rgb(255 255 255);
+      border-color: rgba(15 23 42 / 0.1);
+      color: rgb(15 23 42);
+    }
+    [data-theme='light'] .form-label {
+      color: rgb(100 116 139);
+    }
+    [data-theme='light'] .timeline-item-dot { background-color: rgb(226 232 240); }
+    [data-theme='light'] .timeline-connector { background-color: rgb(226 232 240); }
+
+    /* Timeline specific styles */
+    .timeline-item { position: relative; }
+    .timeline-connector {
+        content: '';
+        position: absolute;
+        top: 1.5rem;
+        left: 0.35rem;
+        height: calc(100% - 1.5rem);
+        width: 1px;
+        background-color: rgb(30 41 59);
+    }
+    .timeline-item-dot {
+        position: absolute;
+        left: 0;
+        top: 0.3rem;
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 9999px;
+        background-color: rgb(30 41 59);
+        border: 2px solid var(--nitda-green);
+        z-index: 10;
+    }
+  </style>
+
+</head>
+<body class="bg-slate-950 text-slate-50 font-inter">
+  <div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-slate-950/90 border-b border-slate-800 sticky top-0 z-30 backdrop-blur">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo/Branding -->
+          <a href="./index.html" class="flex items-center space-x-2 text-xl font-bold text-white tracking-tight">
+            <div class="bg-nitda-green w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold shadow-lg">N</div>
+            <span class="text-base sm:text-lg font-extrabold">NITDA Portal</span>
+          </a>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden md:flex space-x-6 text-sm font-semibold">
+            <a href="./index.html" class="nav-link text-slate-200 hover:text-white transition-colors">Home</a>
+            <a href="./submit.html" class="nav-link text-slate-200 hover:text-white transition-colors">Submit</a>
+            <a href="./track.html" class="nav-link text-nitda-green">Track</a>
+            <a href="./support.html" class="nav-link text-slate-200 hover:text-white transition-colors">Support</a>
+            <a href="./ADMINdashboard.html" class="nav-link text-slate-400 hover:text-white transition-colors">Admin</a>
+          </nav>
+
+          <!-- Right side controls (Theme toggle & Mobile menu button) -->
+          <div class="flex items-center space-x-4">
+            <!-- Theme Toggle Button -->
+            <button id="theme-toggle" class="w-7 h-7 flex items-center justify-center text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-nitda-green">
+              <!-- Initial icon set by JS -->
+            </button>
+
+            <!-- Mobile Menu Button (md:hidden) -->
+            <button id="mobile-menu-toggle" type="button" class="md:hidden text-slate-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-nitda-green rounded-md p-1" aria-controls="mobile-nav-menu" aria-expanded="false">
+              <span class="sr-only">Open main menu</span>
+              <i class="fas fa-bars text-lg" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Navigation Menu -->
+    <nav id="mobile-nav-menu" class="md:hidden hidden px-4 pb-4 border-b border-slate-800 bg-slate-900/95">
+      <div class="pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="./index.html" class="mobile-nav-link text-slate-300 hover:bg-slate-800 rounded-lg">Home</a>
+        <a href="./submit.html" class="mobile-nav-link text-slate-300 hover:bg-slate-800 rounded-lg">Submit Document</a>
+        <a href="./track.html" class="mobile-nav-link text-nitda-green font-semibold rounded-lg">Track Request</a>
+        <a href="./support.html" class="mobile-nav-link text-slate-300 hover:bg-slate-800 rounded-lg">Support</a>
+        <a href="./ADMINdashboard.html" class="mobile-nav-link text-slate-400 hover:bg-slate-800 rounded-lg">Admin Dashboard</a>
+      </div>
+    </nav>
+    <!-- End Header/Navigation -->
+
+    <!-- Main Content Area -->
+    <main class="flex-grow">
+      <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <h1 class="text-2xl sm:text-3xl font-bold text-nitda-green mb-1">Track Request</h1>
+        <p class="text-slate-400 mb-6 text-sm">Enter your unique Tracking ID to retrieve the latest status of your submission.</p>
+
+        <!-- Tracking Form Card -->
+        <div class="bg-slate-900/50 border border-slate-700 p-6 rounded-xl shadow-xl">
+            <form id="tracking-form" class="space-y-4">
+                <!-- Tracking ID Input -->
+                <div>
+                    <label for="trackingId" class="form-label">TRACKING ID (E.G., NITDA-A1B2C3D4E)</label>
+                    <input type="text" id="trackingId" name="trackingId" placeholder="Enter Tracking ID" class="form-input text-lg font-mono tracking-wider uppercase" required />
+                </div>
+
+                <!-- Tracking Status Box -->
+                <div id="tracking-status-box" class="pt-2">
+                    <!-- Status messages and results will be inserted here -->
+                </div>
+
+                <!-- Track Button -->
+                <button type="submit" id="track-btn" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center justify-center">
+                    <i class="fas fa-search mr-2"></i>
+                    <span id="track-text">Track Status</span>
+                    <i id="track-spinner" class="fas fa-spinner fa-spin ml-2 hidden"></i>
+                </button>
+            </form>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 py-6 mt-12">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
+        <p>&copy; 2025 NITDA Intelligent Portal. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Application JavaScript Logic -->
+  <script>
+    // Mock API Endpoint (Replace with your actual Power Automate or backend URL)
+    const TRACKING_FLOW_URL = 'https://mock.api/nitda/track'; // Replace with a real endpoint
+
+    // --- Utility Functions for UI/UX ---
+
+    function setTrackingLoading(isLoading) {
+      const btn = document.getElementById('track-btn');
+      const text = document.getElementById('track-text');
+      const spinner = document.getElementById('track-spinner');
+      const input = document.getElementById('trackingId');
+
+      if (btn) btn.disabled = isLoading;
+      if (input) input.disabled = isLoading;
+      if (text) text.textContent = isLoading ? 'Searching...' : 'Track Status';
+      if (spinner) spinner.classList.toggle('hidden', !isLoading);
+    }
+
+    function sanitizeText(text) {
+        // Simple sanitization to prevent XSS in displayed text
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#x27;',
+            "/": '&#x2F;',
+        };
+        const reg = /[&<>"'/]/ig;
+        return text.replace(reg, (match)=>(map[match]));
+    }
+
+    function showTrackStatus(type, title, message, extraHtml = '') {
+      const box = document.getElementById('tracking-status-box');
+      if (!box) return;
+
+      let colorClass = {
+        'success': 'bg-green-500/10 border-green-500/50 text-green-300',
+        'error': 'bg-red-500/10 border-red-500/50 text-red-300',
+        'info': 'bg-blue-500/10 border-blue-500/50 text-blue-300'
+      }[type];
+
+      let iconClass = {
+        'success': 'fas fa-check-circle text-green-500',
+        'error': 'fas fa-times-circle text-red-500',
+        'info': 'fas fa-info-circle text-blue-500'
+      }[type];
+
+      box.innerHTML = `
+        <div class="p-3 rounded-lg border text-sm ${colorClass}">
+          <p class="font-semibold flex items-center mb-1">
+            <i class="${iconClass} mr-2"></i>${title}
+          </p>
+          <p class="text-xs text-current/80">${message}</p>
+          ${extraHtml}
+        </div>
+      `;
+    }
+
+    // --- Core Tracking Logic ---
+
+    document.getElementById('tracking-form')?.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const trackingId = document.getElementById('trackingId').value.toUpperCase().trim();
+
+      if (!trackingId || trackingId.length < 5) {
+        showTrackStatus('error', 'Invalid ID', 'Please enter a valid Tracking ID.');
+        return;
+      }
+
+      performTracking(trackingId);
+    });
+
+    // Handle tracking ID from URL query parameter
+    (function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const trackingId = urlParams.get('id');
+        if (trackingId) {
+            document.getElementById('trackingId').value = trackingId;
+            performTracking(trackingId);
+        }
+    })();
+
+    // Mock Backend Data Store (Simulates a database or flow response)
+    const mockDataStore = {
+        'NITDA-A1B2C3D4E': {
+            status: 'Approved',
+            lastUpdated: '2025-11-20 14:30:00',
+            notes: 'Final review complete. Clearance certificate issued.',
+            history: [
+                { date: '2025-11-20', activity: 'Clearance certificate issued and sent to requester.' },
+                { date: '2025-11-19', activity: 'Final approval granted by Director General.' },
+                { date: '2025-11-15', activity: 'Compliance team audit completed successfully.' },
+                { date: '2025-11-10', activity: 'Initial submission review and document validation.' },
+                { date: '2025-11-10', activity: 'Document received and tracking ID generated.' },
+            ]
+        },
+        'NITDA-F6G7H8I9J': {
+            status: 'Review Required',
+            lastUpdated: '2025-11-24 10:00:00',
+            notes: 'Requires additional documentation regarding data hosting infrastructure. A request email has been sent.',
+            history: [
+                { date: '2025-11-24', activity: 'Request for additional documents sent to the requester.' },
+                { date: '2025-11-22', activity: 'Initial security assessment flagged a missing requirement.' },
+                { date: '2025-11-21', activity: 'Document received and tracking ID generated.' },
+            ]
+        },
+        'NITDA-K0L1M2N3O': {
+            status: 'Processing',
+            lastUpdated: '2025-11-25 09:15:00',
+            notes: 'Currently undergoing technical compatibility assessment.',
+            history: [
+                { date: '2025-11-25', activity: 'Technical assessment initiated.' },
+                { date: '2025-11-23', activity: 'Document validation successful.' },
+                { date: '2025-11-23', activity: 'Document received and tracking ID generated.' },
+            ]
+        }
+    };
+
+    async function performTracking(trackingId) {
+      const box = document.getElementById('tracking-status-box');
+      if (box) box.innerHTML = '';
+
+      setTrackingLoading(true);
+      showTrackStatus('info', 'Searching...', `Checking status for ID: ${sanitizeText(trackingId)}`);
+
+      try {
+        // MOCK API CALL
+        await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate loading time
+
+        const data = mockDataStore[trackingId];
+
+        if (!data) {
+          showTrackStatus(
+            'error',
+            'Request Not Found',
+            'The tracking ID provided does not match any records. Please verify the ID and try again.'
+          );
+          return;
+        }
+
+        const { status, lastUpdated, notes, history } = data;
+
+        let historyHtml = '';
+        if (history && history.length > 0) {
+          const items = history.map(item => `
+            <li class="timeline-item pb-4 pl-3">
+              <div class="timeline-item-dot"></div>
+              <div class="timeline-connector"></div>
+              <p class="text-xs font-semibold text-slate-200">${sanitizeText(item.activity)}</p>
+              <p class="text-[10px] text-slate-500">${sanitizeText(item.date)}</p>
+            </li>
+          `).join('');
+
+          historyHtml = `
+            <div class="mt-4 p-4 bg-slate-800/50 rounded-xl">
+              <h3 class="font-bold text-sm mb-3 text-nitda-green">Request History Timeline</h3>
+              <ol class="space-y-1.5 relative ml-1">
+                ${items}
+              </ol>
+            </div>
+          `;
+        }
+
+        let extraHtml = '';
+        if (status || lastUpdated || notes || historyHtml) {
+          // Main status box
+          extraHtml = `
+            <div class="mt-3 space-y-3">
+              <div class="rounded-xl bg-slate-800/70 border border-slate-700 px-4 py-3 text-xs text-slate-200">
+                ${status ? '<p class="mb-1"><span class="font-semibold text-nitda-green">Status:</span> <span class="text-white">' + sanitizeText(status) + '</span></p>' : ''}
+                ${lastUpdated ? '<p class="mb-1"><span class="font-semibold">Last updated:</span> ' + sanitizeText(lastUpdated) + '</p>' : ''}
+                ${notes ? '<p class="mb-0"><span class="font-semibold">Notes:</span> ' + sanitizeText(notes) + '</p>' : ''}
+              </div>
+              ${historyHtml}
+            </div>
+          `;
+        }
+
+        showTrackStatus(
+          'success',
+          status ? `Status: ${sanitizeText(status)}` : 'Request located',
+          status
+            ? 'Below is the latest information returned from the workflow.'
+            : 'The workflow returned a result for your request.',
+          extraHtml
+        );
+      } catch (err) {
+        console.error(err);
+        showTrackStatus(
+          'error',
+          'Unable to retrieve status',
+          'Something went wrong while contacting the tracking service. Please try again later.'
+        );
+      } finally {
+        setTrackingLoading(false);
+      }
+    }
+    
+    // --- Common JS Logic (Theme Toggle & Mobile Nav) ---
+    (function () {
+      // 1. Mobile navigation toggle
+      const toggle = document.getElementById('mobile-menu-toggle');
+      const mobileNav = document.getElementById('mobile-nav-menu');
+      if (toggle && mobileNav) {
+        toggle.addEventListener('click', function () {
+          const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+          toggle.setAttribute('aria-expanded', String(!isExpanded));
+          mobileNav.classList.toggle('hidden');
+        });
+      }
+
+      // 2. Theme toggle (light/dark)
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+
+      const applyTheme = (theme) => {
+        if (theme === 'light') {
+          root.setAttribute('data-theme', 'light');
+        } else {
+          root.removeAttribute('data-theme');
+        }
+      };
+
+      const stored = localStorage.getItem('nitdaTheme');
+      applyTheme(stored || 'dark');
+
+      btn.addEventListener('click', function () {
+        const current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+        const next = current === 'light' ? 'dark' : 'light';
+        applyTheme(next);
+        localStorage.setItem('nitdaTheme', next);
+        btn.innerHTML = next === 'light'
+          ? '<i class="fas fa-moon text-[11px]" aria-hidden="true"></i>'
+          : '<i class="fas fa-sun text-[11px]" aria-hidden="true"></i>';
+      });
+
+      // Initialise icon
+      if (root.getAttribute('data-theme') === 'light') {
+        btn.innerHTML = '<i class="fas fa-moon text-[11px]" aria-hidden="true"></i>';
+      } else {
+        btn.innerHTML = '<i class="fas fa-sun text-[11px]" aria-hidden="true"></i>';
+      }
+    })();
+  </script>
+</body>
+</html>

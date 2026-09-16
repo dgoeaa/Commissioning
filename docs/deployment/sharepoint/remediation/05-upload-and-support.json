@@ -1,0 +1,887 @@
+{
+  "remediationId": "05-upload-and-support",
+  "visit": 5,
+  "endpoint": "UPLOAD, SUPPORT",
+  "closes": "C3 and C5.",
+  "appliesTo": [
+    {
+      "flow": "Portal_UPLOAD_ECM_DOCS",
+      "internalName": "ae4b2a44-2388-42c7-baaf-86de3d6fa664"
+    },
+    {
+      "flow": "UPLOAD_ECM_DOCS_PORTAL",
+      "internalName": "9bd6724c-5a8f-4e74-9d3e-3c1eeaef2d06"
+    },
+    {
+      "flow": "Portal_Upload_HTTP",
+      "internalName": "39d65c5b-5539-43de-aec6-52bfcd31bcc1"
+    },
+    {
+      "flow": "Portal_ECM_DOCS_SUPPORT",
+      "internalName": "1b2c2e53-6c07-46a3-80b2-c43be1ef69db"
+    }
+  ],
+  "keepUnchanged": [
+    {
+      "what": "The Create_file into /NITDA_Central_Registry in the upload flows",
+      "why": "The one sanctioned write outside the portal estate. A library holds files, a list holds metadata."
+    }
+  ],
+  "remove": [
+    {
+      "what": "Get_items against Global Tracking Queue in Portal_Upload_HTTP and Portal_ECM_DOCS_SUPPORT",
+      "why": "Boundary."
+    }
+  ],
+  "composeFirst": [
+    {
+      "name": "Compose_Bucket_Upload_Source",
+      "inputs": "@concat('UPLOAD_IP:', coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown'))"
+    },
+    {
+      "name": "Compose_Bucket_Support",
+      "inputs": "@concat('SUPPORT_IP:', coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown'))"
+    },
+    {
+      "name": "Compose_Case_Reference",
+      "inputs": "@concat('NITDA-S-', toUpper(substring(replace(guid(),'-',''),0,6)))"
+    }
+  ],
+  "uploadActions": [
+    {
+      "name": "Get_Rate_Limit_Upload_Source",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "GetItems",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetItems"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "$filter": "Title eq '@{outputs('Compose_Bucket_Upload_Source')}'",
+          "$top": 1
+        }
+      },
+      "why": "Public endpoint, no limit today."
+    },
+    {
+      "name": "Update_Rate_Limit_Upload_Source",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "id": "@first(outputs('Get_Rate_Limit_Upload_Source')?['body/value'])?['ID']",
+          "item/RequestCount": "@add(coalesce(first(outputs('Get_Rate_Limit_Upload_Source')?['body/value'])?['RequestCount'],0),1)",
+          "item/UpdatedAtUtc": "@utcNow()"
+        }
+      },
+      "why": "Only when the bucket exists and its window is current."
+    },
+    {
+      "name": "Create_Rate_Limit_Upload_Source",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "item/Title": "@outputs('Compose_Bucket_Upload_Source')",
+          "item/WindowStartUtc": "@utcNow()",
+          "item/UpdatedAtUtc": "@utcNow()",
+          "item/RequestCount": 1
+        }
+      },
+      "why": "Only when absent or the window has rolled over."
+    },
+    {
+      "name": "Get_Upload_Ticket",
+      "type": "OpenApiConnection",
+      "list": "Portal Upload Tickets",
+      "operation": "GetItems",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetItems"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+          "table": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+          "$filter": "Title eq '@{coalesce(triggerOutputs()?[''headers'']?[''X-Upload-Ticket''],'''')}' and Redeemed eq 0",
+          "$top": 1
+        }
+      },
+      "why": "Absent, already redeemed, or past ExpiresAtUtc all stop here."
+    },
+    {
+      "name": "Mark_Ticket_Expired",
+      "type": "OpenApiConnection",
+      "list": "Portal Upload Tickets",
+      "operation": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+          "table": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+          "id": "@first(outputs('Get_Upload_Ticket')?['body/value'])?['ID']",
+          "item/Status": "Expired"
+        }
+      },
+      "why": "Only on the expired branch. An expired ticket left Pending keeps matching the filter and is offered again."
+    },
+    {
+      "name": "Create_Attachment_Record",
+      "type": "OpenApiConnection",
+      "list": "Portal Attachments",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+          "table": "ecf2ba9b-968f-4fbc-ac9c-7b5e36d5099e",
+          "item/Title": "@first(outputs('Get_Upload_Ticket')?['body/value'])?['Title']",
+          "item/SubmissionRef": "@first(outputs('Get_Upload_Ticket')?['body/value'])?['SubmissionRef']",
+          "item/DeclaredName": "@first(outputs('Get_Upload_Ticket')?['body/value'])?['DeclaredName']",
+          "item/StoredName": "@first(outputs('Get_Upload_Ticket')?['body/value'])?['StoredName']",
+          "item/DeclaredSizeBytes": "@coalesce(first(outputs('Get_Upload_Ticket')?['body/value'])?['DeclaredSizeBytes'],0)",
+          "item/DeclaredSha256": "@coalesce(first(outputs('Get_Upload_Ticket')?['body/value'])?['DeclaredSha256'],'')",
+          "item/AttachmentLink": "@outputs('Create_file')?['body/Path']",
+          "item/CreatedAtUtc": "@utcNow()",
+          "item/Status": "Stored"
+        }
+      },
+      "why": "After the file write, so AttachmentLink is only ever populated on a successful store."
+    },
+    {
+      "name": "Update_Upload_Ticket_Redeemed",
+      "type": "OpenApiConnection",
+      "list": "Portal Upload Tickets",
+      "operation": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+          "table": "d777f3cd-0696-426e-8096-ffc860e7c0d4",
+          "id": "@first(outputs('Get_Upload_Ticket')?['body/value'])?['ID']",
+          "item/Redeemed": true,
+          "item/Status": "Stored"
+        }
+      },
+      "why": "Last. The read at the start and this update are what make the ticket single-use; skipping either turns it into a reusable upload credential."
+    },
+    {
+      "name": "Create_Flow_Telemetry",
+      "type": "OpenApiConnection",
+      "list": "Portal Flow Telemetry",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+          "item/Title": "@coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])",
+          "item/Flow": "@coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])",
+          "item/RunId": "@workflow()?['run']?['name']",
+          "item/StartedAtUtc": "@variables('varReceivedAtUtc')",
+          "item/CompletedAtUtc": "@variables('varCompletedAtUtc')",
+          "item/Outcome": "@if(less(variables('varStatusCode'),400),'Succeeded','Failed')",
+          "item/DurationMs": "@variables('varDurationMs')",
+          "item/ErrorMessage": "@string(variables('varErrors'))"
+        }
+      },
+      "why": "HOUSE STANDARD. Place inside Scope_Flow_Data_Capture, beside the existing Compose_Flow_Run_Record - not on the request path. The values are the standard variable set the skeleton already initialises; if this flow has no Scope_Flow_Data_Capture, add the scope first, because that is the conformance gap rather than this action."
+    }
+  ],
+  "supportActions": [
+    {
+      "name": "Get_Rate_Limit_Support",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "GetItems",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetItems"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "$filter": "Title eq '@{outputs('Compose_Bucket_Support')}'",
+          "$top": 1
+        }
+      },
+      "why": "Public endpoint, no limit today."
+    },
+    {
+      "name": "Update_Rate_Limit_Support",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "id": "@first(outputs('Get_Rate_Limit_Support')?['body/value'])?['ID']",
+          "item/RequestCount": "@add(coalesce(first(outputs('Get_Rate_Limit_Support')?['body/value'])?['RequestCount'],0),1)",
+          "item/UpdatedAtUtc": "@utcNow()"
+        }
+      },
+      "why": "Only when the bucket exists and its window is current."
+    },
+    {
+      "name": "Create_Rate_Limit_Support",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "item/Title": "@outputs('Compose_Bucket_Support')",
+          "item/WindowStartUtc": "@utcNow()",
+          "item/UpdatedAtUtc": "@utcNow()",
+          "item/RequestCount": 1
+        }
+      },
+      "why": "Only when absent or the window has rolled over."
+    },
+    {
+      "name": "Create_Support_Case",
+      "type": "OpenApiConnection",
+      "list": "Portal Support Cases",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "b984645b-8e3a-457f-a305-b95650fd3f23",
+          "item/Title": "@outputs('Compose_Case_Reference')",
+          "item/Name": "@coalesce(triggerBody()?['name'],'')",
+          "item/Email": "@toLower(trim(coalesce(triggerBody()?['email'],'')))",
+          "item/Topic": "@coalesce(triggerBody()?['topic'],'')",
+          "item/AboutReference": "@coalesce(triggerBody()?['aboutReference'],'')",
+          "item/Message": "@coalesce(triggerBody()?['message'],'')",
+          "item/Status": "open",
+          "item/SubmittedAtUtc": "@utcNow()",
+          "item/SourceIp": "@coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'')"
+        }
+      },
+      "why": "Never touches the registry. A case is not correspondence, and letting a helpdesk message become a registered submission is how a registry stops meaning anything."
+    },
+    {
+      "name": "Create_Outbox_Receipt_Support",
+      "type": "OpenApiConnection",
+      "list": "Portal Outbox Receipts",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+          "item/Title": "@outputs('Compose_Case_Reference')",
+          "item/MessageType": "support-acknowledgement",
+          "item/RecipientEmail": "@toLower(trim(coalesce(triggerBody()?['email'],'')))",
+          "item/Reference": "@outputs('Compose_Case_Reference')",
+          "item/SentAtUtc": "@utcNow()",
+          "item/Status": "sent",
+          "item/Attempts": 1,
+          "item/LastError": ""
+        }
+      },
+      "why": "D2 - Outbox Receipts is the one of the three reserved lists that gets wired, because whether the citizen received the mail is a question nothing else answers."
+    },
+    {
+      "name": "Create_Flow_Telemetry",
+      "type": "OpenApiConnection",
+      "list": "Portal Flow Telemetry",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+          "item/Title": "@coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])",
+          "item/Flow": "@coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])",
+          "item/RunId": "@workflow()?['run']?['name']",
+          "item/StartedAtUtc": "@variables('varReceivedAtUtc')",
+          "item/CompletedAtUtc": "@variables('varCompletedAtUtc')",
+          "item/Outcome": "@if(less(variables('varStatusCode'),400),'Succeeded','Failed')",
+          "item/DurationMs": "@variables('varDurationMs')",
+          "item/ErrorMessage": "@string(variables('varErrors'))"
+        }
+      },
+      "why": "HOUSE STANDARD. Place inside Scope_Flow_Data_Capture, beside the existing Compose_Flow_Run_Record - not on the request path. The values are the standard variable set the skeleton already initialises; if this flow has no Scope_Flow_Data_Capture, add the scope first, because that is the conformance gap rather than this action."
+    }
+  ],
+  "alsoForVerify": {
+    "action": {
+      "name": "Create_Outbox_Receipt_Verify",
+      "type": "OpenApiConnection",
+      "list": "Portal Outbox Receipts",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+          "item/Title": "@toLower(trim(coalesce(triggerBody()?['email'],'')))",
+          "item/MessageType": "verification-code",
+          "item/RecipientEmail": "@toLower(trim(coalesce(triggerBody()?['email'],'')))",
+          "item/Reference": "",
+          "item/SentAtUtc": "@utcNow()",
+          "item/Status": "sent",
+          "item/Attempts": 1,
+          "item/LastError": ""
+        }
+      },
+      "why": "Add to Portal_Verify at visit 1 if convenient, or here. Never record the code itself."
+    }
+  },
+  "verification": [
+    "npm run wiring   # UPLOAD 0/7 to 7/7, SUPPORT 0/5 to 5/5, all crossings clear",
+    "Redeem a ticket twice - the second attempt must be refused",
+    "Raise a case and confirm it never appears in Portal Registry"
+  ],
+  "buildStandard": {
+    "conformTo": "docs/deployment/sharepoint/flow-standard.json",
+    "placement": "Work in Scope_<Purpose> under Scope_Global; failure path in the catch scope; answer through Compose__Standard_Response_Revised then Response; run record in Scope_Flow_Data_Capture.",
+    "check": "node scripts/verify-flow-standard.mjs --portal"
+  },
+  "standardConformance": {
+    "decision": "D7 - the standard work rides along with each visit rather than waiting for a sixth pass. The flow is already open, and adding a catch scope to a flow whose actions you have just rewritten costs a fraction of coming back to it.",
+    "standard": "docs/deployment/sharepoint/flow-standard.json",
+    "order": "Do the standard work FIRST, before the SharePoint actions in Step B. The variables and Scope_Global have to exist before an action can reference them, and moving actions into a scope afterwards is where things get dropped.",
+    "perFlow": [
+      {
+        "flow": "Portal_UPLOAD_ECM_DOCS",
+        "conformanceBefore": "33% by rule count",
+        "conforms": false,
+        "missing": [
+          {
+            "check": "vars.core",
+            "title": "Initialise the standard variable set",
+            "how": "Three Initialize variable actions at the very top of the flow, before Scope_Global.",
+            "add": [
+              {
+                "name": "Initialize_variable_varStatusCode",
+                "type": "Integer",
+                "value": 200
+              },
+              {
+                "name": "Initialize_variable_varData",
+                "type": "Object",
+                "value": {}
+              },
+              {
+                "name": "Initialize_variable_varErrors",
+                "type": "Array",
+                "value": []
+              }
+            ],
+            "why": "One response envelope can only serve every flow if every flow reports its outcome the same way."
+          },
+          {
+            "check": "vars.timing",
+            "title": "Initialise the timing variables",
+            "how": "Four more Initialize variable actions, alongside the core set.",
+            "add": [
+              {
+                "name": "Initialize_variable_varRequestId",
+                "type": "String",
+                "value": "@guid()"
+              },
+              {
+                "name": "Initialize_variable_varReceivedAtUtc",
+                "type": "String",
+                "value": "@utcNow()"
+              },
+              {
+                "name": "Initialize_variable_varStartTicks",
+                "type": "Integer",
+                "value": "@ticks(utcNow())"
+              },
+              {
+                "name": "Initialize_variable_varCompletedAtUtc",
+                "type": "String",
+                "value": ""
+              },
+              {
+                "name": "Initialize_variable_varDurationMs",
+                "type": "Integer",
+                "value": 0
+              }
+            ],
+            "alsoAdd": {
+              "name": "Scope_Finalize_Response_State",
+              "where": "Inside Scope_Global, after the work and before the envelope",
+              "actions": [
+                {
+                  "name": "Set_variable_varCompletedAtUtc",
+                  "value": "@utcNow()"
+                },
+                {
+                  "name": "Set_variable_varDurationMs",
+                  "value": "@div(sub(ticks(utcNow()), variables('varStartTicks')), 10000)"
+                }
+              ]
+            },
+            "why": "The envelope and the run record both report timing. Computing it once is what keeps them agreeing."
+          },
+          {
+            "check": "scope.global",
+            "title": "Wrap the work in Scope_Global",
+            "how": "Add a Scope named Scope_Global and move every existing action except the Initialize variable actions inside it.",
+            "why": "One place to attach a catch. Without it the failure path has to be repeated on every branch, which is why the flows missing this are the same flows missing a catch."
+          },
+          {
+            "check": "telemetry.capture",
+            "title": "Add Scope_Flow_Data_Capture",
+            "how": "Add a Scope named Scope_Flow_Data_Capture as a top-level peer of Scope_Global, with 'Configure run after' set to Succeeded, Failed, Skipped and Timed out - it must run whatever happened.",
+            "why": "The observability harness twenty-three flows already carry. Adding it is what makes this flow visible in the same way as the rest of the estate."
+          },
+          {
+            "check": "telemetry.record",
+            "title": "Compose the versioned run record",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Flow_Run_Record.",
+            "copyFrom": "Any conforming flow - Fetch_Tasks_POST is the cleanest. Copy Compose_Flow_Run_Record verbatim; it reads only workflow(), trigger(), the redaction composes and the standard variables, so it is portable between flows unchanged.",
+            "why": "capture_version 2.0.0, with its draft-07 schema alongside. Copying rather than rewriting is the point - a second dialect of the record is worse than none."
+          },
+          {
+            "check": "redaction.headers",
+            "title": "Redact headers before capture",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Headers, running after Compose_Redacted_Queries.",
+            "inputs": "@setProperty(\n  setProperty(\n    setProperty(\n      setProperty(\n        coalesce(triggerOutputs()?['headers'], json('{}')),\n        'Authorization',\n        '***REDACTED***'\n      ),\n      'Cookie',\n      '***REDACTED***'\n    ),\n    'x-api-key',\n    '***REDACTED***'\n  ),\n  'Ocp-Apim-Subscription-Key',\n  '***REDACTED***'\n)",
+            "why": "Without it the observability harness becomes the leak.",
+            "wireInto": {
+              "action": "Compose_Flow_Run_Record",
+              "underKey": "request",
+              "pair": {
+                "key": "headers_redacted",
+                "value": "@coalesce(outputs('Compose_Redacted_Headers'), json('{}'))"
+              },
+              "note": "Same: an unconsumed Compose redacts nothing. Compose_Flow_Run_Record must also be moved to run after Compose_Redacted_Headers, or it composes before the value exists."
+            }
+          },
+          {
+            "check": "redaction.queries",
+            "title": "Redact the query string before capture",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Queries. Place it first in that scope, immediately after Get_Flow_Definition.",
+            "inputs": "@setProperty(\n  setProperty(\n    coalesce(triggerOutputs()?['queries'], json('{}')),\n    'sig',\n    '***REDACTED***'\n  ),\n  'code',\n  '***REDACTED***'\n)",
+            "why": "sig is the trigger credential and code is the one-time password. On the verification flows this is the difference between telemetry and a log of every OTP issued.",
+            "wireInto": {
+              "action": "Compose_Flow_Run_Record",
+              "underKey": "request",
+              "pair": {
+                "key": "queries_redacted",
+                "value": "@coalesce(outputs('Compose_Redacted_Queries'), json('{}'))"
+              },
+              "note": "Adding the Compose without this leaves it inert: the run record captures no query string at all, and the conformance check still passes. The rule is about what reaches telemetry, not about an action existing."
+            }
+          }
+        ]
+      },
+      {
+        "flow": "UPLOAD_ECM_DOCS_PORTAL",
+        "conformanceBefore": "33% by rule count",
+        "conforms": false,
+        "missing": [
+          {
+            "check": "vars.core",
+            "title": "Initialise the standard variable set",
+            "how": "Three Initialize variable actions at the very top of the flow, before Scope_Global.",
+            "add": [
+              {
+                "name": "Initialize_variable_varStatusCode",
+                "type": "Integer",
+                "value": 200
+              },
+              {
+                "name": "Initialize_variable_varData",
+                "type": "Object",
+                "value": {}
+              },
+              {
+                "name": "Initialize_variable_varErrors",
+                "type": "Array",
+                "value": []
+              }
+            ],
+            "why": "One response envelope can only serve every flow if every flow reports its outcome the same way."
+          },
+          {
+            "check": "vars.timing",
+            "title": "Initialise the timing variables",
+            "how": "Four more Initialize variable actions, alongside the core set.",
+            "add": [
+              {
+                "name": "Initialize_variable_varRequestId",
+                "type": "String",
+                "value": "@guid()"
+              },
+              {
+                "name": "Initialize_variable_varReceivedAtUtc",
+                "type": "String",
+                "value": "@utcNow()"
+              },
+              {
+                "name": "Initialize_variable_varStartTicks",
+                "type": "Integer",
+                "value": "@ticks(utcNow())"
+              },
+              {
+                "name": "Initialize_variable_varCompletedAtUtc",
+                "type": "String",
+                "value": ""
+              },
+              {
+                "name": "Initialize_variable_varDurationMs",
+                "type": "Integer",
+                "value": 0
+              }
+            ],
+            "alsoAdd": {
+              "name": "Scope_Finalize_Response_State",
+              "where": "Inside Scope_Global, after the work and before the envelope",
+              "actions": [
+                {
+                  "name": "Set_variable_varCompletedAtUtc",
+                  "value": "@utcNow()"
+                },
+                {
+                  "name": "Set_variable_varDurationMs",
+                  "value": "@div(sub(ticks(utcNow()), variables('varStartTicks')), 10000)"
+                }
+              ]
+            },
+            "why": "The envelope and the run record both report timing. Computing it once is what keeps them agreeing."
+          },
+          {
+            "check": "scope.global",
+            "title": "Wrap the work in Scope_Global",
+            "how": "Add a Scope named Scope_Global and move every existing action except the Initialize variable actions inside it.",
+            "why": "One place to attach a catch. Without it the failure path has to be repeated on every branch, which is why the flows missing this are the same flows missing a catch."
+          },
+          {
+            "check": "telemetry.capture",
+            "title": "Add Scope_Flow_Data_Capture",
+            "how": "Add a Scope named Scope_Flow_Data_Capture as a top-level peer of Scope_Global, with 'Configure run after' set to Succeeded, Failed, Skipped and Timed out - it must run whatever happened.",
+            "why": "The observability harness twenty-three flows already carry. Adding it is what makes this flow visible in the same way as the rest of the estate."
+          },
+          {
+            "check": "telemetry.record",
+            "title": "Compose the versioned run record",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Flow_Run_Record.",
+            "copyFrom": "Any conforming flow - Fetch_Tasks_POST is the cleanest. Copy Compose_Flow_Run_Record verbatim; it reads only workflow(), trigger(), the redaction composes and the standard variables, so it is portable between flows unchanged.",
+            "why": "capture_version 2.0.0, with its draft-07 schema alongside. Copying rather than rewriting is the point - a second dialect of the record is worse than none."
+          },
+          {
+            "check": "redaction.headers",
+            "title": "Redact headers before capture",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Headers, running after Compose_Redacted_Queries.",
+            "inputs": "@setProperty(\n  setProperty(\n    setProperty(\n      setProperty(\n        coalesce(triggerOutputs()?['headers'], json('{}')),\n        'Authorization',\n        '***REDACTED***'\n      ),\n      'Cookie',\n      '***REDACTED***'\n    ),\n    'x-api-key',\n    '***REDACTED***'\n  ),\n  'Ocp-Apim-Subscription-Key',\n  '***REDACTED***'\n)",
+            "why": "Without it the observability harness becomes the leak.",
+            "wireInto": {
+              "action": "Compose_Flow_Run_Record",
+              "underKey": "request",
+              "pair": {
+                "key": "headers_redacted",
+                "value": "@coalesce(outputs('Compose_Redacted_Headers'), json('{}'))"
+              },
+              "note": "Same: an unconsumed Compose redacts nothing. Compose_Flow_Run_Record must also be moved to run after Compose_Redacted_Headers, or it composes before the value exists."
+            }
+          },
+          {
+            "check": "redaction.queries",
+            "title": "Redact the query string before capture",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Queries. Place it first in that scope, immediately after Get_Flow_Definition.",
+            "inputs": "@setProperty(\n  setProperty(\n    coalesce(triggerOutputs()?['queries'], json('{}')),\n    'sig',\n    '***REDACTED***'\n  ),\n  'code',\n  '***REDACTED***'\n)",
+            "why": "sig is the trigger credential and code is the one-time password. On the verification flows this is the difference between telemetry and a log of every OTP issued.",
+            "wireInto": {
+              "action": "Compose_Flow_Run_Record",
+              "underKey": "request",
+              "pair": {
+                "key": "queries_redacted",
+                "value": "@coalesce(outputs('Compose_Redacted_Queries'), json('{}'))"
+              },
+              "note": "Adding the Compose without this leaves it inert: the run record captures no query string at all, and the conformance check still passes. The rule is about what reaches telemetry, not about an action existing."
+            }
+          }
+        ]
+      },
+      {
+        "flow": "Portal_Upload_HTTP",
+        "conformanceBefore": "44% by rule count",
+        "conforms": false,
+        "missing": [
+          {
+            "check": "vars.timing",
+            "title": "Initialise the timing variables",
+            "how": "Four more Initialize variable actions, alongside the core set.",
+            "add": [
+              {
+                "name": "Initialize_variable_varRequestId",
+                "type": "String",
+                "value": "@guid()"
+              },
+              {
+                "name": "Initialize_variable_varReceivedAtUtc",
+                "type": "String",
+                "value": "@utcNow()"
+              },
+              {
+                "name": "Initialize_variable_varStartTicks",
+                "type": "Integer",
+                "value": "@ticks(utcNow())"
+              },
+              {
+                "name": "Initialize_variable_varCompletedAtUtc",
+                "type": "String",
+                "value": ""
+              },
+              {
+                "name": "Initialize_variable_varDurationMs",
+                "type": "Integer",
+                "value": 0
+              }
+            ],
+            "alsoAdd": {
+              "name": "Scope_Finalize_Response_State",
+              "where": "Inside Scope_Global, after the work and before the envelope",
+              "actions": [
+                {
+                  "name": "Set_variable_varCompletedAtUtc",
+                  "value": "@utcNow()"
+                },
+                {
+                  "name": "Set_variable_varDurationMs",
+                  "value": "@div(sub(ticks(utcNow()), variables('varStartTicks')), 10000)"
+                }
+              ]
+            },
+            "why": "The envelope and the run record both report timing. Computing it once is what keeps them agreeing."
+          },
+          {
+            "check": "scope.global",
+            "title": "Wrap the work in Scope_Global",
+            "how": "Add a Scope named Scope_Global and move every existing action except the Initialize variable actions inside it.",
+            "why": "One place to attach a catch. Without it the failure path has to be repeated on every branch, which is why the flows missing this are the same flows missing a catch."
+          },
+          {
+            "check": "telemetry.capture",
+            "title": "Add Scope_Flow_Data_Capture",
+            "how": "Add a Scope named Scope_Flow_Data_Capture as a top-level peer of Scope_Global, with 'Configure run after' set to Succeeded, Failed, Skipped and Timed out - it must run whatever happened.",
+            "why": "The observability harness twenty-three flows already carry. Adding it is what makes this flow visible in the same way as the rest of the estate."
+          },
+          {
+            "check": "telemetry.record",
+            "title": "Compose the versioned run record",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Flow_Run_Record.",
+            "copyFrom": "Any conforming flow - Fetch_Tasks_POST is the cleanest. Copy Compose_Flow_Run_Record verbatim; it reads only workflow(), trigger(), the redaction composes and the standard variables, so it is portable between flows unchanged.",
+            "why": "capture_version 2.0.0, with its draft-07 schema alongside. Copying rather than rewriting is the point - a second dialect of the record is worse than none."
+          },
+          {
+            "check": "redaction.headers",
+            "title": "Redact headers before capture",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Headers, running after Compose_Redacted_Queries.",
+            "inputs": "@setProperty(\n  setProperty(\n    setProperty(\n      setProperty(\n        coalesce(triggerOutputs()?['headers'], json('{}')),\n        'Authorization',\n        '***REDACTED***'\n      ),\n      'Cookie',\n      '***REDACTED***'\n    ),\n    'x-api-key',\n    '***REDACTED***'\n  ),\n  'Ocp-Apim-Subscription-Key',\n  '***REDACTED***'\n)",
+            "why": "Without it the observability harness becomes the leak.",
+            "wireInto": {
+              "action": "Compose_Flow_Run_Record",
+              "underKey": "request",
+              "pair": {
+                "key": "headers_redacted",
+                "value": "@coalesce(outputs('Compose_Redacted_Headers'), json('{}'))"
+              },
+              "note": "Same: an unconsumed Compose redacts nothing. Compose_Flow_Run_Record must also be moved to run after Compose_Redacted_Headers, or it composes before the value exists."
+            }
+          },
+          {
+            "check": "redaction.queries",
+            "title": "Redact the query string before capture",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Queries. Place it first in that scope, immediately after Get_Flow_Definition.",
+            "inputs": "@setProperty(\n  setProperty(\n    coalesce(triggerOutputs()?['queries'], json('{}')),\n    'sig',\n    '***REDACTED***'\n  ),\n  'code',\n  '***REDACTED***'\n)",
+            "why": "sig is the trigger credential and code is the one-time password. On the verification flows this is the difference between telemetry and a log of every OTP issued.",
+            "wireInto": {
+              "action": "Compose_Flow_Run_Record",
+              "underKey": "request",
+              "pair": {
+                "key": "queries_redacted",
+                "value": "@coalesce(outputs('Compose_Redacted_Queries'), json('{}'))"
+              },
+              "note": "Adding the Compose without this leaves it inert: the run record captures no query string at all, and the conformance check still passes. The rule is about what reaches telemetry, not about an action existing."
+            }
+          }
+        ]
+      },
+      {
+        "flow": "Portal_ECM_DOCS_SUPPORT",
+        "conformanceBefore": "44% by rule count",
+        "conforms": false,
+        "missing": [
+          {
+            "check": "vars.timing",
+            "title": "Initialise the timing variables",
+            "how": "Four more Initialize variable actions, alongside the core set.",
+            "add": [
+              {
+                "name": "Initialize_variable_varRequestId",
+                "type": "String",
+                "value": "@guid()"
+              },
+              {
+                "name": "Initialize_variable_varReceivedAtUtc",
+                "type": "String",
+                "value": "@utcNow()"
+              },
+              {
+                "name": "Initialize_variable_varStartTicks",
+                "type": "Integer",
+                "value": "@ticks(utcNow())"
+              },
+              {
+                "name": "Initialize_variable_varCompletedAtUtc",
+                "type": "String",
+                "value": ""
+              },
+              {
+                "name": "Initialize_variable_varDurationMs",
+                "type": "Integer",
+                "value": 0
+              }
+            ],
+            "alsoAdd": {
+              "name": "Scope_Finalize_Response_State",
+              "where": "Inside Scope_Global, after the work and before the envelope",
+              "actions": [
+                {
+                  "name": "Set_variable_varCompletedAtUtc",
+                  "value": "@utcNow()"
+                },
+                {
+                  "name": "Set_variable_varDurationMs",
+                  "value": "@div(sub(ticks(utcNow()), variables('varStartTicks')), 10000)"
+                }
+              ]
+            },
+            "why": "The envelope and the run record both report timing. Computing it once is what keeps them agreeing."
+          },
+          {
+            "check": "scope.global",
+            "title": "Wrap the work in Scope_Global",
+            "how": "Add a Scope named Scope_Global and move every existing action except the Initialize variable actions inside it.",
+            "why": "One place to attach a catch. Without it the failure path has to be repeated on every branch, which is why the flows missing this are the same flows missing a catch."
+          },
+          {
+            "check": "telemetry.capture",
+            "title": "Add Scope_Flow_Data_Capture",
+            "how": "Add a Scope named Scope_Flow_Data_Capture as a top-level peer of Scope_Global, with 'Configure run after' set to Succeeded, Failed, Skipped and Timed out - it must run whatever happened.",
+            "why": "The observability harness twenty-three flows already carry. Adding it is what makes this flow visible in the same way as the rest of the estate."
+          },
+          {
+            "check": "telemetry.record",
+            "title": "Compose the versioned run record",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Flow_Run_Record.",
+            "copyFrom": "Any conforming flow - Fetch_Tasks_POST is the cleanest. Copy Compose_Flow_Run_Record verbatim; it reads only workflow(), trigger(), the redaction composes and the standard variables, so it is portable between flows unchanged.",
+            "why": "capture_version 2.0.0, with its draft-07 schema alongside. Copying rather than rewriting is the point - a second dialect of the record is worse than none."
+          },
+          {
+            "check": "redaction.headers",
+            "title": "Redact headers before capture",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Headers, running after Compose_Redacted_Queries.",
+            "inputs": "@setProperty(\n  setProperty(\n    setProperty(\n      setProperty(\n        coalesce(triggerOutputs()?['headers'], json('{}')),\n        'Authorization',\n        '***REDACTED***'\n      ),\n      'Cookie',\n      '***REDACTED***'\n    ),\n    'x-api-key',\n    '***REDACTED***'\n  ),\n  'Ocp-Apim-Subscription-Key',\n  '***REDACTED***'\n)",
+            "why": "Without it the observability harness becomes the leak.",
+            "wireInto": {
+              "action": "Compose_Flow_Run_Record",
+              "underKey": "request",
+              "pair": {
+                "key": "headers_redacted",
+                "value": "@coalesce(outputs('Compose_Redacted_Headers'), json('{}'))"
+              },
+              "note": "Same: an unconsumed Compose redacts nothing. Compose_Flow_Run_Record must also be moved to run after Compose_Redacted_Headers, or it composes before the value exists."
+            }
+          },
+          {
+            "check": "redaction.queries",
+            "title": "Redact the query string before capture",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Queries. Place it first in that scope, immediately after Get_Flow_Definition.",
+            "inputs": "@setProperty(\n  setProperty(\n    coalesce(triggerOutputs()?['queries'], json('{}')),\n    'sig',\n    '***REDACTED***'\n  ),\n  'code',\n  '***REDACTED***'\n)",
+            "why": "sig is the trigger credential and code is the one-time password. On the verification flows this is the difference between telemetry and a log of every OTP issued.",
+            "wireInto": {
+              "action": "Compose_Flow_Run_Record",
+              "underKey": "request",
+              "pair": {
+                "key": "queries_redacted",
+                "value": "@coalesce(outputs('Compose_Redacted_Queries'), json('{}'))"
+              },
+              "note": "Adding the Compose without this leaves it inert: the run record captures no query string at all, and the conformance check still passes. The rule is about what reaches telemetry, not about an action existing."
+            }
+          }
+        ]
+      }
+    ],
+    "check": "node scripts/verify-flow-standard.mjs --portal",
+    "measuredFrom": "scripts/verify-flow-standard.mjs, at generation time",
+    "generatedBy": "scripts/build-remediation-standard.mjs"
+  }
+}

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<!-- @dsCard group="Brand" name="Single Task Email" subtitle="Internal memo · single recipient" -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>@{coalesce(outputs('Compose_Subject'), 'Single Task Assignment')}</title>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+  <style type="text/css">
+    html, body { margin:0 !important; padding:0 !important; width:100% !important; background-color:#F4F2F3; }
+    * { -ms-text-size-adjust:100%; -webkit-text-size-adjust:100%; box-sizing:border-box; }
+    table, td { mso-table-lspace:0pt !important; mso-table-rspace:0pt !important; }
+    table { border-spacing:0 !important; border-collapse:collapse !important; margin:0 auto; }
+    img { -ms-interpolation-mode:bicubic; border:0; outline:none; text-decoration:none; display:block; }
+    body, table, td, p, a, li, div, span { font-family:Verdana, Geneva, 'DejaVu Sans', sans-serif; -webkit-font-smoothing:antialiased; }
+    a { text-decoration:none; }
+    .button-note { font-size:12px; line-height:19px; color:#807D7E; padding-top:12px; }
+
+    @media only screen and (max-width: 650px) {
+      .container { width:100% !important; border-radius:0 !important; border:none !important; }
+      .mobile-padding { padding-left:16px !important; padding-right:16px !important; }
+      .stack { display:block !important; width:100% !important; }
+      .grid-col { display:block !important; width:100% !important; border-right:none !important; border-bottom:1px solid #E8E6E7 !important; }
+      .button-full { display:block !important; width:100% !important; text-align:center !important; box-sizing:border-box; margin-bottom:10px !important; }
+      .btn-gap { display:none !important; }
+      .hide-mobile { display:none !important; }
+      .doc-preview { height:160px !important; }
+    }
+  </style>
+</head>
+<body style="background-color:#F4F2F3; padding:24px 0; margin:0;">
+
+  <!-- PREHEADER -->
+  <div style="display:none; font-size:1px; color:#F4F2F3; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden;">
+    @{coalesce(outputs('Compose_Preheader'), 'A new task has been assigned. Acknowledgement required.')}
+  </div>
+
+  <center style="width:100%; background-color:#F4F2F3;">
+    <table role="presentation" class="container" width="650" cellspacing="0" cellpadding="0" border="0" style="width:650px; background-color:#FFFFFF; border:1px solid #E8E6E7; border-radius:14px; overflow:hidden; box-shadow:0 12px 28px rgba(5,88,59,0.10);">
+
+      <!-- FEDERAL SUPER-HEADER -->
+      <tr>
+        <td align="center" style="background-color:#033F2A; padding:10px 20px;">
+          <div style="font-size:10px; font-weight:800; color:#FFFFFF; text-transform:uppercase; letter-spacing:2.5px;">Federal Republic of Nigeria</div>
+        </td>
+      </tr>
+
+      <!-- BRANDING -->
+      <tr>
+        <td class="mobile-padding" style="padding:24px 30px; border-bottom:3px solid #17B255;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td width="90" align="left" valign="middle">
+                <img src="@{coalesce(outputs('Compose_Org_Logo_Url'), 'https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/942233_926692/NITDA%20LOGO%20png%20smallest_1.png')}" alt="NITDA" width="80" style="width:80px;">
+              </td>
+              <td align="left" valign="middle" style="padding-left:14px;">
+                <div style="font-size:15px; font-weight:900; color:#05583B; text-transform:uppercase; line-height:20px;">@{coalesce(outputs('Compose_Org_Name_Long'), 'National Information Technology<br>Development Agency')}</div>
+                <div style="font-size:11px; font-weight:700; color:#5F5C5D; text-transform:uppercase; letter-spacing:1px; margin-top:6px;">@{coalesce(outputs('Compose_Org_Office_Line'), 'Office of the Director General / CEO')}</div>
+              </td>
+              <td align="right" valign="middle" class="hide-mobile">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1.4px;">Single Task</div>
+                <div style="font-size:11px; color:#1B1A1A; font-weight:700; margin-top:4px; font-family:'Helvetica Neue', Arial, sans-serif;">@{formatDateTime(utcNow(),'dd MMM yyyy')}</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- PRIORITY SPINE / DECORATIVE BAND -->
+      <tr><td style="padding:0; height:8px; line-height:8px; background-color:@{coalesce(outputs('Compose_Priority_Color'), '#05583B')};">@{coalesce(outputs('Compose_Header_Band_SVG'), '')}</td></tr>
+
+      <tr>
+        <td class="mobile-padding" style="padding:32px 30px 8px 30px;">
+
+          <!-- META CHIPS -->
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom:16px;">
+            <tr>
+              <td>
+                <span style="display:inline-block; font-size:10px; font-weight:800; color:#FFFFFF; background-color:#05583B; padding:5px 10px; border-radius:999px; letter-spacing:1px; text-transform:uppercase;">Internal Memo</span>
+                <span style="display:inline-block; margin-left:6px; font-size:10px; font-weight:800; text-transform:uppercase; padding:5px 10px; border-radius:999px; letter-spacing:1px; color:@{coalesce(outputs('Compose_Priority_Text'), '#119143')}; background-color:@{coalesce(outputs('Compose_Priority_Bg'), '#E6EEEB')}; border:1px solid @{coalesce(outputs('Compose_Priority_Border'), '#A2E0BB')};">@{coalesce(outputs('Compose_Priority_Icon_SVG'), '')} Priority &middot; @{coalesce(outputs('Compose_Priority_Level'), 'Normal')}</span>
+                <span style="display:inline-block; margin-left:6px; font-size:10px; font-weight:800; text-transform:uppercase; padding:5px 10px; border-radius:999px; letter-spacing:1px; color:@{coalesce(outputs('Compose_Status_Color'), '#2A2829')}; background-color:@{coalesce(outputs('Compose_Status_Bg'), '#FAF9F9')}; border:1px solid @{coalesce(outputs('Compose_Status_Border'), '#D6D4D5')};">@{coalesce(outputs('Compose_Status_Text'), 'Pending Action')}</span>
+              </td>
+            </tr>
+          </table>
+
+          <!-- HERO -->
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
+            <td valign="top" width="64" style="padding-right:16px;">
+              <!-- Conditional priority shield: solid disc w/ glyph -->
+              <div style="width:56px; height:56px; border-radius:50%; background-color:@{coalesce(outputs('Compose_Priority_Color'), '#05583B')}; box-shadow:0 4px 12px rgba(5,88,59,0.18); position:relative;">
+                <table role="presentation" width="56" height="56" cellspacing="0" cellpadding="0" border="0"><tr>
+                  <td align="center" valign="middle" style="color:#FFFFFF; font-family:'Helvetica Neue', Arial, sans-serif; font-size:22px; font-weight:800; line-height:1;">@{coalesce(outputs('Compose_Priority_Glyph'), '&#9678;')}</td>
+                </tr></table>
+              </div>
+              <div style="margin-top:8px; font-size:9px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px; text-align:center;">Doc</div>
+            </td>
+            <td valign="top">
+          <h1 style="margin:0 0 8px 0; font-size:24px; font-weight:800; color:#1B1A1A; font-family:'Helvetica Neue', Arial, sans-serif; line-height:31px;">@{coalesce(outputs('Compose_Hero_Title'), 'Single Task Assignment')}</h1>
+          <div style="font-size:13px; color:#5F5C5D; line-height:21px;">Ref <strong style="color:#1B1A1A;">@{coalesce(outputs('Compose_Reference_Id'), 'REF-UNSPECIFIED')}</strong> &middot; Recipient <strong style="color:#1B1A1A;">@{coalesce(outputs('Compose_Recipient_Name'), 'Designated Officer')}</strong></div>
+
+          <p style="font-size:14px; line-height:23px; color:#2A2829; margin:18px 0 0 0;">@{coalesce(outputs('Compose_Body_Lede'), 'The following assignment has been directed to your office for review. Please acknowledge receipt and proceed with the necessary action.')}</p>
+            </td>
+          </tr></table>
+        </td>
+      </tr>
+
+      <!-- DASHBOARD STAT GRID -->
+      <tr>
+        <td class="mobile-padding" style="padding:18px 30px 6px 30px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border:1px solid #E8E6E7; border-radius:12px; overflow:hidden; background-color:#FAF9F9;">
+            <tr>
+              <td class="grid-col" width="33.33%" valign="top" style="padding:16px 18px; border-right:1px solid #E8E6E7;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px;">Priority</div>
+                <div style="margin-top:8px; font-size:16px; font-weight:800; line-height:20px; color:@{coalesce(outputs('Compose_Priority_Text'), '#119143')};">@{coalesce(outputs('Compose_Priority_Level'), 'Normal')}</div>
+                <div style="margin-top:8px; height:5px; border-radius:999px; background-color:@{coalesce(outputs('Compose_Priority_Color'), '#17B255')};"></div>
+              </td>
+              <td class="grid-col" width="33.33%" valign="top" style="padding:16px 18px; border-right:1px solid #E8E6E7;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px;">Status</div>
+                <div style="margin-top:8px; font-size:16px; font-weight:800; line-height:20px; color:#1B1A1A;">@{coalesce(outputs('Compose_Status_Text'), 'Pending Action')}</div>
+                <div style="margin-top:8px; height:5px; border-radius:999px; background-color:@{coalesce(outputs('Compose_Status_Border'), '#D6D4D5')};"></div>
+              </td>
+              <td class="grid-col" width="33.34%" valign="top" style="padding:16px 18px;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px;">Acknowledge By</div>
+                <div style="margin-top:8px; font-size:16px; font-weight:800; line-height:20px; color:#1B1A1A;">@{coalesce(triggerBody()?['NewActivityTask']?['AckDue'], '—')}</div>
+                <div style="margin-top:6px; font-size:11px; color:#807D7E; line-height:16px;">Time-bound response</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- DOCUMENT DETAILS (single-task: document-specific metadata) -->
+      <tr>
+        <td class="mobile-padding" style="padding:18px 30px 6px 30px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border:1px solid #E8E6E7; border-radius:12px; overflow:hidden;">
+            <tr>
+              <td colspan="4" style="padding:12px 18px; background-color:#FAF9F9; border-bottom:1px solid #E8E6E7;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
+                  <td align="left" style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1.1px;">Document Details</td>
+                  <td align="right" style="font-size:10px; font-weight:800; color:#FFFFFF; background-color:#05583B; padding:3px 10px; border-radius:999px; letter-spacing:1px; text-transform:uppercase;">@{coalesce(outputs('Compose_Doc_Classification'), 'Restricted')}</td>
+                </tr></table>
+              </td>
+            </tr>
+            <tr>
+              <td class="grid-col" width="25%" valign="top" style="padding:14px 18px; border-right:1px solid #E8E6E7;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px;">Document Type</div>
+                <div style="margin-top:6px; font-size:14px; font-weight:800; line-height:19px; color:#1B1A1A;">@{coalesce(outputs('Compose_Doc_Type'), 'Internal Memo')}</div>
+              </td>
+              <td class="grid-col" width="25%" valign="top" style="padding:14px 18px; border-right:1px solid #E8E6E7;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px;">Pages</div>
+                <div style="margin-top:6px; font-size:14px; font-weight:800; line-height:19px; color:#1B1A1A;">@{coalesce(outputs('Compose_Doc_Page_Count'), '—')}</div>
+              </td>
+              <td class="grid-col" width="25%" valign="top" style="padding:14px 18px; border-right:1px solid #E8E6E7;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px;">File Size</div>
+                <div style="margin-top:6px; font-size:14px; font-weight:800; line-height:19px; color:#1B1A1A;">@{coalesce(outputs('Compose_Doc_File_Size'), '—')}</div>
+              </td>
+              <td class="grid-col" width="25%" valign="top" style="padding:14px 18px;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px;">Originating Office</div>
+                <div style="margin-top:6px; font-size:14px; font-weight:800; line-height:19px; color:#1B1A1A;">@{coalesce(outputs('Compose_Doc_Originating_Office'), '—')}</div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="4" style="padding:12px 18px; background-color:#FAF9F9; border-top:1px solid #E8E6E7;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
+                  <td valign="middle" width="20" style="padding-right:8px; font-size:14px; color:#17B255; line-height:14px;">&#9656;</td>
+                  <td valign="middle" style="font-size:12px; line-height:18px; color:#5F5C5D;">
+                    <strong style="color:#1B1A1A;">Action Required:</strong> @{coalesce(outputs('Compose_Action_Required'), 'Review &amp; Acknowledge')}
+                  </td>
+                </tr></table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- DOCUMENT PREVIEW BLOCK (single-task distinct section) -->
+      <tr>
+        <td class="mobile-padding" style="padding:18px 30px 6px 30px;">
+          <a href="@{coalesce(outputs('Compose_Record_Url'), '#')}" style="text-decoration:none; color:inherit; display:block;">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border:1px solid #E8E6E7; border-radius:12px; overflow:hidden; background-color:#FAF9F9;">
+              <tr>
+                <td class="doc-preview" style="padding:0; height:140px; background-color:#F4F2F3; background-image:linear-gradient(135deg, #F4F2F3 25%, #E8E6E7 25%, #E8E6E7 50%, #F4F2F3 50%, #F4F2F3 75%, #E8E6E7 75%, #E8E6E7 100%); background-size:14px 14px; border-bottom:1px solid #E8E6E7;">
+                  <table role="presentation" width="100%" height="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                      <td align="center" valign="middle" style="font-family:'Courier New', monospace; font-size:11px; color:#AFADAE; letter-spacing:2px; text-transform:uppercase;">[ Document Preview ]</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:16px 20px;">
+                  <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Document Subject &middot; Click to open</div>
+                  <div style="font-size:17px; font-weight:800; color:#05583B; line-height:23px;">@{coalesce(outputs('Compose_Subject'), 'View Task Record')} <span style="font-size:12px; color:#807D7E;">&#8599;</span></div>
+                  <div style="font-size:13px; line-height:20px; color:#5F5C5D; margin-top:6px;">@{coalesce(outputs('Compose_Priority_Description'), 'Review and action the attached document.')}</div>
+                </td>
+              </tr>
+            </table>
+          </a>
+        </td>
+      </tr>
+
+      <!-- REMARKS -->
+      <tr>
+        <td class="mobile-padding" style="padding:18px 30px 6px 30px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#E6EEEB; border:1px solid #CDDDD7; border-left:4px solid #17B255; border-radius:0 8px 8px 0;">
+            <tr>
+              <td style="padding:14px 18px;">
+                <div style="font-size:10px; font-weight:800; color:#05583B; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Internal Remarks</div>
+                <div style="font-size:13px; color:#1B1A1A; font-style:italic; line-height:21px;">"@{coalesce(outputs('Compose_Remarks'), 'No additional contextual remarks.')}"</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- CLASSIFICATION WATERMARK STRIPE (conditional, visual marker) -->
+      <tr>
+        <td class="mobile-padding" style="padding:0 30px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
+            <td style="height:24px; line-height:24px; background-image:repeating-linear-gradient(135deg, #FAF9F9 0, #FAF9F9 12px, #F4F2F3 12px, #F4F2F3 22px); border-radius:6px; padding:0 14px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
+                <td align="left" style="font-size:9px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:3px; font-family:'Helvetica Neue', Arial, sans-serif;">&#9670; @{coalesce(outputs('Compose_Doc_Classification'), 'Restricted')} &middot; @{coalesce(outputs('Compose_Doc_Classification'), 'Restricted')} &middot; @{coalesce(outputs('Compose_Doc_Classification'), 'Restricted')} &#9670;</td>
+                <td align="right" style="font-size:9px; font-weight:700; color:#AFADAE; letter-spacing:1px;">Ref @{coalesce(outputs('Compose_Reference_Id'), 'REF')}</td>
+              </tr></table>
+            </td>
+          </tr></table>
+        </td>
+      </tr>
+
+      <!-- CHAIN OF COMMAND / ESCALATION (single-task distinct section) -->
+      <tr>
+        <td class="mobile-padding" style="padding:18px 30px 6px 30px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border:1px solid #E8E6E7; border-radius:12px; overflow:hidden;">
+            <tr>
+              <td colspan="2" style="padding:12px 18px; background-color:#FAF9F9; border-bottom:1px solid #E8E6E7;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1.1px;">Chain of Command &amp; Escalation</div>
+              </td>
+            </tr>
+            <tr>
+              <td class="grid-col" width="45%" valign="top" style="padding:16px 18px; border-right:1px solid #E8E6E7; position:relative;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Signatory</div>
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr>
+                  <td valign="middle" width="36" style="padding-right:10px;">
+                    <div style="width:32px; height:32px; border-radius:50%; background-color:#05583B; color:#FFFFFF; font-size:11px; font-weight:800; font-family:'Helvetica Neue', Arial, sans-serif;">
+                      <table role="presentation" width="32" height="32" cellspacing="0" cellpadding="0" border="0"><tr><td align="center" valign="middle" style="color:#FFFFFF; font-size:11px; font-weight:800;">@{coalesce(outputs('Compose_Signatory_Initials'), 'SG')}</td></tr></table>
+                    </div>
+                  </td>
+                  <td valign="middle">
+                    <div style="font-size:13px; line-height:18px; color:#1B1A1A; font-weight:800;">@{coalesce(outputs('Compose_Signatory_Name'), '—')}</div>
+                    <div style="font-size:11px; line-height:16px; color:#5F5C5D;">@{coalesce(outputs('Compose_Signatory_Title'), '—')}</div>
+                  </td>
+                </tr></table>
+              </td>
+              <td class="hide-mobile" width="10%" valign="middle" align="center" style="padding:0;">
+                <div style="font-size:18px; color:#17B255; font-weight:800; line-height:1;">&rarr;</div>
+                <div style="font-size:8px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1.5px; margin-top:4px;">Esc.</div>
+              </td>
+              <td class="grid-col" width="45%" valign="top" style="padding:16px 18px;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Escalate To</div>
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr>
+                  <td valign="middle" width="36" style="padding-right:10px;">
+                    <div style="width:32px; height:32px; border-radius:50%; background-color:#17B255; color:#FFFFFF; font-size:11px; font-weight:800; font-family:'Helvetica Neue', Arial, sans-serif;">
+                      <table role="presentation" width="32" height="32" cellspacing="0" cellpadding="0" border="0"><tr><td align="center" valign="middle" style="color:#FFFFFF; font-size:11px; font-weight:800;">@{coalesce(outputs('Compose_Escalation_Initials'), 'ES')}</td></tr></table>
+                    </div>
+                  </td>
+                  <td valign="middle">
+                    <div style="font-size:13px; line-height:18px; color:#1B1A1A; font-weight:800;">@{coalesce(outputs('Compose_Escalation_Name'), '—')}</div>
+                    <div style="font-size:11px; line-height:16px; color:#5F5C5D;">@{coalesce(outputs('Compose_Escalation_Title'), '—')}</div>
+                    <a href="mailto:@{coalesce(outputs('Compose_Escalation_Email'), '')}" style="font-size:11px; line-height:16px; color:#05583B; font-weight:700; display:inline-block; margin-top:2px;">@{coalesce(outputs('Compose_Escalation_Email'), '—')}</a>
+                  </td>
+                </tr></table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- ACTIONS -->
+      <tr>
+        <td class="mobile-padding" style="padding:22px 30px 8px 30px;">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td class="button-full" align="left" valign="top">
+                <!--[if mso]>
+                <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="@{coalesce(outputs('Compose_Acknowledge_Url'), '#')}" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="14%" strokecolor="#05583B" fillcolor="#05583B">
+                <w:anchorlock/>
+                <center style="color:#FFFFFF;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;font-weight:bold;">Acknowledge Receipt</center>
+                </v:roundrect>
+                <![endif]-->
+                <!--[if !mso]><!-- -->
+                <a href="@{coalesce(outputs('Compose_Acknowledge_Url'), '#')}" style="display:inline-block; background-color:#05583B; color:#FFFFFF; font-size:14px; font-weight:800; padding:14px 24px; border-radius:8px; border:1px solid #05583B;">Acknowledge Receipt</a>
+                <!--<![endif]-->
+              </td>
+              <td class="btn-gap" width="10" style="width:10px;">&nbsp;</td>
+              <td class="button-full" align="left" valign="top">
+                <!--[if mso]>
+                <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="@{coalesce(outputs('Compose_Record_Url'), '#')}" style="height:48px;v-text-anchor:middle;width:180px;" arcsize="14%" strokecolor="#D6D4D5" fillcolor="#FFFFFF">
+                <w:anchorlock/>
+                <center style="color:#2A2829;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;font-weight:bold;">Open Record</center>
+                </v:roundrect>
+                <![endif]-->
+                <!--[if !mso]><!-- -->
+                <a href="@{coalesce(outputs('Compose_Record_Url'), '#')}" style="display:inline-block; background-color:#FFFFFF; color:#2A2829; font-size:14px; font-weight:800; padding:14px 24px; border-radius:8px; border:1px solid #D6D4D5;">Open Record</a>
+                <!--<![endif]-->
+              </td>
+            </tr>
+          </table>
+
+          <div class="button-note">
+            If the buttons do not open, copy and paste this link into your browser:<br>
+            <a href="@{coalesce(outputs('Compose_Acknowledge_Url'), '#')}" style="color:#05583B; word-break:break-all;">@{coalesce(outputs('Compose_Acknowledge_Url'), '#')}</a>
+          </div>
+        </td>
+      </tr>
+
+      <!-- FOOTER -->
+      <tr>
+        <td class="mobile-padding" style="background-color:#FAF9F9; padding:24px 30px; border-top:1px solid #E8E6E7; margin-top:18px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td class="stack" valign="top" align="left" style="font-size:12px; line-height:20px; color:#807D7E;">
+                <strong style="color:#05583B;">@{coalesce(outputs('Compose_Org_Name_Long'), 'National Information Technology Development Agency (NITDA)')}</strong><br>
+                @{coalesce(outputs('Compose_Org_Address_Line'), 'Port Harcourt Crescent, Garki, Abuja.')}<br>
+                <a href="@{coalesce(outputs('Compose_Org_Portal_Url'), 'https://nitda.gov.ng')}" style="color:#05583B;">@{coalesce(outputs('Compose_Org_Portal_Url'), 'www.nitda.gov.ng')}</a>
+              </td>
+              <td class="stack" valign="top" align="right" style="font-size:11px; line-height:18px; color:#AFADAE; text-align:right;">
+                <a href="@{coalesce(outputs('Compose_Org_Support_Url'), '#')}" style="color:#05583B; font-weight:700;">Support</a><br>
+                Digital Correspondence
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <div style="padding:18px; font-size:10px; color:#AFADAE; text-align:center;">&copy; @{formatDateTime(utcNow(), 'yyyy')} NITDA &middot; Unified Assignment System</div>
+  </center>
+</body>
+</html>

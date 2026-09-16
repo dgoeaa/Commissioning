@@ -1,0 +1,101 @@
+:root {
+  --nitda-green: #008751;
+  --nitda-deep: #006A4E;
+  --nitda-accent: #E6F6F0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Navigation links */
+.nav-link {
+  position: relative;
+  padding-bottom: 0.1rem;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.15rem;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(to right, #34d399, #22c55e);
+  transition: width 0.18s ease-out;
+  opacity: 0.9;
+}
+.nav-link:hover::after {
+  width: 100%;
+}
+.mobile-nav-link {
+  display: block;
+  padding: 0.4rem 0;
+}
+
+/* Form controls */
+.form-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgb(148 163 184);
+  margin-bottom: 0.25rem;
+}
+.form-input,
+.form-textarea,
+.form-file {
+  width: 100%;
+  border-radius: 0.9rem;
+  border-width: 1px;
+  border-color: rgb(51 65 85);
+  background-color: rgba(15,23,42,0.85);
+  padding: 0.55rem 0.75rem;
+  font-size: 0.78rem;
+  color: rgb(226 232 240);
+  outline: none;
+}
+.form-textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+.form-input:focus,
+.form-textarea:focus,
+.form-file:focus {
+  border-color: rgba(16, 185, 129, 0.7);
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3);
+}
+
+/* Portal cards */
+.portal-card {
+  border-radius: 1.5rem;
+  border: 1px solid rgba(30, 64, 175, 0.35);
+  background: radial-gradient(circle at top left, rgba(16,185,129,0.06), rgba(15,23,42,0.95));
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.portal-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 999px;
+  margin-bottom: 0.25rem;
+}
+.portal-card-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgb(226 232 240);
+}
+.portal-card-body {
+  font-size: 0.78rem;
+  color: rgb(148 163 184);
+}
+.portal-card-link {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  color: rgb(45 212 191);
+}

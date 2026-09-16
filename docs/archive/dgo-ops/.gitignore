@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.*
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+.cache/
+dist/
+build/
+coverage-output/
+audit-output/
+*.bak
+*.tmp

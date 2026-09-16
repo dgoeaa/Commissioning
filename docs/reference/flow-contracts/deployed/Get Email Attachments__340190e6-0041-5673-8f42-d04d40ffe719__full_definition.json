@@ -1,0 +1,243 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:25Z",
+    "workflow_identity":  {
+                              "internal_name":  "340190e6-0041-5673-8f42-d04d40ffe719",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "Get Email Attachments",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           },
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+                                                                        "operationMetadataId":  "fedda494-ab7c-4ba4-af13-0ccb10fbbbfa"
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "PowerAppV2",
+                                                       "inputs":  {
+                                                                      "schema":  {
+                                                                                     "type":  "object",
+                                                                                     "properties":  {
+                                                                                                        "text":  {
+                                                                                                                     "title":  "EmailMessageId",
+                                                                                                                     "type":  "string",
+                                                                                                                     "x-ms-dynamically-added":  true,
+                                                                                                                     "description":  "Please enter your input",
+                                                                                                                     "x-ms-content-hint":  "TEXT"
+                                                                                                                 }
+                                                                                                    },
+                                                                                     "required":  [
+                                                                                                      "text"
+                                                                                                  ]
+                                                                                 }
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Get_email_(V2)":  {
+                                                              "runAfter":  {
+                                                                               "Initialize_variable":  [
+                                                                                                           "Succeeded"
+                                                                                                       ]
+                                                                           },
+                                                              "metadata":  {
+                                                                               "operationMetadataId":  "36347360-2afe-4292-8fd5-448d916964eb"
+                                                                           },
+                                                              "type":  "OpenApiConnection",
+                                                              "inputs":  {
+                                                                             "host":  {
+                                                                                          "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                          "connectionName":  "shared_office365_1",
+                                                                                          "operationId":  "GetEmailV2"
+                                                                                      },
+                                                                             "parameters":  {
+                                                                                                "messageId":  "@triggerBody()[\u0027text\u0027]",
+                                                                                                "includeAttachments":  true
+                                                                                            },
+                                                                             "authentication":  {
+                                                                                                    "value":  "@json(decodeBase64(triggerOutputs().headers[\u0027X-MS-APIM-Tokens\u0027]))[\u0027$ConnectionKey\u0027]",
+                                                                                                    "type":  "Raw"
+                                                                                                }
+                                                                         }
+                                                          },
+                                       "Condition":  {
+                                                         "actions":  {
+                                                                         "Apply_to_each":  {
+                                                                                               "foreach":  "@outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/attachments\u0027]",
+                                                                                               "actions":  {
+                                                                                                               "Get_Attachment_(V2)":  {
+                                                                                                                                           "runAfter":  {
+
+                                                                                                                                                        },
+                                                                                                                                           "metadata":  {
+                                                                                                                                                            "operationMetadataId":  "cb969781-81f6-42be-b9d4-b45294595c06"
+                                                                                                                                                        },
+                                                                                                                                           "type":  "OpenApiConnection",
+                                                                                                                                           "inputs":  {
+                                                                                                                                                          "host":  {
+                                                                                                                                                                       "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                                                                                                       "connectionName":  "shared_office365_1",
+                                                                                                                                                                       "operationId":  "GetAttachment_V2"
+                                                                                                                                                                   },
+                                                                                                                                                          "parameters":  {
+                                                                                                                                                                             "messageId":  "@outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/id\u0027]",
+                                                                                                                                                                             "attachmentId":  "@items(\u0027Apply_to_each\u0027)?[\u0027id\u0027]"
+                                                                                                                                                                         },
+                                                                                                                                                          "authentication":  {
+                                                                                                                                                                                 "value":  "@json(decodeBase64(triggerOutputs().headers[\u0027X-MS-APIM-Tokens\u0027]))[\u0027$ConnectionKey\u0027]",
+                                                                                                                                                                                 "type":  "Raw"
+                                                                                                                                                                             }
+                                                                                                                                                      }
+                                                                                                                                       },
+                                                                                                               "base64AttachmentContent":  {
+                                                                                                                                               "runAfter":  {
+                                                                                                                                                                "Get_Attachment_(V2)":  [
+                                                                                                                                                                                            "Succeeded"
+                                                                                                                                                                                        ]
+                                                                                                                                                            },
+                                                                                                                                               "metadata":  {
+                                                                                                                                                                "operationMetadataId":  "03b8a0e2-590e-47fe-8ee0-409ab46eed1f"
+                                                                                                                                                            },
+                                                                                                                                               "type":  "Compose",
+                                                                                                                                               "inputs":  "@base64(outputs(\u0027Get_Attachment_(V2)\u0027)?[\u0027body/contentBytes\u0027])"
+                                                                                                                                           },
+                                                                                                               "JSON_Attachments":  {
+                                                                                                                                        "runAfter":  {
+                                                                                                                                                         "base64AttachmentContent":  [
+                                                                                                                                                                                         "Succeeded"
+                                                                                                                                                                                     ]
+                                                                                                                                                     },
+                                                                                                                                        "metadata":  {
+                                                                                                                                                         "operationMetadataId":  "f701f1ab-9df2-4cb1-a157-e00d43a5fa69"
+                                                                                                                                                     },
+                                                                                                                                        "type":  "Compose",
+                                                                                                                                        "inputs":  {
+                                                                                                                                                       "Name":  "@{outputs(\u0027Get_Attachment_(V2)\u0027)?[\u0027body/name\u0027]}",
+                                                                                                                                                       "ContentType":  "@{outputs(\u0027Get_Attachment_(V2)\u0027)?[\u0027body/contentType\u0027]}",
+                                                                                                                                                       "ContentBytes":  "@{outputs(\u0027Get_Attachment_(V2)\u0027)?[\u0027body/contentBytes\u0027]}"
+                                                                                                                                                   }
+                                                                                                                                    },
+                                                                                                               "Append_to_array_variable":  {
+                                                                                                                                                "runAfter":  {
+                                                                                                                                                                 "JSON_Attachments":  [
+                                                                                                                                                                                          "Succeeded"
+                                                                                                                                                                                      ]
+                                                                                                                                                             },
+                                                                                                                                                "metadata":  {
+                                                                                                                                                                 "operationMetadataId":  "f151db21-5e10-49b0-b6c2-4062039c2617"
+                                                                                                                                                             },
+                                                                                                                                                "type":  "AppendToArrayVariable",
+                                                                                                                                                "inputs":  {
+                                                                                                                                                               "name":  "varAttachments",
+                                                                                                                                                               "value":  "@outputs(\u0027JSON_Attachments\u0027)"
+                                                                                                                                                           }
+                                                                                                                                            }
+                                                                                                           },
+                                                                                               "runAfter":  {
+
+                                                                                                            },
+                                                                                               "metadata":  {
+                                                                                                                "operationMetadataId":  "0dd0b073-8c7e-4f3b-b176-7ca2127ad6a8"
+                                                                                                            },
+                                                                                               "type":  "Foreach"
+                                                                                           }
+                                                                     },
+                                                         "runAfter":  {
+                                                                          "Get_email_(V2)":  [
+                                                                                                 "Succeeded"
+                                                                                             ]
+                                                                      },
+                                                         "expression":  {
+                                                                            "equals":  [
+                                                                                           "@outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/hasAttachments\u0027]",
+                                                                                           true
+                                                                                       ]
+                                                                        },
+                                                         "metadata":  {
+                                                                          "operationMetadataId":  "75cb4f72-2901-4120-a633-548cc4d0a10a"
+                                                                      },
+                                                         "type":  "If"
+                                                     },
+                                       "Initialize_variable":  {
+                                                                   "runAfter":  {
+
+                                                                                },
+                                                                   "metadata":  {
+                                                                                    "operationMetadataId":  "3c5968ad-d4ee-46c5-8622-0036324c2884"
+                                                                                },
+                                                                   "type":  "InitializeVariable",
+                                                                   "inputs":  {
+                                                                                  "variables":  [
+                                                                                                    {
+                                                                                                        "name":  "varAttachments",
+                                                                                                        "type":  "array"
+                                                                                                    }
+                                                                                                ]
+                                                                              }
+                                                               },
+                                       "Respond_to_a_Power_App_or_flow":  {
+                                                                              "runAfter":  {
+                                                                                               "Attachments_Array_JSON_String":  [
+                                                                                                                                     "Succeeded"
+                                                                                                                                 ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "52cef952-d86e-4a45-a52e-f8041a002d6e"
+                                                                                           },
+                                                                              "type":  "Response",
+                                                                              "kind":  "PowerApp",
+                                                                              "inputs":  {
+                                                                                             "statusCode":  200,
+                                                                                             "body":  {
+                                                                                                          "flowemailattachment":  "@{outputs(\u0027Attachments_Array_JSON_String\u0027)}"
+                                                                                                      },
+                                                                                             "schema":  {
+                                                                                                            "type":  "object",
+                                                                                                            "properties":  {
+                                                                                                                               "flowemailattachment":  {
+                                                                                                                                                           "title":  "flowemailAttachment",
+                                                                                                                                                           "x-ms-dynamically-added":  true,
+                                                                                                                                                           "type":  "string"
+                                                                                                                                                       }
+                                                                                                                           }
+                                                                                                        }
+                                                                                         }
+                                                                          },
+                                       "Attachments_Array_JSON_String":  {
+                                                                             "runAfter":  {
+                                                                                              "Condition":  [
+                                                                                                                "Succeeded"
+                                                                                                            ]
+                                                                                          },
+                                                                             "metadata":  {
+                                                                                              "operationMetadataId":  "ad48ca59-16f1-45b9-83d5-fb3bc4eb27e2"
+                                                                                          },
+                                                                             "type":  "Compose",
+                                                                             "inputs":  "@json(string(variables(\u0027varAttachments\u0027)))"
+                                                                         }
+                                   },
+                       "outputs":  {
+
+                                   },
+                       "description":  "Click a button in a Power Apps application to send a email to a specified email address."
+                   }
+}

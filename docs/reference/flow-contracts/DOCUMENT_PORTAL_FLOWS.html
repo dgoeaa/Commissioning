@@ -1,0 +1,740 @@
+<title>Document Portal — Flow Reference</title>
+<style>
+  /* ============================================================
+     TOKENS
+     Light: warm-cool near-white with a faint green bias (--paper),
+     near-black ink, NITDA deep green as a fixed brand band, smart
+     green as the interactive accent. Dark mirrors it in the same
+     family rather than inverting to a different hue.
+     ============================================================ */
+  :root{
+    --paper:#F7F8F5;
+    --paper-raised:#FFFFFF;
+    --paper-sunken:#EFF2ED;
+    --ink:#171F19;
+    --ink-muted:#565F58;
+    --ink-faint:#8A9088;
+    --border:#DEE3DA;
+    --border-strong:#C6CEC1;
+
+    --brand:#05583B;
+    --brand-ink:#FDFEFC;
+    --accent:#0E7C4A;
+    --accent-tint:#E5F5EB;
+    --accent-ink:#0B5C33;
+
+    --live:#B3122A;
+    --live-tint:#FBE7EA;
+    --live-ink:#8C0E21;
+    --doc:#3C6E96;
+    --doc-tint:#E6F0F7;
+    --doc-ink:#2C5470;
+    --warn:#B07A00;
+    --warn-tint:#FBF1DA;
+    --warn-ink:#7A5500;
+
+    --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --font-body: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+    --shadow-1: 0 1px 2px rgba(20,30,24,.06);
+    --shadow-2: 0 10px 28px rgba(20,30,24,.10);
+    --radius: 8px;
+    --measure: 72ch;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0D1512; --paper-raised:#141F1A; --paper-sunken:#0A100D;
+      --ink:#ECF3EF; --ink-muted:#A6B4AC; --ink-faint:#748076;
+      --border:#233029; --border-strong:#324339;
+      --brand:#0A6B47; --brand-ink:#EAFBF1;
+      --accent:#3FD68C; --accent-tint:rgba(63,214,140,.13); --accent-ink:#8FF0BE;
+      --live:#FF6E80; --live-tint:rgba(255,110,128,.15); --live-ink:#FFB0BA;
+      --doc:#6FB6E8; --doc-tint:rgba(111,182,232,.15); --doc-ink:#AEDBFA;
+      --warn:#F0B429; --warn-tint:rgba(240,180,41,.14); --warn-ink:#FBD87E;
+      --shadow-1: 0 1px 2px rgba(0,0,0,.4); --shadow-2: 0 14px 32px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0D1512; --paper-raised:#141F1A; --paper-sunken:#0A100D;
+    --ink:#ECF3EF; --ink-muted:#A6B4AC; --ink-faint:#748076;
+    --border:#233029; --border-strong:#324339;
+    --brand:#0A6B47; --brand-ink:#EAFBF1;
+    --accent:#3FD68C; --accent-tint:rgba(63,214,140,.13); --accent-ink:#8FF0BE;
+    --live:#FF6E80; --live-tint:rgba(255,110,128,.15); --live-ink:#FFB0BA;
+    --doc:#6FB6E8; --doc-tint:rgba(111,182,232,.15); --doc-ink:#AEDBFA;
+    --warn:#F0B429; --warn-tint:rgba(240,180,41,.14); --warn-ink:#FBD87E;
+    --shadow-1: 0 1px 2px rgba(0,0,0,.4); --shadow-2: 0 14px 32px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;}
+  ::selection{background:var(--accent-tint); color:var(--ink);}
+  a{color:var(--accent);}
+  code, .mono{font-family:var(--font-mono); font-variant-numeric:tabular-nums;}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px;}
+  h1,h2,h3,h4{font-family:var(--font-display); text-wrap:balance; font-weight:600; color:var(--ink); margin:0;}
+  p{margin:0 0 1em; max-width:var(--measure);}
+  table{border-collapse:collapse; width:100%; font-size:14.5px;}
+  th,td{text-align:left; padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{font-family:var(--font-body); font-size:11.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-faint); font-weight:700; white-space:nowrap;}
+  td code{font-size:13px;}
+  .table-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); background:var(--paper-raised);}
+  .table-wrap table{min-width:560px;}
+
+  /* ---------- cover ---------- */
+  .cover{background:var(--brand); color:var(--brand-ink); padding:56px 24px 44px;}
+  .cover-inner{max-width:920px; margin:0 auto;}
+  .kicker{font-family:var(--font-body); font-size:12px; letter-spacing:.13em; text-transform:uppercase; opacity:.8; font-weight:600;}
+  .cover h1{font-size:clamp(34px,5vw,52px); line-height:1.08; margin:14px 0 18px; letter-spacing:-.01em;}
+  .cover-sub{font-family:var(--font-body); font-size:17px; line-height:1.55; max-width:58ch; opacity:.92; margin:0 0 28px;}
+  .cover-meta{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; border-top:1px solid rgba(255,255,255,.22); padding-top:22px; margin:0;}
+  .cover-meta dt{font-size:11px; letter-spacing:.08em; text-transform:uppercase; opacity:.72; margin-bottom:4px;}
+  .cover-meta dd{margin:0; font-size:14.5px; font-family:var(--font-mono); line-height:1.5;}
+
+  /* ---------- layout ---------- */
+  .layout{max-width:1180px; margin:0 auto; display:grid; grid-template-columns:230px 1fr; gap:48px; padding:40px 24px 80px; align-items:start;}
+  @media (max-width:860px){ .layout{grid-template-columns:1fr;} .toc{position:static !important;} }
+
+  .toc{position:sticky; top:24px; align-self:start;}
+  .toc-label{font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint); font-weight:700; margin-bottom:10px;}
+  .toc ol{list-style:none; margin:0 0 18px; padding:0; border-left:1px solid var(--border);}
+  .toc li a{display:block; padding:6px 0 6px 14px; margin-left:-1px; border-left:2px solid transparent; font-size:13.5px; color:var(--ink-muted); text-decoration:none;}
+  .toc li a:hover{color:var(--ink);}
+  .toc li a[aria-current="true"]{border-left-color:var(--accent); color:var(--ink); font-weight:600;}
+  .toc-foot a{font-size:12.5px; color:var(--ink-muted); text-decoration:none; display:inline-flex; align-items:center; gap:6px;}
+  .toc-foot a:hover{color:var(--accent);}
+
+  main{min-width:0;}
+  .lede{font-size:17px; line-height:1.65; color:var(--ink-muted); max-width:var(--measure); margin-bottom:8px;}
+  .lede b{color:var(--ink); font-weight:600;}
+
+  section.block{padding:38px 0; border-top:1px solid var(--border);}
+  section.block:first-of-type{border-top:0; padding-top:6px;}
+
+  .endpoint-head{display:flex; align-items:baseline; gap:16px; margin-bottom:22px;}
+  .endpoint-num{font-family:var(--font-mono); font-size:13px; color:var(--accent); border:1px solid var(--border-strong); border-radius:999px; padding:3px 10px; flex-shrink:0;}
+  .endpoint-head h2{font-size:28px;}
+  .endpoint-sub{font-family:var(--font-mono); font-size:13px; color:var(--ink-muted); margin:4px 0 0;}
+
+  h3.sec{font-family:var(--font-body); font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); font-weight:700; margin:28px 0 12px;}
+  h3.sec:first-of-type{margin-top:0;}
+  h4.sub{font-family:var(--font-body); font-size:12.5px; letter-spacing:.04em; color:var(--ink-muted); font-weight:700; margin:0 0 8px;}
+
+  .code-block{position:relative; background:var(--paper-sunken); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;}
+  .code-block pre{margin:0; padding:16px 18px; overflow-x:auto; font-family:var(--font-mono); font-size:13px; line-height:1.65; color:var(--ink);}
+  .code-copy{position:absolute; top:8px; right:8px; font-family:var(--font-body); font-size:11px; font-weight:600; padding:5px 10px; border-radius:6px; border:1px solid var(--border-strong); background:var(--paper-raised); color:var(--ink-muted); cursor:pointer;}
+  .code-copy:hover{color:var(--ink); border-color:var(--ink-faint);}
+  .code-copy[data-copied="true"]{color:var(--accent-ink); background:var(--accent-tint); border-color:transparent;}
+
+  .field-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; background:var(--paper-raised);}
+  .field-list li{display:grid; grid-template-columns:160px 1fr; gap:14px; padding:10px 14px; border-top:1px solid var(--border); font-size:13.5px;}
+  .field-list li:first-child{border-top:0;}
+  .field-name{font-family:var(--font-mono); font-weight:700; color:var(--ink);}
+  .field-name .req{color:var(--live); font-weight:400; font-size:11px; margin-left:6px;}
+  .field-desc{color:var(--ink-muted); line-height:1.55;}
+
+  .response-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:640px){.response-grid{grid-template-columns:1fr;}}
+  .response-col{border-radius:var(--radius); overflow:hidden; border:1px solid var(--border);}
+  .response-col .rc-head{padding:9px 14px; font-size:11px; letter-spacing:.06em; text-transform:uppercase; font-weight:800;}
+  .response-col.live .rc-head{background:var(--live-tint); color:var(--live-ink);}
+  .response-col.doc .rc-head{background:var(--doc-tint); color:var(--doc-ink);}
+  .response-col .code-block{border:0; border-radius:0;}
+
+  .callout{display:flex; gap:12px; padding:14px 16px; border-radius:var(--radius); font-size:14px; line-height:1.6; margin:14px 0;}
+  .callout.warn{background:var(--warn-tint); color:var(--warn-ink);}
+  .callout.live{background:var(--live-tint); color:var(--live-ink);}
+  .callout .ic{flex-shrink:0; font-family:var(--font-mono); font-weight:800; font-size:12px; padding:2px 7px; border-radius:5px; background:rgba(0,0,0,.08); height:fit-content;}
+
+  ul.findings{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;}
+  ul.findings li{display:flex; gap:10px; font-size:14.5px; line-height:1.6; color:var(--ink);}
+  ul.findings li::before{content:"—"; color:var(--live); flex-shrink:0; font-weight:700;}
+  ul.findings code{background:var(--paper-sunken); padding:1px 5px; border-radius:4px; font-size:13px;}
+
+  .pill{display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; font-family:var(--font-mono);}
+  .pill.ok{background:var(--accent-tint); color:var(--accent-ink);}
+  .pill.no{background:var(--live-tint); color:var(--live-ink);}
+
+  footer.doc-foot{max-width:1180px; margin:0 auto; padding:0 24px 60px; color:var(--ink-faint); font-size:12px; line-height:1.7;}
+  footer.doc-foot code{font-size:11.5px;}
+
+  @media print{
+    .toc{display:none;}
+    .layout{grid-template-columns:1fr; max-width:none;}
+    .code-copy{display:none;}
+    .cover{background:var(--paper-raised) !important; color:var(--ink) !important;}
+    a{color:var(--ink); text-decoration:underline;}
+    section.block{break-inside:avoid-page;}
+  }
+</style>
+
+<div class="cover">
+  <div class="cover-inner">
+    <div class="kicker">DGO Digital OPS &middot; Specification</div>
+    <h1>Document Portal<br>Flow Reference</h1>
+    <p class="cover-sub">The sole source of reference for every <code>document-portal</code> flow's trigger schema, request payload, response structure, and response variants. Every shape here is traced to its exact client call site or its exact position in the live-tenant probe transcript &mdash; nothing is a sample.</p>
+    <dl class="cover-meta">
+      <div><dt>Flows in scope</dt><dd>SUBMISSION &middot; UPLOAD &middot; SUPPORT &middot; VERIFY &middot; VERIFY_CONFIRM &middot; STATUS</dd></div>
+      <div><dt>Traced to</dt><dd>core.js &middot; submit.js &middot; track.js &middot; support.js</dd></div>
+      <div><dt>Corroborated against</dt><dd>Live-tenant probe &middot; 2026-08-08</dd></div>
+    </dl>
+  </div>
+</div>
+
+<div class="layout" style="max-width:960px;margin:24px auto 0;padding:0 24px;">
+  <div style="border:2px solid #B07A00;background:#FBF1DA;color:#7A5500;border-radius:8px;padding:16px 20px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.5;">
+    <strong>Superseded, 2026-08-15.</strong> This page and its JSON companion were generated
+    2026-08-09 against a mix of harvested and live-probe evidence that has since been replaced
+    by the six real flow definitions now in
+    <code>docs/deployment/power-automate-flows/codeview/</code>. Several conclusions here no
+    longer hold &mdash; notably that <code>SUBMISSION</code>'s request shape matched no known
+    flow, and <code>UPLOAD</code>'s lack of ticket validation. The narrative document,
+    <code>docs/reference/flow-contracts/DOCUMENT_PORTAL_FLOWS.md</code>, has been rewritten
+    against those real definitions and is now the authoritative reference. This HTML/JSON pair
+    has not been regenerated to match and should not be relied on until it is.
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="Table of contents">
+    <div class="toc-label">Contents</div>
+    <ol>
+      <li><a href="#mechanics" data-toc="mechanics">Common mechanics</a></li>
+      <li><a href="#submission" data-toc="submission">01 &middot; SUBMISSION</a></li>
+      <li><a href="#upload" data-toc="upload">02 &middot; UPLOAD</a></li>
+      <li><a href="#support" data-toc="support">03 &middot; SUPPORT</a></li>
+      <li><a href="#verify" data-toc="verify">04 &middot; VERIFY</a></li>
+      <li><a href="#verify-confirm" data-toc="verify-confirm">05 &middot; VERIFY_CONFIRM</a></li>
+      <li><a href="#status" data-toc="status">06 &middot; STATUS</a></li>
+      <li><a href="#cross-cutting" data-toc="cross-cutting">Cross-cutting behaviour</a></li>
+    </ol>
+    <div class="toc-foot"><a href="#" id="printLink">&#8595; Save as PDF</a></div>
+  </nav>
+
+  <main>
+
+    <section class="block" id="mechanics">
+      <h3 class="sec">Common mechanics</h3>
+      <p class="lede">Every request below is a flat JSON object &mdash; <b>no portal request is ever wrapped</b> in an <code>action</code>/<code>operation</code> field, a <code>requestId</code>, or a timestamp, unlike the internal operations platform's convention. Every response is parsed by the same permissive helper, and every endpoint degrades the same two ways when unconfigured or offline.</p>
+
+      <h3 class="sec">Response parsing</h3>
+      <div class="code-block"><button class="code-copy" data-copy-target="c-readjson">Copy</button><pre id="c-readjson">function readJson(r) {
+  return r.text().then(function (t) {
+    var data = {};
+    try { data = t ? JSON.parse(t) : {}; } catch (e) {}
+    return data;
+  });
+}</pre></div>
+      <p style="margin-top:10px">A non-JSON or empty body resolves to <code>{}</code> silently &mdash; never throws. Every field this document lists as &ldquo;read&rdquo; is read with optional-chaining-style access; an absent field is simply <code>undefined</code>.</p>
+
+      <h3 class="sec">Behaviour when a key has no URL configured</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Key</th><th>Result</th><th>Side effect</th></tr></thead>
+        <tbody>
+          <tr><td><code>SUBMISSION</code></td><td><code>{delivered:false, reason:'not-configured'}</code></td><td>Whole portal enters demo mode &mdash; <code>PF.backendConfigured()</code> becomes <code>false</code></td></tr>
+          <tr><td><code>UPLOAD</code></td><td><code>{ok:false, stored:false, reason:'not-configured'}</code></td><td>&mdash;</td></tr>
+          <tr><td><code>SUPPORT</code></td><td><code>{delivered:false, reason:'not-configured'}</code></td><td>&mdash;</td></tr>
+          <tr><td><code>VERIFY</code></td><td><code>{ok:false, reason:'not-configured'}</code></td><td><code>PF.intake.verificationAvailable()</code> becomes <code>false</code></td></tr>
+          <tr><td><code>VERIFY_CONFIRM</code></td><td><code>{ok:false, reason:'not-configured'}</code></td><td><code>PF.intake.verificationAvailable()</code> becomes <code>false</code></td></tr>
+          <tr><td><code>STATUS</code></td><td><code>{resolution:'unavailable', reason:'not-configured'}</code></td><td>&mdash;</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 class="sec">Behaviour when the device is offline</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Key</th><th>Queued for retry</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td><code>SUBMISSION</code></td><td><span class="pill ok">YES</span></td><td><code>{delivered:false, reason:'offline'}</code></td></tr>
+          <tr><td><code>SUPPORT</code></td><td><span class="pill ok">YES</span></td><td><code>{delivered:false, reason:'offline'}</code></td></tr>
+          <tr><td><code>STATUS</code></td><td><span class="pill no">NO</span></td><td><code>{resolution:'unavailable', reason:'offline'}</code></td></tr>
+          <tr><td><code>UPLOAD</code>, <code>VERIFY</code>, <code>VERIFY_CONFIRM</code></td><td><span class="pill no">NO</span></td><td>No offline short-circuit exists in code &mdash; each proceeds to <code>fetch()</code> and fails at the network layer</td></tr>
+        </tbody>
+      </table></div>
+      <p style="margin-top:10px"><code>PF.outbox</code> queues only <code>submission</code>/<code>support</code> entries, capped at the 50 most recent, retried up to 5 times whenever <code>PF.outbox.flush()</code> runs with connectivity restored.</p>
+    </section>
+
+    <!-- ============================================================ SUBMISSION ============================================================ -->
+    <section class="block" id="submission">
+      <div class="endpoint-head"><span class="endpoint-num">01</span><div><h2>SUBMISSION</h2><p class="endpoint-sub">POST &middot; PF.intake.submit(record, opts) &middot; core.js:331</p></div></div>
+
+      <h3 class="sec">Request &mdash; as sent by the client</h3>
+      <p>Built in <code>submit.js</code>'s <code>dispatchToWorkflow</code> (line 369).</p>
+      <div class="code-block"><button class="code-copy" data-copy-target="c-sub-req">Copy</button><pre id="c-sub-req">{
+  "localId": "&lt;PF.uid() &mdash; client-generated local record id&gt;",
+  "channel": "Portal",
+  "correspondenceType": "Incoming",
+  "subject": "&lt;wizard step 3, Subject field&gt;",
+  "category": "&lt;PF.correspondenceType(service).category&gt;",
+  "sender": {
+    "name": "&lt;Full name, step 2&gt;",
+    "organisation": "&lt;Organisation, step 2&gt;",
+    "organisationType": "&lt;Organisation type, step 2&gt;"
+  },
+  "senderEmail": "&lt;Email, step 2&gt;",
+  "senderPhone": "&lt;Phone, step 2 &mdash; may be an empty string&gt;",
+  "eventDate": "&lt;empty string unless the correspondence type carries one&gt;",
+  "description": "&lt;Purpose/description, step 3&gt;",
+  "attachments": [
+    { "name": "&lt;declared file name&gt;", "size": 0, "sha256": "&lt;client-computed SHA-256 hex, or empty string&gt;" }
+  ],
+  "submittedAt": "&lt;ISO 8601, set once at record creation&gt;"
+}</pre></div>
+      <div class="callout warn"><span class="ic">OPTIONAL</span><div><code>verification</code> is merged in only when <code>opts.verification</code> is truthy. <b>As currently wired, this never happens</b> &mdash; <code>submit.js</code> calls <code>PF.intake.submit({...})</code> with one argument only.</div></div>
+
+      <h3 class="sec">Trigger schema &mdash; harvested, live-corroborated</h3>
+      <p>Source: <code>docs/reference/foundational/flows/DOCUMENT SUBMISSION PORTAL POWER AU.txt</code> &mdash; the one portal flow whose harvested response is byte-shape-identical to the live probe.</p>
+      <div class="code-block"><button class="code-copy" data-copy-target="c-sub-trigger">Copy</button><pre id="c-sub-trigger">{
+  "type": "object",
+  "properties": {
+    "UserId": { "type": "string" },
+    "SubmitterName": { "type": "string" },
+    "EmailAddress": { "type": "string" },
+    "CompanyName": { "type": "string" },
+    "DocumentType": { "type": "string" },
+    "FileName": { "type": "string" },
+    "FileContentBase64": { "type": "string" }
+  }
+}</pre></div>
+      <div class="callout live"><span class="ic">MISMATCH</span><div>This trigger expects one inline base64 file with <code>UserId</code>/<code>SubmitterName</code>/<code>EmailAddress</code>. The client sends <code>localId</code>/<code>sender.name</code>/<code>senderEmail</code> and an <code>attachments[]</code> array with no bytes at all. Neither field names nor cardinality match &mdash; the root cause of <code>uploads</code> being absent from the live response below.</div></div>
+
+      <h3 class="sec">Response</h3>
+      <div class="response-grid">
+        <div class="response-col live"><div class="rc-head">Live-observed &middot; 2026-08-08</div><div class="code-block"><pre>HTTP 200
+{
+  "trackingId": "NITDA-2026-217",
+  "status": "success",
+  "createdAt": "2026-07-28T18:52:18.2006842Z",
+  "message": "Submission received successfully",
+  "submittedBy": "",
+  "submittedAt": "2026-07-28T18:52:18.7971508Z",
+  "attachmentsCount": "0",
+  "referenceId": "NITDA-2026-217"
+}</pre></div></div>
+        <div class="response-col doc"><div class="rc-head">Documented target</div><div class="code-block"><pre>HTTP 200
+{
+  "referenceId": "NITDA-YYYY-&lt;unpadded sequence&gt;",
+  "uploads": [
+    { "ticket": "string", "name": "string" }
+  ]
+}</pre></div></div>
+      </div>
+      <p style="margin-top:10px">Fields the client actually reads from a 2xx body: <code>referenceId</code>, <code>uploads</code> (defaulted to <code>[]</code>). Every other field in the live-observed sample has no functional effect.</p>
+
+      <h4 class="sub" style="margin-top:24px">Handling branches</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Condition</th><th>Queued</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td><code>403</code> &amp; <code>error === 'verification_required'</code></td><td><span class="pill no">NO</span></td><td><code>{delivered:false, status:403, reason:'verification-required'}</code></td></tr>
+          <tr><td>Any other non-2xx</td><td><span class="pill ok">YES</span></td><td><code>{delivered:false, status, reason: data.reason || 'rejected'}</code></td></tr>
+          <tr><td>2xx</td><td>&mdash;</td><td><code>{delivered:true, referenceId: data.referenceId, uploads: data.uploads || []}</code></td></tr>
+          <tr><td><code>fetch()</code> throws</td><td><span class="pill ok">YES</span></td><td><code>{delivered:false, reason:'unreachable'}</code></td></tr>
+        </tbody>
+      </table></div>
+
+      <h4 class="sub" style="margin-top:22px">Citizen-visible outcome states</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>State</th><th>Trigger</th><th>Title shown</th></tr></thead>
+        <tbody>
+          <tr><td><code>delivered</code></td><td><code>res.delivered === true</code></td><td>&ldquo;Submission received&rdquo;</td></tr>
+          <tr><td><code>queued</code></td><td>any other reason, <b>including <code>verification-required</code></b></td><td>&ldquo;Saved &mdash; not yet delivered&rdquo;</td></tr>
+          <tr><td><code>held</code></td><td>demo mode</td><td>&ldquo;Saved on this device only&rdquo;</td></tr>
+        </tbody>
+      </table></div>
+
+      <h4 class="sub" style="margin-top:22px">Response variants</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Variant</th><th>HTTP</th><th>Outcome</th></tr></thead>
+        <tbody>
+          <tr><td>Accepted</td><td>2xx</td><td><code>delivered</code></td></tr>
+          <tr><td>Verification required</td><td>403</td><td><code>queued</code> &mdash; no automatic retry with a proof exists</td></tr>
+          <tr><td>Other refusal</td><td>4xx/5xx</td><td><code>queued</code>, reason <code>rejected</code></td></tr>
+          <tr><td>Unreachable</td><td>&mdash;</td><td><code>queued</code>, reason <code>unreachable</code></td></tr>
+          <tr><td>Not configured</td><td>&mdash;</td><td><code>held</code></td></tr>
+          <tr><td>Offline</td><td>&mdash;</td><td><code>queued</code>, reason <code>offline</code></td></tr>
+        </tbody>
+      </table></div>
+
+      <h4 class="sub" style="margin-top:22px">Findings</h4>
+      <ul class="findings">
+        <li><code>verification-required</code> is classified identically to every other queued failure &mdash; <code>submit.js</code> has no branch that re-runs <code>VERIFY</code>/<code>VERIFY_CONFIRM</code> the way <code>track.js</code> does for <code>STATUS</code>.</li>
+        <li><code>uploadAll()</code> runs zero iterations when <code>res.uploads</code> is empty (the live-observed case) &mdash; attachments are silently never transmitted while the submission still reports <code>delivered</code>.</li>
+      </ul>
+    </section>
+
+    <!-- ============================================================ UPLOAD ============================================================ -->
+    <section class="block" id="upload">
+      <div class="endpoint-head"><span class="endpoint-num">02</span><div><h2>UPLOAD</h2><p class="endpoint-sub">PUT &middot; PF.intake.upload(ticket, file) &middot; core.js:370</p></div></div>
+
+      <h3 class="sec">Request &mdash; as sent by the client</h3>
+      <p>Called once per declared attachment, <b>sequentially</b>, from <code>submit.js</code>'s <code>uploadAll</code> (line 426).</p>
+      <div class="code-block"><button class="code-copy" data-copy-target="c-up-req">Copy</button><pre id="c-up-req">PUT &lt;UPLOAD endpoint URL&gt;
+Content-Type: application/octet-stream
+X-Upload-Ticket: &lt;ticket, exactly as returned in SUBMISSION's uploads[].ticket&gt;
+
+Body: &lt;raw bytes of the file, unencoded&gt;</pre></div>
+
+      <h3 class="sec">Trigger and actions &mdash; real, as provided</h3>
+      <p><b>Not harvested and not from the live probe</b> &mdash; this is the flow's actual definition, supplied directly. It supersedes every earlier statement that this flow was unbuilt; it exists. Trigger: <code>Request</code>, kind <code>Http</code>, method <code>PUT</code>, no body schema declared.</p>
+      <div class="code-block"><button class="code-copy" data-copy-target="c-up-flow">Copy</button><pre id="c-up-flow">1. Compose_Upload_Ticket
+   @trim(string(coalesce(
+     triggerOutputs()?['headers']?['x-upload-ticket'],
+     triggerOutputs()?['headers']?['X-Upload-Ticket'], '')))
+
+2. Condition_Upload_Ticket_Missing — If empty(ticket) == true
+
+   TICKET ABSENT/EMPTY →
+   Response_Upload_Ticket_Missing
+     HTTP 403
+     { "stored": false, "reason": "missing-upload-ticket" }
+
+   TICKET PRESENT (the only condition checked) →
+   3. Compose_Upload_FileName
+      @concat(formatDateTime(utcNow(), 'yyyyMMdd-HHmmss-'),
+        replace(replace(outputs('Compose_Upload_Ticket'),
+        '/', '-'), ':', '-'), '.bin')
+      &rarr; extension is ALWAYS .bin; no original filename
+        is read from the request anywhere in this flow
+
+   4. Create_file_Upload  (SharePoint CreateFile, chunked)
+      site:   https://nitdanigeria.sharepoint.com/sites/NEDMS
+      folder: /NITDA_Central_Registry
+      name:   the composed .bin filename
+      body:   @triggerBody()  &mdash; raw bytes, unexamined
+
+   5. Compose_Upload_Response_Body
+      {
+        "stored": true,
+        "attachmentLink": coalesce(body/Path, body/Id, body/Name),
+        "ticket": "&lt;the ticket&gt;",
+        "fileName": "&lt;the composed .bin filename&gt;"
+      }
+
+   6. Response_Upload_Success  &rarr;  HTTP 200
+
+FAILURE PATH (Create_file_Upload fails: throttling,
+permission, invalid name) →
+   Response_Upload_Failed
+     HTTP 500
+     { "stored": false, "reason": "upload-processing-failed",
+       "details": "&lt;failed action's result object&gt;" }</pre></div>
+      <p style="margin-top:10px">Every branch sends <code>Access-Control-Allow-Methods: PUT, OPTIONS</code> and <code>Access-Control-Allow-Headers: Content-Type, X-Upload-Ticket, X-Correlation-ID</code>. <b>No <code>Access-Control-Allow-Origin</code> header is set anywhere in this definition</b> &mdash; whether a cross-origin browser <code>fetch()</code> can still read the response depends on platform-level CORS handling this definition does not settle, and is worth confirming against a real browser call.</p>
+
+      <div class="callout live"><span class="ic">CRITICAL</span><div>The ticket is <b>never validated against anything <code>SUBMISSION</code> issued</b>. <code>Condition_Upload_Ticket_Missing</code> checks only that the header is present and non-empty &mdash; no lookup, no expiry check, no single-use enforcement. <b>Any non-empty string in <code>X-Upload-Ticket</code> satisfies the only gate this flow has.</b> Combined with the endpoint URL being delivered to every visitor's browser, this is an unauthenticated write path into the agency's SharePoint registry.</div></div>
+
+      <h4 class="sub" style="margin-top:20px">Further gaps against the documented obligation</h4>
+      <ul class="findings">
+        <li>No file size limit is enforced.</li>
+        <li>No integrity check (SHA-256 or otherwise) against any declared digest &mdash; <code>triggerBody()</code> is written to SharePoint unexamined.</li>
+        <li>No association is recorded between the stored file and the correspondence record it belongs to &mdash; the ticket is sanitised into a filename fragment, never decoded or looked up. Combined with the forced <code>.bin</code> extension and the absent original filename, a stored file has no machine- or human-readable link back to its submission, name, or real content type.</li>
+      </ul>
+
+      <h4 class="sub" style="margin-top:22px">Handling branches</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Condition</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>2xx, <code>data.stored === true</code></td><td><code>{ok:true, stored:true}</code></td></tr>
+          <tr><td>Non-2xx</td><td><code>{ok:false, stored:false, reason}</code></td></tr>
+        </tbody>
+      </table></div>
+
+      <h4 class="sub" style="margin-top:22px">Response variants &mdash; exact to the real flow</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Variant</th><th>HTTP</th><th>Trigger condition</th><th>Client result</th></tr></thead>
+        <tbody>
+          <tr><td>Ticket absent/empty</td><td>403</td><td><code>X-Upload-Ticket</code> missing or blank</td><td>Failure &mdash; name pushed to <code>failed[]</code></td></tr>
+          <tr><td>Accepted</td><td>200</td><td>Any non-empty ticket &mdash; no validity check</td><td>Success</td></tr>
+          <tr><td>File-write failure</td><td>500</td><td><code>Create_file_Upload</code> fails</td><td>Failure</td></tr>
+          <tr><td>Unreachable / not configured</td><td>&mdash;</td><td>&mdash;</td><td>Failure</td></tr>
+        </tbody>
+      </table></div>
+      <p style="margin-top:10px">There is no <code>stored:false</code> branch on a <code>200</code> in the real flow &mdash; every path reaching <code>Create_file_Upload</code> returns <code>stored:true</code>. The outcomes are exactly two: a clean <code>200</code>, or a <code>500</code> from the underlying SharePoint call failing outright.</p>
+    </section>
+
+    <!-- ============================================================ SUPPORT ============================================================ -->
+    <section class="block" id="support">
+      <div class="endpoint-head"><span class="endpoint-num">03</span><div><h2>SUPPORT</h2><p class="endpoint-sub">POST &middot; PF.intake.support(payload) &middot; core.js:387</p></div></div>
+
+      <h3 class="sec">Request &mdash; as sent by the client</h3>
+      <p>Built in <code>support.js</code>'s <code>send</code> (line 206). <b>This is the exact, real body</b> &mdash; not a generic <code>{email, subject, message}</code> summary.</p>
+      <div class="code-block"><button class="code-copy" data-copy-target="c-sup-req">Copy</button><pre id="c-sup-req">{
+  "name": "&lt;case form, Name field&gt;",
+  "email": "&lt;case form, Email field&gt;",
+  "topic": "&lt;the topic's LABEL, e.g. its display text &mdash; not its internal key&gt;",
+  "aboutReference": "&lt;tracking-ID field, uppercased &mdash; empty string if blank&gt;",
+  "message": "&lt;case form, Message field&gt;"
+}</pre></div>
+
+      <h3 class="sec">Response &mdash; documented, and not read by the current UI</h3>
+      <div class="response-grid">
+        <div class="response-col live"><div class="rc-head">Live-observed &middot; 2026-08-08</div><div class="code-block"><pre>HTTP 200
+Top-level keys:
+ok, status, request, timing,
+data, errors, meta
+
+data.caseRef: absent</pre></div></div>
+        <div class="response-col doc"><div class="rc-head">Documented target</div><div class="code-block"><pre>HTTP 200
+{ "caseRef": "CASE-..." }</pre></div></div>
+      </div>
+
+      <div class="callout live"><span class="ic">DEAD CODE</span><div><code>support.js</code>'s <code>send()</code> calls <code>PF.intake.support({...})</code> with <b>no <code>.then()</code>, no assignment</b>. The reference shown to the citizen (<code>ticket.ref</code>, generated by the local <code>sref()</code> function) exists <b>before</b> this call is even made and is never reconciled with <code>data.caseRef</code>. Whatever the flow returns, on any request, has zero effect on what the citizen sees.</div></div>
+
+      <h4 class="sub" style="margin-top:24px">Handling branches <span style="font-weight:400;color:var(--ink-faint);text-transform:none;letter-spacing:0">(reachable only by code that awaits the promise &mdash; none does today)</span></h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Condition</th><th>Queued</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Non-2xx</td><td><span class="pill ok">YES</span></td><td><code>{delivered:false, status}</code></td></tr>
+          <tr><td>2xx</td><td>&mdash;</td><td><code>{delivered:true, caseRef: data.caseRef}</code></td></tr>
+          <tr><td>Unreachable</td><td><span class="pill ok">YES</span></td><td><code>{delivered:false, reason:'unreachable'}</code></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ============================================================ VERIFY ============================================================ -->
+    <section class="block" id="verify">
+      <div class="endpoint-head"><span class="endpoint-num">04</span><div><h2>VERIFY</h2><p class="endpoint-sub">POST &middot; PF.intake.verifyRequest(email) &middot; core.js:417 &middot; shares the platform's <code>OTP_GENERATE</code> flow</p></div></div>
+
+      <h3 class="sec">Request &mdash; as sent by the client</h3>
+      <p>Called from <code>track.js</code>'s <code>requireVerification</code> (line 174), only after <code>STATUS</code> answers <code>verification-required</code>.</p>
+      <div class="code-block"><button class="code-copy" data-copy-target="c-ver-req">Copy</button><pre id="c-ver-req">{ "email": "&lt;the address entered in the tracking form&gt;" }</pre></div>
+      <p style="margin-top:10px">No <code>action</code>, <code>operation</code>, or <code>purpose</code> field &mdash; this is the entire body.</p>
+
+      <h3 class="sec">Trigger schema &mdash; harvested, shared, mismatched</h3>
+      <p>Source: the harvested <code>OTP_GENERATE</code> definition (<code>docs/reference/foundational/flows/definitions/OTP_FLOWS/OTP_GENERATE/</code>). Accepted top-level properties: <code>action, operation, mode, source, userEmail, method, id, device, otp_code</code> (<code>additionalProperties: true</code>).</p>
+      <div class="callout live"><span class="ic">MISMATCH</span><div><code>email</code> is not a named property of this schema. The flow's routing keys on <code>action === 'generate'|'verify'</code> and an <code>identifier</code> field &mdash; this request supplies neither.</div></div>
+
+      <h3 class="sec">Response</h3>
+      <div class="response-grid">
+        <div class="response-col live"><div class="rc-head">Live-observed &middot; 2026-08-08</div><div class="code-block"><pre>HTTP 200
+Top-level keys:
+ok, status, confidence,
+request, timing, data,
+results, errors, meta
+
+data.sent: absent</pre></div></div>
+        <div class="response-col doc"><div class="rc-head">Documented target</div><div class="code-block"><pre>HTTP 200
+{
+  "sent": true,
+  "expiresAt": "&lt;ISO 8601 or epoch ms&gt;"
+}</pre></div></div>
+      </div>
+      <p style="margin-top:10px"><code>confidence</code> and <code>results</code> appear on every OTP-family response in this estate and are not part of any documented contract for either app.</p>
+
+      <h4 class="sub" style="margin-top:24px">Caller branch</h4>
+      <div class="code-block"><button class="code-copy" data-copy-target="c-ver-branch">Copy</button><pre id="c-ver-branch">PF.intake.verifyRequest(email).then(function (r) {
+  if (!r.ok || !r.sent) {
+    /* toast: "Could not send the code" */
+    return;
+  }
+  /* proceeds to the six-digit code entry step */
+});</pre></div>
+      <div class="callout live"><span class="ic">LIVE EFFECT</span><div>On the live-observed response (<code>ok:true</code>, <code>sent</code> absent &rarr; normalised <code>false</code> by strict <code>=== true</code> comparison), this takes the <b>failure</b> path &mdash; the citizen sees &ldquo;Could not send the code&rdquo; despite an HTTP <code>200</code>.</div></div>
+
+      <h4 class="sub" style="margin-top:22px">Response variants</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Variant</th><th>HTTP</th><th>Citizen sees</th></tr></thead>
+        <tbody>
+          <tr><td>Sent</td><td>2xx, <code>sent:true</code></td><td>Proceeds to code entry</td></tr>
+          <tr><td>Answered, not sent <i>(live)</i></td><td>2xx, <code>sent</code> absent</td><td>&ldquo;Could not send the code&rdquo;</td></tr>
+          <tr><td>Rate-limited</td><td>429</td><td>&ldquo;Too many requests&hellip; wait a minute&rdquo;</td></tr>
+          <tr><td>Other refusal</td><td>4xx/5xx</td><td>&ldquo;The code could not be sent&hellip;&rdquo;</td></tr>
+          <tr><td>Not configured</td><td>&mdash;</td><td>Never called &mdash; gated earlier</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ============================================================ VERIFY_CONFIRM ============================================================ -->
+    <section class="block" id="verify-confirm">
+      <div class="endpoint-head"><span class="endpoint-num">05</span><div><h2>VERIFY_CONFIRM</h2><p class="endpoint-sub">POST &middot; PF.intake.verifyConfirm(email, code) &middot; core.js:434 &middot; shares the platform's <code>OTP_VERIFY</code> flow</p></div></div>
+
+      <h3 class="sec">Request &mdash; as sent by the client</h3>
+      <p>Called only after <code>VERIFY</code> has reported <code>sent:true</code>, from <code>track.js</code>'s <code>confirmCode</code> handler (line 193).</p>
+      <div class="code-block"><button class="code-copy" data-copy-target="c-vc-req">Copy</button><pre id="c-vc-req">{
+  "email": "&lt;the same address VERIFY was called with&gt;",
+  "code": "&lt;six digits, validated client-side against /^\\d{6}$/&gt;"
+}</pre></div>
+
+      <h3 class="sec">Response</h3>
+      <div class="response-grid">
+        <div class="response-col live"><div class="rc-head">Live-observed &middot; 2026-08-08</div><div class="code-block"><pre>HTTP 200
+Top-level keys:
+ok, status, confidence,
+request, timing, data,
+results, errors, meta
+
+data.verification: absent</pre></div></div>
+        <div class="response-col doc"><div class="rc-head">Documented target</div><div class="code-block"><pre>HTTP 200
+{
+  "verification": "&lt;opaque single-use proof&gt;",
+  "expiresAt": "&lt;timestamp&gt;"
+}</pre></div></div>
+      </div>
+
+      <h4 class="sub" style="margin-top:24px">Proof lifecycle</h4>
+      <p>Held in a page-scoped JavaScript variable only (<code>var proof = null;</code>, <code>track.js:143</code>) &mdash; <b>never persisted</b>. Consumed by exactly one immediately-following <code>STATUS</code> call, then reset to <code>null</code>. A page reload discards it; there is no path for a stale proof to be replayed.</p>
+
+      <div class="callout live"><span class="ic">LIVE EFFECT</span><div>On the live-observed response (<code>verification</code> absent), <code>track.js</code>'s <code>!v.ok || !v.verification</code> branch takes the failure path &mdash; the citizen sees &ldquo;That code was not accepted,&rdquo; indistinguishable from a genuinely wrong code.</div></div>
+
+      <h4 class="sub" style="margin-top:22px">Response variants</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Variant</th><th>HTTP</th><th>Citizen sees</th></tr></thead>
+        <tbody>
+          <tr><td>Verified</td><td>2xx, <code>verification</code> present</td><td>Proof held; <code>STATUS</code> retried immediately</td></tr>
+          <tr><td>Answered, no proof <i>(live)</i></td><td>2xx, <code>verification</code> absent</td><td>&ldquo;That code was not accepted&rdquo;</td></tr>
+          <tr><td>Rejected / unreachable</td><td>4xx/5xx / &mdash;</td><td>&ldquo;That code was not accepted&rdquo; &mdash; identical presentation</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ============================================================ STATUS ============================================================ -->
+    <section class="block" id="status">
+      <div class="endpoint-head"><span class="endpoint-num">06</span><div><h2>STATUS</h2><p class="endpoint-sub">POST &middot; PF.intake.status(referenceId, email, opts) &middot; core.js:481</p></div></div>
+
+      <h3 class="sec">Request &mdash; two mutually exclusive shapes</h3>
+      <h4 class="sub">Unverified (the common case)</h4>
+      <div class="code-block"><button class="code-copy" data-copy-target="c-st-req1">Copy</button><pre id="c-st-req1">{
+  "referenceId": "&lt;tracking ID, trimmed and upper-cased&gt;",
+  "email": "&lt;trimmed email&gt;"
+}</pre></div>
+      <h4 class="sub" style="margin-top:16px">Verified (a proof from VERIFY_CONFIRM is held)</h4>
+      <div class="code-block"><button class="code-copy" data-copy-target="c-st-req2">Copy</button><pre id="c-st-req2">{
+  "referenceId": "&lt;tracking ID, trimmed and upper-cased&gt;",
+  "verification": "&lt;the proof&gt;"
+}</pre></div>
+      <p style="margin-top:10px"><code>email</code> is <b>structurally absent</b> from the body in this case &mdash; not blanked, omitted from the object entirely.</p>
+
+      <h3 class="sec">Response</h3>
+      <div class="response-grid">
+        <div class="response-col live"><div class="rc-head">Live-observed &middot; probed with an unknown reference</div><div class="code-block"><pre>HTTP 200
+Top-level keys:
+ok, status, request, timing,
+data, errors, meta
+
+data.record: absent</pre></div></div>
+        <div class="response-col doc"><div class="rc-head">Documented target &mdash; denied</div><div class="code-block"><pre>HTTP 404
+(no body content specified)
+
+Byte-identical for: unknown
+reference, wrong email, or an
+expired/replayed proof.</pre></div></div>
+      </div>
+
+      <h4 class="sub" style="margin-top:20px">Documented target &mdash; found</h4>
+      <div class="code-block"><button class="code-copy" data-copy-target="c-st-found">Copy</button><pre id="c-st-found">HTTP 200
+{
+  "record": {
+    "referenceId": "string",
+    "status": "string",
+    "statusLabel": "string",
+    "category": "string",
+    "subject": "string",
+    "receivedAt": "ISO 8601",
+    "acknowledgedAt": "ISO 8601",
+    "updatedAt": "ISO 8601",
+    "closedAt": "ISO 8601",
+    "actionRequired": true,
+    "timeline": [
+      { "at": "ISO 8601", "status": "string", "label": "string", "note": "string" }
+    ]
+  }
+}</pre></div>
+      <p style="margin-top:10px">Explicitly excluded from <code>record</code>, per <code>document-portal/README.md</code>: description, attachments, assigned officer, handling unit.</p>
+
+      <div class="callout live"><span class="ic">SECURITY</span><div>The probe's reference was unknown <b>by construction</b> and the documented contract requires <code>404</code> here. The live flow answered <code>200</code>. Because <code>res.record</code> resolves to <code>null</code> (<code>data.record || null</code>) and the client's success branch is keyed on <code>r.ok</code> alone, <code>resolution</code> becomes <code>found</code> &mdash; not <code>denied</code>. <code>track.js</code> renders a near-empty but &ldquo;successfully found&rdquo; record via <code>fromRegistry(null, id)</code>, indistinguishable in the UI from a genuine minimal-data match.</div></div>
+
+      <h4 class="sub" style="margin-top:22px">Handling branches</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Condition</th><th><code>resolution</code></th></tr></thead>
+        <tbody>
+          <tr><td>2xx</td><td><code>found</code></td></tr>
+          <tr><td><code>403</code> &amp; <code>error === 'verification_required'</code></td><td><code>verification-required</code></td></tr>
+          <tr><td><code>404</code> or <code>400</code></td><td><code>denied</code> <span style="color:var(--ink-faint)">(not reachable against the live-observed <code>200</code>)</span></td></tr>
+          <tr><td><code>429</code></td><td><code>unavailable</code>, reason <code>rate-limited</code></td></tr>
+          <tr><td>Any other status</td><td><code>unavailable</code>, reason <code>registry-error</code></td></tr>
+        </tbody>
+      </table></div>
+
+      <h4 class="sub" style="margin-top:22px">Response variants</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Variant</th><th>HTTP</th><th>Citizen sees</th></tr></thead>
+        <tbody>
+          <tr><td>Genuine match</td><td>200</td><td>The full record, sourced &ldquo;registry&rdquo;</td></tr>
+          <tr><td>Answered, no record <i>(live)</i></td><td>200</td><td>A near-empty but &ldquo;found&rdquo; record</td></tr>
+          <tr><td>Verification demanded</td><td>403</td><td>The email-verification step</td></tr>
+          <tr><td>Uniform denial <i>(documented, not observed live)</i></td><td>404 / 400</td><td>&ldquo;No request matches that tracking ID and email&rdquo;</td></tr>
+          <tr><td>Rate-limited</td><td>429</td><td>&ldquo;Too many lookups&hellip; wait a minute&rdquo;</td></tr>
+          <tr><td>Other error / unreachable / not configured</td><td>&mdash;</td><td>&ldquo;The registry could not be reached&rdquo; (falls back to matching device data if present)</td></tr>
+          <tr><td>Offline</td><td>&mdash;</td><td>&ldquo;This device is offline&rdquo;</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ============================================================ CROSS-CUTTING ============================================================ -->
+    <section class="block" id="cross-cutting">
+      <h3 class="sec">Cross-cutting behaviour</h3>
+      <div class="field-list">
+        <li><span class="field-name">Demo mode</span><span class="field-desc"><code>PF.backendConfigured()</code> reflects whether the <code>SUBMISSION</code> endpoint has a configured URL &mdash; that one key alone gates whether the entire portal is considered live, independent of the other five endpoints' configuration.</span></li>
+        <li><span class="field-name">Draft autosave</span><span class="field-desc">Entirely client-local (<code>localStorage</code>). No flow is involved. Attachment bytes are explicitly excluded from the saved draft &mdash; only <code>{name, size}</code> survives.</span></li>
+        <li><span class="field-name">Reference minting</span><span class="field-desc">The tracking ID shown immediately after submitting is client-generated (<code>PF.uid()</code>), before the registry is contacted, and is overwritten by the registry's <code>referenceId</code> if one arrives. The help-case reference (<code>sref()</code>, <code>NITDA-S-XXXXXX</code>) is likewise client-generated and, per &sect;03, never reconciled with the flow's own reference.</span></li>
+        <li><span class="field-name">Filename policy</span><span class="field-desc">No client-side normalisation exists in <code>submit.js</code> or <code>core.js</code> &mdash; the Universal Filename Policy is applied by the <code>SUBMISSION</code> flow itself.</span></li>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="doc-foot">
+  Companion documents: <code>docs/reference/flow-contracts/DOCUMENT_PORTAL_FLOWS.md</code> (narrative form) &middot;
+  <code>docs/reference/flow-contracts/DOCUMENT_PORTAL_FLOWS.json</code> (machine-readable form) &middot;
+  <code>docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md</code> (the internal operations platform's equivalent).
+  Sourced from <code>document-portal/js/core.js</code>, <code>submit.js</code>, <code>track.js</code>, <code>support.js</code>,
+  <code>document-portal/README.md</code>, <code>docs/reference/foundational/flows/DOCUMENT SUBMISSION PORTAL POWER AU.txt</code>,
+  and the live-tenant probe transcript captured 2026-08-08.
+</footer>
+
+<script>
+"use strict";
+document.querySelectorAll(".code-copy").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    var target = document.getElementById(btn.getAttribute("data-copy-target"));
+    if (!target) return;
+    var text = target.textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { flash(btn); });
+    } else {
+      var ta = document.createElement("textarea");
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+      flash(btn);
+    }
+  });
+});
+function flash(btn) {
+  var original = btn.textContent;
+  btn.textContent = "Copied";
+  btn.setAttribute("data-copied", "true");
+  setTimeout(function () { btn.textContent = original; btn.removeAttribute("data-copied"); }, 1400);
+}
+
+document.getElementById("printLink").addEventListener("click", function (e) {
+  e.preventDefault();
+  window.print();
+});
+
+/* Active-section highlighting in the TOC, via IntersectionObserver. */
+var sections = Array.prototype.slice.call(document.querySelectorAll("section.block[id]"));
+var links = {};
+document.querySelectorAll(".toc a[data-toc]").forEach(function (a) { links[a.getAttribute("data-toc")] = a; });
+if ("IntersectionObserver" in window) {
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      var link = links[entry.target.id];
+      if (!link) return;
+      link.setAttribute("aria-current", entry.isIntersecting ? "true" : "false");
+    });
+  }, { rootMargin: "-15% 0px -70% 0px", threshold: 0 });
+  sections.forEach(function (s) { obs.observe(s); });
+}
+</script>

@@ -1,0 +1,327 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:27Z",
+    "workflow_identity":  {
+                              "internal_name":  "033e5d70-ea07-4632-8e9a-f32590913637",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "Persistent GPT AI Chat in App",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "undefined",
+                       "parameters":  {
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+                                                                        "operationMetadataId":  "a86c22b8-cece-498a-8263-c0d3c6855ced"
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "PowerAppV2",
+                                                       "inputs":  {
+                                                                      "schema":  {
+                                                                                     "type":  "object",
+                                                                                     "properties":  {
+                                                                                                        "text":  {
+                                                                                                                     "description":  "Please enter your prompt",
+                                                                                                                     "title":  "varConversationJson",
+                                                                                                                     "type":  "string",
+                                                                                                                     "x-ms-content-hint":  "TEXT",
+                                                                                                                     "x-ms-dynamically-added":  true
+                                                                                                                 }
+                                                                                                    },
+                                                                                     "required":  [
+                                                                                                      "text"
+                                                                                                  ]
+                                                                                 }
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Compose_Prompt":  {
+                                                              "runAfter":  {
+                                                                               "Apply_to_each_varTruncatedConversation":  [
+                                                                                                                              "Succeeded"
+                                                                                                                          ]
+                                                                           },
+                                                              "metadata":  {
+                                                                               "operationMetadataId":  "2f7e8d1f-e713-4031-9f42-b89d6e44e1ae"
+                                                                           },
+                                                              "type":  "Compose",
+                                                              "inputs":  "@triggerBody()?[\u0027text\u0027]"
+                                                          },
+                                       "HTTP":  {
+                                                    "runAfter":  {
+                                                                     "Compose_Prompt":  [
+                                                                                            "Succeeded"
+                                                                                        ]
+                                                                 },
+                                                    "metadata":  {
+                                                                     "operationMetadataId":  "7ff89773-2f71-4581-bdfd-f9024ac896b5"
+                                                                 },
+                                                    "type":  "Http",
+                                                    "inputs":  {
+                                                                   "method":  "POST",
+                                                                   "uri":  "https://router.huggingface.co/v1/chat/completions",
+                                                                   "headers":  {
+                                                                                   "Authorization":  "Bearer REDACTED-HUGGINGFACE-TOKEN",
+                                                                                   "Content-Type":  "application/json"
+                                                                               },
+                                                                   "body":  {
+                                                                                "model":  "openai/gpt-oss-120b:fireworks-ai",
+                                                                                "messages":  "@variables(\u0027varMessages\u0027)",
+                                                                                "max_tokens":  1200,
+                                                                                "temperature":  0.2
+                                                                            }
+                                                               },
+                                                    "runtimeConfiguration":  {
+                                                                                 "contentTransfer":  {
+                                                                                                         "transferMode":  "Chunked"
+                                                                                                     }
+                                                                             }
+                                                },
+                                       "Parse_JSON":  {
+                                                          "runAfter":  {
+                                                                           "HTTP":  [
+                                                                                        "Succeeded"
+                                                                                    ]
+                                                                       },
+                                                          "metadata":  {
+                                                                           "operationMetadataId":  "68c03305-0d39-410e-96d0-a93ee752d2f1"
+                                                                       },
+                                                          "type":  "ParseJson",
+                                                          "inputs":  {
+                                                                         "content":  "@body(\u0027HTTP\u0027)",
+                                                                         "schema":  {
+                                                                                        "type":  "object",
+                                                                                        "properties":  {
+                                                                                                           "choices":  {
+                                                                                                                           "type":  "array",
+                                                                                                                           "items":  {
+                                                                                                                                         "type":  "object",
+                                                                                                                                         "properties":  {
+                                                                                                                                                            "message":  {
+                                                                                                                                                                            "type":  "object",
+                                                                                                                                                                            "properties":  {
+                                                                                                                                                                                               "role":  {
+                                                                                                                                                                                                            "type":  "string"
+                                                                                                                                                                                                        },
+                                                                                                                                                                                               "content":  {
+                                                                                                                                                                                                               "type":  "string"
+                                                                                                                                                                                                           }
+                                                                                                                                                                                           }
+                                                                                                                                                                        }
+                                                                                                                                                        }
+                                                                                                                                     }
+                                                                                                                       }
+                                                                                                       }
+                                                                                    }
+                                                                     }
+                                                      },
+                                       "Compose_Response":  {
+                                                                "runAfter":  {
+                                                                                 "Parse_JSON":  [
+                                                                                                    "Succeeded"
+                                                                                                ]
+                                                                             },
+                                                                "metadata":  {
+                                                                                 "operationMetadataId":  "c30e20b4-228d-4ea5-8527-094e92e9bb8c"
+                                                                             },
+                                                                "type":  "Compose",
+                                                                "inputs":  "@first(body(\u0027Parse_JSON\u0027)?[\u0027choices\u0027])?[\u0027message\u0027]?[\u0027content\u0027]"
+                                                            },
+                                       "Respond_to_a_Power_App_or_flow":  {
+                                                                              "runAfter":  {
+                                                                                               "Append_to_string_variable_varAssistantReply":  [
+                                                                                                                                                   "Succeeded"
+                                                                                                                                               ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "fde8fe7a-4288-4e72-8063-a57dea8169ff"
+                                                                                           },
+                                                                              "type":  "Response",
+                                                                              "kind":  "PowerApp",
+                                                                              "inputs":  {
+                                                                                             "statusCode":  200,
+                                                                                             "body":  {
+                                                                                                          "hf_response":  "@{outputs(\u0027Compose_Response\u0027)}"
+                                                                                                      },
+                                                                                             "schema":  {
+                                                                                                            "type":  "object",
+                                                                                                            "properties":  {
+                                                                                                                               "hf_response":  {
+                                                                                                                                                   "title":  "HF_Response",
+                                                                                                                                                   "x-ms-dynamically-added":  true,
+                                                                                                                                                   "type":  "string"
+                                                                                                                                               }
+                                                                                                                           }
+                                                                                                        }
+                                                                                         }
+                                                                          },
+                                       "Initialize_variable_varConversationJson":  {
+                                                                                       "runAfter":  {
+
+                                                                                                    },
+                                                                                       "metadata":  {
+                                                                                                        "operationMetadataId":  "5f784611-908d-45dc-b28e-93bd8a3c7637"
+                                                                                                    },
+                                                                                       "type":  "InitializeVariable",
+                                                                                       "inputs":  {
+                                                                                                      "variables":  [
+                                                                                                                        {
+                                                                                                                            "name":  "varConversationJson",
+                                                                                                                            "type":  "string"
+                                                                                                                        }
+                                                                                                                    ]
+                                                                                                  }
+                                                                                   },
+                                       "Initialize_variable_varConversation":  {
+                                                                                   "runAfter":  {
+                                                                                                    "Initialize_variable_varConversationJson":  [
+                                                                                                                                                    "Succeeded"
+                                                                                                                                                ]
+                                                                                                },
+                                                                                   "metadata":  {
+                                                                                                    "operationMetadataId":  "809a63d3-0c47-423c-b5fd-bfb7ecf84d70"
+                                                                                                },
+                                                                                   "type":  "InitializeVariable",
+                                                                                   "inputs":  {
+                                                                                                  "variables":  [
+                                                                                                                    {
+                                                                                                                        "name":  "varConversation",
+                                                                                                                        "type":  "array",
+                                                                                                                        "value":  "@if(equals(variables(\u0027varConversationJson\u0027), \u0027\u0027), json(\u0027[]\u0027), json(variables(\u0027varConversationJson\u0027)))\r\n"
+                                                                                                                    }
+                                                                                                                ]
+                                                                                              }
+                                                                               },
+                                       "Initialize_variable_varTruncatedConversation":  {
+                                                                                            "runAfter":  {
+                                                                                                             "Initialize_variable_varConversation":  [
+                                                                                                                                                         "Succeeded"
+                                                                                                                                                     ]
+                                                                                                         },
+                                                                                            "metadata":  {
+                                                                                                             "operationMetadataId":  "40993d8a-ffd2-43b7-ad29-2afbe68d74f7"
+                                                                                                         },
+                                                                                            "type":  "InitializeVariable",
+                                                                                            "inputs":  {
+                                                                                                           "variables":  [
+                                                                                                                             {
+                                                                                                                                 "name":  "varTruncatedConversation",
+                                                                                                                                 "type":  "array",
+                                                                                                                                 "value":  "@if(greater(length(variables(\u0027varConversation\u0027)), 12), skip(variables(\u0027varConversation\u0027), sub(length(variables(\u0027varConversation\u0027)), 12)), variables(\u0027varConversation\u0027))\r\n"
+                                                                                                                             }
+                                                                                                                         ]
+                                                                                                       }
+                                                                                        },
+                                       "Initialize_variable_varMessages":  {
+                                                                               "runAfter":  {
+                                                                                                "Initialize_variable_varTruncatedConversation":  [
+                                                                                                                                                     "Succeeded"
+                                                                                                                                                 ]
+                                                                                            },
+                                                                               "metadata":  {
+                                                                                                "operationMetadataId":  "275f4f8d-0970-49e8-b5bf-77cdc020348c"
+                                                                                            },
+                                                                               "type":  "InitializeVariable",
+                                                                               "inputs":  {
+                                                                                              "variables":  [
+                                                                                                                {
+                                                                                                                    "name":  "varMessages",
+                                                                                                                    "type":  "array",
+                                                                                                                    "value":  [
+                                                                                                                                  {
+                                                                                                                                      "role":  "system",
+                                                                                                                                      "content":  "You are a helpful assistant. Keep answers concise and explicit. If asked to return HTML or code, return only the requested block. Do not include extra explanation."
+                                                                                                                                  }
+                                                                                                                              ]
+                                                                                                                }
+                                                                                                            ]
+                                                                                          }
+                                                                           },
+                                       "Apply_to_each_varTruncatedConversation":  {
+                                                                                      "foreach":  "@variables(\u0027varTruncatedConversation\u0027)",
+                                                                                      "actions":  {
+                                                                                                      "Append_to_array_variable_varMessages":  {
+                                                                                                                                                   "runAfter":  {
+
+                                                                                                                                                                },
+                                                                                                                                                   "metadata":  {
+                                                                                                                                                                    "operationMetadataId":  "007dd443-701e-42b6-b72a-71020fe44aa8"
+                                                                                                                                                                },
+                                                                                                                                                   "type":  "AppendToArrayVariable",
+                                                                                                                                                   "inputs":  {
+                                                                                                                                                                  "name":  "varMessages",
+                                                                                                                                                                  "value":  "@items(\u0027Apply_to_each_varTruncatedConversation\u0027)"
+                                                                                                                                                              }
+                                                                                                                                               }
+                                                                                                  },
+                                                                                      "runAfter":  {
+                                                                                                       "Initialize_variable_varAssistantReply":  [
+                                                                                                                                                     "Succeeded"
+                                                                                                                                                 ]
+                                                                                                   },
+                                                                                      "metadata":  {
+                                                                                                       "operationMetadataId":  "27b82037-06e1-4903-91f2-b0749c769e2f"
+                                                                                                   },
+                                                                                      "type":  "Foreach"
+                                                                                  },
+                                       "Initialize_variable_varAssistantReply":  {
+                                                                                     "runAfter":  {
+                                                                                                      "Initialize_variable_varMessages":  [
+                                                                                                                                              "Succeeded"
+                                                                                                                                          ]
+                                                                                                  },
+                                                                                     "metadata":  {
+                                                                                                      "operationMetadataId":  "801a025c-382a-46b5-b9d3-33026e6319dd"
+                                                                                                  },
+                                                                                     "type":  "InitializeVariable",
+                                                                                     "inputs":  {
+                                                                                                    "variables":  [
+                                                                                                                      {
+                                                                                                                          "name":  "varAssistantReply",
+                                                                                                                          "type":  "string"
+                                                                                                                      }
+                                                                                                                  ]
+                                                                                                }
+                                                                                 },
+                                       "Append_to_string_variable_varAssistantReply":  {
+                                                                                           "runAfter":  {
+                                                                                                            "Compose_Response":  [
+                                                                                                                                     "Succeeded"
+                                                                                                                                 ]
+                                                                                                        },
+                                                                                           "metadata":  {
+                                                                                                            "operationMetadataId":  "a4129afa-9510-4e55-a030-7b17ee5f17f7"
+                                                                                                        },
+                                                                                           "type":  "AppendToStringVariable",
+                                                                                           "inputs":  {
+                                                                                                          "name":  "varAssistantReply",
+                                                                                                          "value":  "@first(body(\u0027Parse_JSON\u0027)?[\u0027choices\u0027])?[\u0027message\u0027]?[\u0027content\u0027]\r\n"
+                                                                                                      }
+                                                                                       },
+                                       "Compose_Conversation_Persistence":  {
+                                                                                "runAfter":  {
+                                                                                                 "Respond_to_a_Power_App_or_flow":  [
+                                                                                                                                        "Succeeded"
+                                                                                                                                    ]
+                                                                                             },
+                                                                                "metadata":  {
+                                                                                                 "operationMetadataId":  "554defe4-3b04-4fc7-b203-12273be72380"
+                                                                                             },
+                                                                                "type":  "Compose",
+                                                                                "inputs":  "@ JSON( concat( variables(\u0027varConversation\u0027), variables(\u0027varAssistantReply\u0027) ) )"
+                                                                            }
+                                   }
+                   }
+}

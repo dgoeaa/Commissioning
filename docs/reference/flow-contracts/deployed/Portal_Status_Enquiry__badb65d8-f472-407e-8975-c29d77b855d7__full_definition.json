@@ -1,0 +1,95 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:08:30Z",
+    "workflow_identity":  {
+                              "internal_name":  "badb65d8-f472-407e-8975-c29d77b855d7",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "Portal_Status_Enquiry",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "undefined",
+                       "parameters":  {
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              },
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "Http",
+                                                       "inputs":  {
+                                                                      "triggerAuthenticationType":  "Tenant"
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Initialize_variable_varUploads":  {
+                                                                              "runAfter":  {
+
+                                                                                           },
+                                                                              "type":  "InitializeVariable",
+                                                                              "inputs":  {
+                                                                                             "variables":  [
+                                                                                                               {
+                                                                                                                   "name":  "varUploads",
+                                                                                                                   "type":  "array",
+                                                                                                                   "value":  [
+
+                                                                                                                             ]
+                                                                                                               }
+                                                                                                           ]
+                                                                                         }
+                                                                          },
+                                       "Initialize_variable_varReferenceId":  {
+                                                                                  "runAfter":  {
+                                                                                                   "Initialize_variable_varUploads":  [
+                                                                                                                                          "Succeeded"
+                                                                                                                                      ]
+                                                                                               },
+                                                                                  "type":  "InitializeVariable",
+                                                                                  "inputs":  {
+                                                                                                 "variables":  [
+                                                                                                                   {
+                                                                                                                       "name":  "varReferenceId",
+                                                                                                                       "type":  "string",
+                                                                                                                       "value":  ""
+                                                                                                                   }
+                                                                                                               ]
+                                                                                             }
+                                                                              },
+                                       "Initialize_variable_varVerifiedSubmission":  {
+                                                                                         "runAfter":  {
+                                                                                                          "Initialize_variable_varReferenceId":  [
+                                                                                                                                                     "Succeeded"
+                                                                                                                                                 ]
+                                                                                                      },
+                                                                                         "type":  "InitializeVariable",
+                                                                                         "inputs":  {
+                                                                                                        "variables":  [
+                                                                                                                          {
+                                                                                                                              "name":  "varVerifiedSubmission",
+                                                                                                                              "type":  "boolean",
+                                                                                                                              "value":  false
+                                                                                                                          }
+                                                                                                                      ]
+                                                                                                    }
+                                                                                     }
+                                   }
+                   }
+}

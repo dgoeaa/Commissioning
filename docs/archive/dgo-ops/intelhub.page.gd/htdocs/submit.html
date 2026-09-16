@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>NITDA Intelligent Portal – Submit Document</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'nitda-green': '#008751',
+            'nitda-deep': '#006A4E',
+            'nitda-accent': '#E6F6F0'
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <link href="brand.css" rel="stylesheet">
+</head>
+<body class="bg-slate-950 text-slate-50 font-inter">
+  <div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-slate-950/90 border-b border-slate-800 sticky top-0 z-30 backdrop-blur">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="landing.html" class="flex items-center gap-2">
+            <div class="h-9 w-9 rounded-2xl bg-nitda-green/10 flex items-center justify-center text-nitda-green">
+              <i class="fas fa-shield-alt text-lg" aria-hidden="true"></i>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-sm font-semibold text-slate-50 tracking-tight">NITDA Intelligent Portal</span>
+              <span class="text-[11px] text-slate-400 hidden sm:block">Digital Submission, Tracking &amp; Support</span>
+            </div>
+          </a>
+          <nav class="hidden md:flex items-center gap-6 text-sm text-slate-200">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit.html" class="nav-link">Submit</a>
+            <a href="track.html" class="nav-link">Track</a>
+            <a href="support.html" class="nav-link">Support</a>
+            <a href="ADMINdashboard.html" class="nav-link">Admin</a>
+          </nav>
+          <button id="nav-toggle" class="md:hidden inline-flex items-center justify-center rounded-xl border border-slate-700 px-2.5 py-1.5 text-slate-200 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-nitda-green focus:ring-offset-2 focus:ring-offset-slate-950" aria-label="Toggle navigation" aria-expanded="false">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+        <nav id="mobile-nav" class="md:hidden hidden border-t border-slate-800 pb-3">
+          <div class="flex flex-col gap-1 pt-2 text-sm text-slate-200">
+            <a href="index.html" class="mobile-nav-link">Home</a>
+            <a href="submit.html" class="mobile-nav-link">Submit</a>
+            <a href="track.html" class="mobile-nav-link">Track</a>
+            <a href="support.html" class="mobile-nav-link">Support</a>
+            <a href="ADMINdashboard.html" class="mobile-nav-link">Admin</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="flex-1">
+      <section class="py-10 sm:py-12 lg:py-16">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="mb-6">
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-50 mb-2">Submit a new document</h1>
+            <p class="text-sm text-slate-300 max-w-2xl">
+              Provide basic information about your document, attach the file, and receive a tracking ID you can use to monitor progress.
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-slate-800 bg-slate-900/60 shadow-xl shadow-emerald-500/10 p-5 sm:p-6">
+            <!-- Loading panel -->
+            <div id="submit-loading-panel" class="hidden rounded-2xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-4 text-xs flex items-start gap-3">
+              <span class="inline-flex h-4 w-4 border-2 border-emerald-200 border-t-transparent rounded-full animate-spin mt-0.5" aria-hidden="true"></span>
+              <div>
+                <p class="font-semibold text-emerald-100 mb-1">Submitting your document...</p>
+                <p class="text-[11px] text-emerald-50/90">
+                  Please wait while your file is securely uploaded and processed. This may take a few seconds for larger documents.
+                </p>
+              </div>
+            </div>
+
+            <!-- Form -->
+            <form id="submission-form" class="space-y-4" novalidate>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="submitterName" class="form-label">Full name</label>
+                  <input id="submitterName" name="submitterName" type="text" class="form-input" autocomplete="name" required />
+                </div>
+                <div>
+                  <label for="emailAddress" class="form-label">Official email address</label>
+                  <input id="emailAddress" name="emailAddress" type="email" class="form-input" autocomplete="email" required />
+                </div>
+              </div>
+
+              <div>
+                <label for="companyName" class="form-label">Organisation / Company name</label>
+                <input id="companyName" name="companyName" type="text" class="form-input" required />
+              </div>
+
+              <div>
+                <label for="documentType" class="form-label">Document type</label>
+                <select id="documentType" name="documentType" class="form-input" required>
+                  <option value="">Select a type...</option>
+                  <option value="Policy">Policy Document</option>
+                  <option value="Proposal">Proposal</option>
+                  <option value="Report">Report</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="file" class="form-label flex items-center justify-between">
+                  <span>Attach document</span>
+                  <span class="text-[11px] text-slate-500">Max 10MB – PDF, DOC, DOCX, XLSX</span>
+                </label>
+                <input id="file" name="file" type="file" class="form-file" accept=".pdf,.doc,.docx,.xlsx" required />
+              </div>
+
+              <div id="status-box" class="space-y-2" aria-live="polite"></div>
+
+              <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between pt-2">
+                <button id="submit-btn" type="submit" class="inline-flex items-center justify-center rounded-2xl bg-nitda-green px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 hover:bg-emerald-600 disabled:opacity-60 disabled:cursor-not-allowed">
+                  <span id="submit-btn-label">Submit document</span>
+                </button>
+                <button type="button" id="reset-btn" class="inline-flex items-center justify-center rounded-2xl border border-slate-700 px-4 py-2.5 text-xs sm:text-sm text-slate-200 hover:bg-slate-900/60">
+                  Clear form
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preview modal -->
+      <div id="submit-preview-modal" class="fixed inset-0 z-40 hidden items-center justify-center bg-black/60 px-4">
+        <div class="max-w-lg w-full mx-auto rounded-3xl border border-slate-800 bg-slate-900 p-5 sm:p-6 shadow-2xl">
+          <h2 class="text-sm font-semibold text-slate-100 mb-2">Confirm submission</h2>
+          <p class="text-[12px] text-slate-400 mb-3">
+            Review the details below. If everything looks correct, click <span class="font-semibold text-emerald-300">Confirm &amp; Submit</span> to proceed.
+          </p>
+          <dl class="text-[12px] text-slate-200 space-y-1.5 mb-4">
+            <div class="flex justify-between gap-3">
+              <dt class="text-slate-400">Name</dt>
+              <dd id="preview-submit-name" class="font-medium text-right"></dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-slate-400">Email</dt>
+              <dd id="preview-submit-email" class="font-medium text-right"></dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-slate-400">Organisation</dt>
+              <dd id="preview-submit-company" class="font-medium text-right"></dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-slate-400">Document type</dt>
+              <dd id="preview-submit-type" class="font-medium text-right"></dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-slate-400">File</dt>
+              <dd id="preview-submit-file" class="font-medium text-right"></dd>
+            </div>
+          </dl>
+          <div class="flex justify-end gap-2">
+            <button id="submit-preview-cancel" class="inline-flex items-center rounded-2xl border border-slate-700 px-3 py-1.5 text-[12px] text-slate-200 hover:bg-slate-800/80">
+              Cancel
+            </button>
+            <button id="submit-preview-confirm" class="inline-flex items-center rounded-2xl bg-nitda-green px-3.5 py-1.5 text-[12px] font-semibold text-white shadow-md shadow-emerald-500/25 hover:bg-emerald-600">
+              Confirm &amp; Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="border-t border-slate-800 bg-slate-950/90">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500">
+        <p>&copy; 2025 NITDA Intelligent Portal. All rights reserved.</p>
+        <p class="flex items-center gap-2">
+          <span class="inline-flex h-1 w-1 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true"></span>
+          <span>Secure digital services for Nigeria&apos;s public sector.</span>
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Mobile nav
+    (function() {
+      const toggle = document.getElementById('nav-toggle');
+      const mobileNav = document.getElementById('mobile-nav');
+      if (toggle && mobileNav) {
+        toggle.addEventListener('click', function () {
+          const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+          toggle.setAttribute('aria-expanded', String(!isExpanded));
+          mobileNav.classList.toggle('hidden');
+        });
+      }
+    })();
+
+    // Exact Power Automate URL (unchanged)
+    const SUBMISSION_FLOW_URL = "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/1ff7714c11a74fa4a876f8f6a79b64d2/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ROTATE_ME";
+
+    // Schema used:
+    // {
+    //   "UserId": "string",
+    //   "SubmitterName": "string",
+    //   "EmailAddress": "string",
+    //   "CompanyName": "string",
+    //   "DocumentType": "string",
+    //   "FileName": "string",
+    //   "FileContentBase64": "string"
+    // }
+
+    const MAX_FILE_SIZE_MB = 10;
+    let pendingSubmission = null;
+
+    function setSubmittingUI(isSubmitting) {
+      const form = document.getElementById('submission-form');
+      const loading = document.getElementById('submit-loading-panel');
+      if (!form || !loading) return;
+      if (isSubmitting) {
+        form.classList.add('hidden');
+        loading.classList.remove('hidden');
+      } else {
+        loading.classList.add('hidden');
+        form.classList.remove('hidden');
+      }
+    }
+
+    function sanitizeText(value) {
+      return String(value || "")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function showStatus(type, title, message, extraHtml) {
+      const box = document.getElementById('status-box');
+      if (!box) return;
+      let colorClasses = 'border-emerald-500/40 bg-emerald-500/10 text-emerald-100';
+      let icon = '<i class="fas fa-check-circle mr-2" aria-hidden="true"></i>';
+      if (type === 'error') {
+        colorClasses = 'border-red-500/40 bg-red-500/10 text-red-100';
+        icon = '<i class="fas fa-circle-exclamation mr-2" aria-hidden="true"></i>';
+      } else if (type === 'info') {
+        colorClasses = 'border-sky-500/40 bg-sky-500/10 text-sky-100';
+        icon = '<i class="fas fa-info-circle mr-2" aria-hidden="true"></i>';
+      }
+      box.innerHTML = `
+        <div class="rounded-2xl border ${colorClasses} px-3 py-2.5 text-xs">
+          <div class="flex items-start gap-2">
+            <div class="mt-0.5">${icon}</div>
+            <div>
+              <p class="font-semibold mb-0.5">${sanitizeText(title)}</p>
+              <p class="text-[11px] opacity-90">${sanitizeText(message || "")}</p>
+              ${extraHtml || ""}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Reset
+    document.getElementById('reset-btn')?.addEventListener('click', function () {
+      const form = document.getElementById('submission-form');
+      form?.reset();
+      const box = document.getElementById('status-box');
+      if (box) box.innerHTML = '';
+    });
+
+    // Handle form submit (opens preview)
+    const submissionForm = document.getElementById('submission-form');
+    if (submissionForm) {
+      submissionForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const submitterName = document.getElementById('submitterName').value.trim();
+        const emailAddress = document.getElementById('emailAddress').value.trim();
+        const companyName = document.getElementById('companyName').value.trim();
+        const documentType = document.getElementById('documentType').value.trim();
+        const fileInput = document.getElementById('file');
+        const file = fileInput.files[0];
+
+        if (!submitterName || !emailAddress || !companyName || !documentType || !file) {
+          showStatus('error', 'Missing required information', 'Please complete all required fields and attach a document before submitting.');
+          return;
+        }
+
+        if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+          showStatus('error', 'File is too large', 'Maximum allowed size is ' + MAX_FILE_SIZE_MB + ' MB.');
+          return;
+        }
+
+        // Prepare preview modal
+        const previewName = document.getElementById('preview-submit-name');
+        const previewEmail = document.getElementById('preview-submit-email');
+        const previewCompany = document.getElementById('preview-submit-company');
+        const previewType = document.getElementById('preview-submit-type');
+        const previewFile = document.getElementById('preview-submit-file');
+        const modal = document.getElementById('submit-preview-modal');
+
+        if (previewName && previewEmail && previewCompany && previewType && previewFile && modal) {
+          previewName.innerHTML = sanitizeText(submitterName);
+          previewEmail.innerHTML = sanitizeText(emailAddress);
+          previewCompany.innerHTML = sanitizeText(companyName);
+          previewType.innerHTML = sanitizeText(documentType);
+          const sizeKb = Math.round(file.size / 1024);
+          previewFile.innerHTML = sanitizeText(file.name) + ' (' + sizeKb + ' KB)';
+          modal.classList.remove('hidden');
+        }
+
+        pendingSubmission = {
+          submitterName,
+          emailAddress,
+          companyName,
+          documentType,
+          file
+        };
+      });
+    }
+
+    // Preview modal actions
+    (function () {
+      const modal = document.getElementById('submit-preview-modal');
+      const cancelBtn = document.getElementById('submit-preview-cancel');
+      const confirmBtn = document.getElementById('submit-preview-confirm');
+
+      function closeModal() {
+        if (modal) modal.classList.add('hidden');
+      }
+
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', function () {
+          closeModal();
+        });
+      }
+
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', function () {
+          if (!pendingSubmission) {
+            closeModal();
+            return;
+          }
+          closeModal();
+          performSubmission(pendingSubmission);
+        });
+      }
+    })();
+
+    function performSubmission(data) {
+      const box = document.getElementById('status-box');
+      if (box) box.innerHTML = '';
+      if (!data || !data.file) return;
+
+      setSubmittingUI(true);
+
+      const reader = new FileReader();
+      reader.onload = async function (e) {
+        try {
+          const dataUrl = e.target.result;
+          const base64 = dataUrl.split(',')[1] || dataUrl;
+
+          const payload = {
+            UserId: data.emailAddress,
+            SubmitterName: data.submitterName,
+            EmailAddress: data.emailAddress,
+            CompanyName: data.companyName,
+            DocumentType: data.documentType,
+            FileName: data.file.name,
+            FileContentBase64: base64
+          };
+
+          const response = await fetch(SUBMISSION_FLOW_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) {
+            throw new Error('Submission failed with status ' + response.status);
+          }
+
+          let responseData = null;
+          try {
+            responseData = await response.json();
+          } catch (err) {
+            // If no JSON, ignore
+          }
+
+          const trackingId = responseData && responseData.trackingId ? responseData.trackingId : null;
+
+          let extraHtml = '';
+          if (trackingId) {
+            const safeId = sanitizeText(trackingId);
+            extraHtml = `
+              <div class="mt-3 rounded-2xl bg-slate-950/40 border border-slate-700 px-3 py-2">
+                <p class="text-[11px] text-slate-300 mb-1">Your tracking ID</p>
+                <code class="block rounded-xl bg-slate-900 px-3 py-1.5 text-[11px] text-emerald-300 font-mono break-all">${safeId}</code>
+                <a href="track.html" class="inline-flex items-center mt-2 rounded-xl border border-emerald-500/40 bg-emerald-500/5 px-3 py-1.5 text-[11px] text-emerald-100 hover:bg-emerald-500/15">
+                  Track this request
+                  <i class="fas fa-arrow-right ml-1 text-[9px]" aria-hidden="true"></i>
+                </a>
+              </div>
+            `;
+          }
+
+          showStatus(
+            'success',
+            'Document submitted successfully',
+            trackingId
+              ? 'Keep your tracking ID safe. You can use it any time to check the status of your request.'
+              : 'Your document was submitted. If a tracking ID is not visible, please contact support for confirmation.',
+            extraHtml
+          );
+
+          const form = document.getElementById('submission-form');
+          form?.reset();
+          pendingSubmission = null;
+        } catch (err) {
+          console.error(err);
+          showStatus('error', 'Could not complete submission', 'Please try again in a moment or contact support if the issue persists.');
+        } finally {
+          setSubmittingUI(false);
+        }
+      };
+
+      reader.onerror = function () {
+        showStatus('error', 'File could not be read', 'Please choose the file again and try submitting one more time.');
+        setSubmittingUI(false);
+      };
+
+      reader.readAsDataURL(data.file);
+    }
+  </script>
+</body>
+</html>

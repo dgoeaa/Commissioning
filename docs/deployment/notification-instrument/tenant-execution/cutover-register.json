@@ -1,0 +1,17 @@
+{
+  "schema": "nitda-notification-cutover/v1",
+  "environment": null,
+  "releaseId": "notification-remediation/1.0.0",
+  "status": "NOT_STARTED",
+  "flows": [],
+  "rollbackRehearsed": false,
+  "rollbackEvidence": null,
+  "hypercare": {
+    "businessOwner": null,
+    "technicalOwner": null,
+    "startUtc": null,
+    "endCriteria": null,
+    "dailyReviewTime": null,
+    "escalationRoute": null
+  }
+}

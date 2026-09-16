@@ -1,0 +1,7 @@
+{
+  "generated": "2026-07-30T19:02:35.838488+00:00",
+  "package": "dgo_leanest_operational_package",
+  "policy": "ECM_ActivityHub_Portal only; root htdocs/runtime/design-system/templates/quality/docs excluded",
+  "ECM_ActivityHub_Portal_file_count_before_manifest": 53,
+  "status": "PASS"
+}

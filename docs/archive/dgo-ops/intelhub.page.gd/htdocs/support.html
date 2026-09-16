@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>NITDA Intelligent Portal – Support</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'nitda-green': '#008751',
+            'nitda-deep': '#006A4E',
+            'nitda-accent': '#E6F6F0'
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <link href="brand.css" rel="stylesheet">
+</head>
+<body class="bg-slate-950 text-slate-50 font-inter">
+  <div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-slate-950/90 border-b border-slate-800 sticky top-0 z-30 backdrop-blur">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="landing.html" class="flex items-center gap-2">
+            <div class="h-9 w-9 rounded-2xl bg-nitda-green/10 flex items-center justify-center text-nitda-green">
+              <i class="fas fa-shield-alt text-lg" aria-hidden="true"></i>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-sm font-semibold text-slate-50 tracking-tight">NITDA Intelligent Portal</span>
+              <span class="text-[11px] text-slate-400 hidden sm:block">Digital Submission, Tracking &amp; Support</span>
+            </div>
+          </a>
+          <nav class="hidden md:flex items-center gap-6 text-sm text-slate-200">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit.html" class="nav-link">Submit</a>
+            <a href="track.html" class="nav-link">Track</a>
+            <a href="support.html" class="nav-link">Support</a>
+            <a href="ADMINdashboard.html" class="nav-link">Admin</a>
+          </nav>
+          <button id="nav-toggle" class="md:hidden inline-flex items-center justify-center rounded-xl border border-slate-700 px-2.5 py-1.5 text-slate-200 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-nitda-green focus:ring-offset-2 focus:ring-offset-slate-950" aria-label="Toggle navigation" aria-expanded="false">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+        <nav id="mobile-nav" class="md:hidden hidden border-t border-slate-800 pb-3">
+          <div class="flex flex-col gap-1 pt-2 text-sm text-slate-200">
+            <a href="index.html" class="mobile-nav-link">Home</a>
+            <a href="submit.html" class="mobile-nav-link">Submit</a>
+            <a href="track.html" class="mobile-nav-link">Track</a>
+            <a href="support.html" class="mobile-nav-link">Support</a>
+            <a href="ADMINdashboard.html" class="mobile-nav-link">Admin</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="flex-1">
+      <section class="py-10 sm:py-12 lg:py-16">
+        <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="mb-6">
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-50 mb-2">Contact support</h1>
+            <p class="text-sm text-slate-300">
+              If you are experiencing issues with submissions, tracking IDs, or general access to the portal, send a quick message and the support team will reach out.
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-slate-800 bg-slate-900/60 shadow-xl shadow-emerald-500/10 p-5 sm:p-6">
+            <!-- Loading panel -->
+            <div id="support-loading-panel" class="hidden rounded-2xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-4 text-xs flex items-start gap-3">
+              <span class="inline-flex h-4 w-4 border-2 border-emerald-200 border-t-transparent rounded-full animate-spin mt-0.5" aria-hidden="true"></span>
+              <div>
+                <p class="font-semibold text-emerald-100 mb-1">Sending your message...</p>
+                <p class="text-[11px] text-emerald-50/90">
+                  Please wait while we pass your details securely to the support workflow. You will receive a response via email.
+                </p>
+              </div>
+            </div>
+
+            <!-- Form -->
+            <form id="support-form" class="space-y-4" novalidate>
+              <div>
+                <label for="supportEmail" class="form-label">Your email address</label>
+                <input id="supportEmail" name="supportEmail" type="email" class="form-input" autocomplete="email" required />
+              </div>
+
+              <div>
+                <label for="comments" class="form-label">How can we help?</label>
+                <textarea id="comments" name="comments" rows="4" class="form-textarea" required></textarea>
+              </div>
+
+              <div id="support-status-box" class="space-y-2" aria-live="polite"></div>
+
+              <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between pt-2">
+                <button id="support-btn" type="submit" class="inline-flex items-center justify-center rounded-2xl bg-nitda-green px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 hover:bg-emerald-600 disabled:opacity-60 disabled:cursor-not-allowed">
+                  <span id="support-btn-label">Send message</span>
+                </button>
+                <button type="button" id="support-reset-btn" class="inline-flex items-center justify-center rounded-2xl border border-slate-700 px-4 py-2.5 text-xs sm:text-sm text-slate-200 hover:bg-slate-900/60">
+                  Clear form
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preview modal -->
+      <div id="support-preview-modal" class="fixed inset-0 z-40 hidden items-center justify-center bg-black/60 px-4">
+        <div class="max-w-md w-full mx-auto rounded-3xl border border-slate-800 bg-slate-900 p-5 sm:p-6 shadow-2xl">
+          <h2 class="text-sm font-semibold text-slate-100 mb-2">Confirm support request</h2>
+          <p class="text-[12px] text-slate-400 mb-3">
+            A support case will be created using the information below.
+          </p>
+          <dl class="text-[12px] text-slate-200 space-y-1.5 mb-4">
+            <div class="flex justify-between gap-3">
+              <dt class="text-slate-400">Email</dt>
+              <dd id="preview-support-email" class="font-medium text-right"></dd>
+            </div>
+            <div>
+              <dt class="text-slate-400 mb-1">Message</dt>
+              <dd id="preview-support-comments" class="font-medium text-left whitespace-pre-line text-[11px] bg-slate-950/60 border border-slate-800 rounded-2xl px-3 py-2 max-h-32 overflow-auto"></dd>
+            </div>
+          </dl>
+          <div class="flex justify-end gap-2">
+            <button id="support-preview-cancel" class="inline-flex items-center rounded-2xl border border-slate-700 px-3 py-1.5 text-[12px] text-slate-200 hover:bg-slate-800/80">
+              Cancel
+            </button>
+            <button id="support-preview-confirm" class="inline-flex items-center rounded-2xl bg-nitda-green px-3.5 py-1.5 text-[12px] font-semibold text-white shadow-md shadow-emerald-500/25 hover:bg-emerald-600">
+              Confirm &amp; Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="border-t border-slate-800 bg-slate-950/90">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500">
+        <p>&copy; 2025 NITDA Intelligent Portal. All rights reserved.</p>
+        <p class="flex items-center gap-2">
+          <span class="inline-flex h-1 w-1 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true"></span>
+          <span>Secure digital services for Nigeria&apos;s public sector.</span>
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Mobile nav
+    (function() {
+      const toggle = document.getElementById('nav-toggle');
+      const mobileNav = document.getElementById('mobile-nav');
+      if (toggle && mobileNav) {
+        toggle.addEventListener('click', function () {
+          const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+          toggle.setAttribute('aria-expanded', String(!isExpanded));
+          mobileNav.classList.toggle('hidden');
+        });
+      }
+    })();
+
+    // Exact Power Automate URL (unchanged)
+    const SUPPORT_FLOW_URL = "https://defaultca6a4b3f912349bcbcb927085ebbf1.a1.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3fc71cc29d15481291fd341def327572/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ROTATE_ME";
+
+    // Schema used:
+    // {
+    //   "emailAddress": "string",
+    //   "Comments": "string"
+    // }
+
+    let pendingSupport = null;
+
+    function setSupportLoading(isLoading) {
+      const form = document.getElementById('support-form');
+      const loading = document.getElementById('support-loading-panel');
+      if (!form || !loading) return;
+      if (isLoading) {
+        form.classList.add('hidden');
+        loading.classList.remove('hidden');
+      } else {
+        loading.classList.add('hidden');
+        form.classList.remove('hidden');
+      }
+    }
+
+    function sanitizeText(value) {
+      return String(value || "")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function showSupportStatus(type, title, message) {
+      const box = document.getElementById('support-status-box');
+      if (!box) return;
+      let colorClasses = 'border-emerald-500/40 bg-emerald-500/10 text-emerald-100';
+      let icon = '<i class="fas fa-circle-check mr-2" aria-hidden="true"></i>';
+      if (type === 'error') {
+        colorClasses = 'border-red-500/40 bg-red-500/10 text-red-100';
+        icon = '<i class="fas fa-circle-exclamation mr-2" aria-hidden="true"></i>';
+      } else if (type === 'info') {
+        colorClasses = 'border-sky-500/40 bg-sky-500/10 text-sky-100';
+        icon = '<i class="fas fa-info-circle mr-2" aria-hidden="true"></i>';
+      }
+      box.innerHTML = `
+        <div class="rounded-2xl border ${colorClasses} px-3 py-2.5 text-xs">
+          <div class="flex items-start gap-2">
+            <div class="mt-0.5">${icon}</div>
+            <div>
+              <p class="font-semibold mb-0.5">${sanitizeText(title)}</p>
+              <p class="text-[11px] opacity-90">${sanitizeText(message || "")}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Reset
+    document.getElementById('support-reset-btn')?.addEventListener('click', function () {
+      const form = document.getElementById('support-form');
+      form?.reset();
+      const box = document.getElementById('support-status-box');
+      if (box) box.innerHTML = '';
+    });
+
+    // Form submit (open preview)
+    const supportForm = document.getElementById('support-form');
+    if (supportForm) {
+      supportForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const email = document.getElementById('supportEmail').value.trim();
+        const comments = document.getElementById('comments').value.trim();
+
+        if (!email || !comments) {
+          showSupportStatus('error', 'Missing information', 'Please provide both your email address and a short description of the issue.');
+          return;
+        }
+
+        if (!SUPPORT_FLOW_URL) {
+          showSupportStatus('error', 'Support endpoint not configured', 'Please configure SUPPORT_FLOW_URL in support.html.');
+          return;
+        }
+
+        const modal = document.getElementById('support-preview-modal');
+        const pEmail = document.getElementById('preview-support-email');
+        const pComments = document.getElementById('preview-support-comments');
+        if (modal && pEmail && pComments) {
+          pEmail.innerHTML = sanitizeText(email);
+          pComments.innerHTML = sanitizeText(comments);
+          modal.classList.remove('hidden');
+        }
+
+        pendingSupport = { email, comments };
+      });
+    }
+
+    // Preview modal actions
+    (function () {
+      const modal = document.getElementById('support-preview-modal');
+      const cancelBtn = document.getElementById('support-preview-cancel');
+      const confirmBtn = document.getElementById('support-preview-confirm');
+
+      function closeModal() {
+        if (modal) modal.classList.add('hidden');
+      }
+
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', function () {
+          closeModal();
+        });
+      }
+
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', function () {
+          if (!pendingSupport) {
+            closeModal();
+            return;
+          }
+          closeModal();
+          performSupport(pendingSupport);
+        });
+      }
+    })();
+
+    async function performSupport(data) {
+      const box = document.getElementById('support-status-box');
+      if (box) box.innerHTML = '';
+
+      setSupportLoading(true);
+
+      try {
+        const payload = {
+          emailAddress: data.email,
+          Comments: data.comments
+        };
+
+        const response = await fetch(SUPPORT_FLOW_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error('Request failed with status ' + response.status);
+        }
+
+        showSupportStatus(
+          'success',
+          'Message sent',
+          'Your message has been sent successfully. A member of the support team will contact you via email.'
+        );
+        const form = document.getElementById('support-form');
+        form?.reset();
+        pendingSupport = null;
+      } catch (err) {
+        console.error(err);
+        showSupportStatus(
+          'error',
+          'Could not send message',
+          'Please try again shortly. If the problem persists, reach out through your usual support channels.'
+        );
+      } finally {
+        setSupportLoading(false);
+      }
+    }
+  </script>
+</body>
+</html>

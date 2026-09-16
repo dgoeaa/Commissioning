@@ -1,0 +1,951 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "method": "PUT"
+        }
+      }
+    },
+    "actions": {
+      "Scope_Upload_Main": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Upload_Ticket": {
+            "type": "Compose",
+            "inputs": "@trim(coalesce(triggerOutputs()?['headers']?['X-Upload-Ticket'], triggerOutputs()?['headers']?['x-upload-ticket'], ''))",
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "d38c6142-bd4a-4c05-ace8-f10624be2f47"
+            }
+          },
+          "Compose_Source_Ip": {
+            "type": "Compose",
+            "inputs": "@trim(first(split(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'], triggerOutputs()?['headers']?['X-Azure-ClientIP'], 'unknown'), ',')))",
+            "runAfter": {
+              "Compose_Upload_Ticket": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "8dc55202-f2d5-453e-a182-8fe45a35215b"
+            }
+          },
+          "Condition_Upload_Ticket_Missing": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@equals(length(outputs('Compose_Upload_Ticket')), 0)",
+                    true
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Response_Upload_Ticket_Missing": {
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                  "statusCode": 403,
+                  "headers": {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "PUT, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID, X-Upload-Ticket"
+                  },
+                  "body": {
+                    "stored": false,
+                    "reason": "missing-upload-ticket"
+                  }
+                },
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "4f76a6d6-2c98-4a91-95c2-b3f646fac568"
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Get_Rate_Limit_Upload_Source": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                      "table": "NITDA_Portal_RateLimits",
+                      "$filter": "Title eq '@{replace(concat('UPLOAD_IP:', outputs('Compose_Source_Ip')), '''', '''''')}'",
+                      "$top": 1
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                      "operationId": "GetItems",
+                      "connectionName": "shared_sharepointonline"
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "fa5f6089-fbb4-46e9-a2f1-6590d2cfd662"
+                  }
+                },
+                "Compose_RL_Upload_Source_Exists": {
+                  "type": "Compose",
+                  "inputs": "@greater(length(outputs('Get_Rate_Limit_Upload_Source')?['body/value']), 0)",
+                  "runAfter": {
+                    "Get_Rate_Limit_Upload_Source": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "78567ee6-1d85-4522-a3be-4a6f41988c7f"
+                  }
+                },
+                "Compose_RL_Upload_Source_Window_Expired": {
+                  "type": "Compose",
+                  "inputs": "@if(outputs('Compose_RL_Upload_Source_Exists'), greater(sub(ticks(utcNow()), ticks(first(outputs('Get_Rate_Limit_Upload_Source')?['body/value']?['WindowStartUtc']))), 36000000000), true)",
+                  "runAfter": {
+                    "Compose_RL_Upload_Source_Exists": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "03e89387-788a-4844-a2d0-8412738cb49b"
+                  }
+                },
+                "Compose_RL_Upload_Source_Effective_Count": {
+                  "type": "Compose",
+                  "inputs": "@if(outputs('Compose_RL_Upload_Source_Window_Expired'), 0, if(outputs('Compose_RL_Upload_Source_Exists'), first(outputs('Get_Rate_Limit_Upload_Source')?['body/value']?['RequestCount']), 0))",
+                  "runAfter": {
+                    "Compose_RL_Upload_Source_Window_Expired": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "e4179a6c-27ac-481c-8e45-9f50f6e4a96e"
+                  }
+                },
+                "Compose_RL_Upload_Source_New_Count": {
+                  "type": "Compose",
+                  "inputs": "@add(outputs('Compose_RL_Upload_Source_Effective_Count'), 1)",
+                  "runAfter": {
+                    "Compose_RL_Upload_Source_Effective_Count": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "2e115385-472e-4132-9e34-bfbb5d431a95"
+                  }
+                },
+                "Condition_RL_Upload_Source_Allowed": {
+                  "type": "If",
+                  "expression": {
+                    "and": [
+                      {
+                        "equals": [
+                          "@less(outputs('Compose_RL_Upload_Source_Effective_Count'), 100)",
+                          true
+                        ]
+                      }
+                    ]
+                  },
+                  "actions": {
+                    "Condition_RL_Upload_Source_Bucket_Exists": {
+                      "type": "If",
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@outputs('Compose_RL_Upload_Source_Exists')",
+                              true
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "Update_Rate_Limit_Upload_Source": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "parameters": {
+                              "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                              "table": "NITDA_Portal_RateLimits",
+                              "id": "@first(outputs('Get_Rate_Limit_Upload_Source')?['body/value']?['ID'])",
+                              "item/RequestCount": "@outputs('Compose_RL_Upload_Source_New_Count')",
+                              "item/WindowStartUtc": "@if(outputs('Compose_RL_Upload_Source_Window_Expired'), utcNow(), first(outputs('Get_Rate_Limit_Upload_Source')?['body/value']?['WindowStartUtc']))",
+                              "item/UpdatedAtUtc": "@utcNow()"
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                              "operationId": "PatchItem",
+                              "connectionName": "shared_sharepointonline"
+                            }
+                          },
+                          "runAfter": {},
+                          "metadata": {
+                            "operationMetadataId": "b662b598-1008-4491-a7e6-97a6eabe570d"
+                          }
+                        }
+                      },
+                      "else": {
+                        "actions": {
+                          "Create_Rate_Limit_Upload_Source": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                "table": "NITDA_Portal_RateLimits",
+                                "item/Title": "@concat('UPLOAD_IP:', outputs('Compose_Source_Ip'))",
+                                "item/WindowStartUtc": "@utcNow()",
+                                "item/RequestCount": 1,
+                                "item/UpdatedAtUtc": "@utcNow()"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                "operationId": "PostItem",
+                                "connectionName": "shared_sharepointonline"
+                              }
+                            },
+                            "runAfter": {},
+                            "metadata": {
+                              "operationMetadataId": "305f1306-0acd-4c74-851e-62ac288d916f"
+                            }
+                          }
+                        }
+                      },
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "6dee2318-4987-49b4-bb05-5144cd020da1"
+                      }
+                    },
+                    "Get_Upload_Ticket": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "parameters": {
+                          "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                          "table": "NITDA_Portal_Attachments",
+                          "$filter": "Title eq '@{replace(outputs('Compose_Upload_Ticket'), '''', '''''')}'",
+                          "$top": 1
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "operationId": "GetItems",
+                          "connectionName": "shared_sharepointonline"
+                        }
+                      },
+                      "runAfter": {
+                        "Condition_RL_Upload_Source_Bucket_Exists": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "864e1c99-9c7b-4698-a3a4-451afc22291c"
+                      }
+                    },
+                    "Condition_Ticket_Found": {
+                      "type": "If",
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@greater(length(outputs('Get_Upload_Ticket')?['body/value']), 0)",
+                              true
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "Condition_Ticket_Already_Redeemed": {
+                          "type": "If",
+                          "expression": {
+                            "and": [
+                              {
+                                "equals": [
+                                  "@equals(first(outputs('Get_Upload_Ticket')?['body/value']?['Redeemed']), true)",
+                                  true
+                                ]
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "Response_Upload_Already_Redeemed": {
+                              "type": "Response",
+                              "kind": "Http",
+                              "inputs": {
+                                "statusCode": 409,
+                                "headers": {
+                                  "Content-Type": "application/json",
+                                  "Access-Control-Allow-Origin": "*",
+                                  "Access-Control-Allow-Methods": "PUT, OPTIONS",
+                                  "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID, X-Upload-Ticket"
+                                },
+                                "body": {
+                                  "stored": false,
+                                  "reason": "ticket-already-redeemed"
+                                }
+                              },
+                              "runAfter": {},
+                              "metadata": {
+                                "operationMetadataId": "a83f37ec-d2ac-4e2d-be17-8aad4f98c734"
+                              }
+                            }
+                          },
+                          "else": {
+                            "actions": {
+                              "Condition_Ticket_Expired": {
+                                "type": "If",
+                                "expression": {
+                                  "and": [
+                                    {
+                                      "equals": [
+                                        "@greater(ticks(utcNow()), ticks(first(outputs('Get_Upload_Ticket')?['body/value']?['ExpiresAtUtc'])))",
+                                        true
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "actions": {
+                                  "Mark_Ticket_Expired": {
+                                    "type": "OpenApiConnection",
+                                    "inputs": {
+                                      "parameters": {
+                                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                        "table": "NITDA_Portal_Attachments",
+                                        "id": "@first(outputs('Get_Upload_Ticket')?['body/value']?['ID'])",
+                                        "item/Status": "Expired"
+                                      },
+                                      "host": {
+                                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                        "operationId": "PatchItem",
+                                        "connectionName": "shared_sharepointonline"
+                                      }
+                                    },
+                                    "runAfter": {},
+                                    "metadata": {
+                                      "operationMetadataId": "a80cf32b-8e35-40ca-b095-c990a9821f16"
+                                    }
+                                  },
+                                  "Response_Upload_Ticket_Expired": {
+                                    "type": "Response",
+                                    "kind": "Http",
+                                    "inputs": {
+                                      "statusCode": 410,
+                                      "headers": {
+                                        "Content-Type": "application/json",
+                                        "Access-Control-Allow-Origin": "*",
+                                        "Access-Control-Allow-Methods": "PUT, OPTIONS",
+                                        "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID, X-Upload-Ticket"
+                                      },
+                                      "body": {
+                                        "stored": false,
+                                        "reason": "ticket-expired"
+                                      }
+                                    },
+                                    "runAfter": {
+                                      "Mark_Ticket_Expired": [
+                                        "Succeeded"
+                                      ]
+                                    },
+                                    "metadata": {
+                                      "operationMetadataId": "1417da7a-57ec-4b7c-9c46-eaa6029df7da"
+                                    }
+                                  }
+                                },
+                                "else": {
+                                  "actions": {
+                                    "Compose_Byte_Length": {
+                                      "type": "Compose",
+                                      "inputs": "@if(equals(length(coalesce(triggerOutputs()?['headers']?['Content-Length'], '')), 0), length(triggerBody()), int(triggerOutputs()?['headers']?['Content-Length']))",
+                                      "runAfter": {},
+                                      "metadata": {
+                                        "operationMetadataId": "22696a90-7724-46f9-980f-278a84c8aee3"
+                                      }
+                                    },
+                                    "Condition_Size_Matches": {
+                                      "type": "If",
+                                      "expression": {
+                                        "and": [
+                                          {
+                                            "equals": [
+                                              "@equals(outputs('Compose_Byte_Length'), first(outputs('Get_Upload_Ticket')?['body/value']?['DeclaredSizeBytes']))",
+                                              true
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      "actions": {
+                                        "Condition_Has_Declared_Checksum": {
+                                          "type": "If",
+                                          "expression": {
+                                            "and": [
+                                              {
+                                                "equals": [
+                                                  "@greater(length(first(outputs('Get_Upload_Ticket')?['body/value']?['DeclaredSha256'])), 0)",
+                                                  true
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          "actions": {
+                                            "Verify_Upload_Checksum": {
+                                              "type": "Javascript",
+                                              "inputs": {
+                                                "code": "\nvar B64_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';\nvar B64_INDEX = {};\nfor (var bi = 0; bi < B64_CHARS.length; bi++) B64_INDEX[B64_CHARS.charAt(bi)] = bi;\n// No atob/Buffer/TextDecoder assumed present in the script sandbox — decoded from the\n// standard base64 alphabet with nothing but string and bitwise operators.\nfunction base64ToBytes(b64) {\n  var clean = b64.replace(/[^A-Za-z0-9+/]/g, '');\n  var out = [];\n  for (var p = 0; p + 1 < clean.length; p += 4) {\n    var c0 = B64_INDEX[clean.charAt(p)] || 0;\n    var c1 = B64_INDEX[clean.charAt(p + 1)] || 0;\n    var c2 = clean.charAt(p + 2) !== '' && p + 2 < clean.length ? B64_INDEX[clean.charAt(p + 2)] : undefined;\n    var c3 = clean.charAt(p + 3) !== '' && p + 3 < clean.length ? B64_INDEX[clean.charAt(p + 3)] : undefined;\n    out.push(((c0 << 2) | (c1 >> 4)) & 0xff);\n    if (c2 !== undefined) out.push(((c1 << 4) | (c2 >> 2)) & 0xff);\n    if (c3 !== undefined) out.push(((c2 << 6) | c3) & 0xff);\n  }\n  return out;\n}\nfunction base64DecodeUtf8(b64) {\n  var bytes = base64ToBytes(b64), out = '', i = 0;\n  while (i < bytes.length) {\n    var b0 = bytes[i++];\n    if (b0 < 0x80) { out += String.fromCharCode(b0); continue; }\n    if ((b0 & 0xe0) === 0xc0) { var c1 = bytes[i++]; out += String.fromCharCode(((b0 & 0x1f) << 6) | (c1 & 0x3f)); continue; }\n    if ((b0 & 0xf0) === 0xe0) { var d1 = bytes[i++], d2 = bytes[i++]; out += String.fromCharCode(((b0 & 0x0f) << 12) | ((d1 & 0x3f) << 6) | (d2 & 0x3f)); continue; }\n    var e1 = bytes[i++], e2 = bytes[i++], e3 = bytes[i++];\n    var cp = ((b0 & 0x07) << 18) | ((e1 & 0x3f) << 12) | ((e2 & 0x3f) << 6) | (e3 & 0x3f);\n    cp -= 0x10000;\n    out += String.fromCharCode(0xd800 + (cp >> 10), 0xdc00 + (cp & 0x3ff));\n  }\n  return out;\n}\nfunction sha256Hex(bytes) {\n  var K = [\n    0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,\n    0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,\n    0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,\n    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,\n    0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,\n    0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,\n    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,\n    0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2\n  ];\n  var h0=0x6a09e667,h1=0xbb67ae85,h2=0x3c6ef372,h3=0xa54ff53a,h4=0x510e527f,h5=0x9b05688c,h6=0x1f83d9ab,h7=0x5be0cd19;\n  var bitLenHi = Math.floor(bytes.length / 0x20000000);\n  var bitLenLo = (bytes.length << 3) >>> 0;\n  var msg = bytes.slice();\n  msg.push(0x80);\n  while ((msg.length % 64) !== 56) msg.push(0);\n  msg.push((bitLenHi >>> 24) & 0xff, (bitLenHi >>> 16) & 0xff, (bitLenHi >>> 8) & 0xff, bitLenHi & 0xff);\n  msg.push((bitLenLo >>> 24) & 0xff, (bitLenLo >>> 16) & 0xff, (bitLenLo >>> 8) & 0xff, bitLenLo & 0xff);\n  function rotr(x, n) { return ((x >>> n) | (x << (32 - n))) >>> 0; }\n  var w = new Array(64);\n  for (var off = 0; off < msg.length; off += 64) {\n    for (var i = 0; i < 16; i++) {\n      var j = off + i * 4;\n      w[i] = ((msg[j] << 24) | (msg[j+1] << 16) | (msg[j+2] << 8) | (msg[j+3])) >>> 0;\n    }\n    for (var i2 = 16; i2 < 64; i2++) {\n      var s0 = rotr(w[i2-15], 7) ^ rotr(w[i2-15], 18) ^ (w[i2-15] >>> 3);\n      var s1 = rotr(w[i2-2], 17) ^ rotr(w[i2-2], 19) ^ (w[i2-2] >>> 10);\n      w[i2] = (w[i2-16] + s0 + w[i2-7] + s1) >>> 0;\n    }\n    var a=h0,b=h1,c=h2,d=h3,e=h4,f=h5,g=h6,h=h7;\n    for (var i3 = 0; i3 < 64; i3++) {\n      var S1 = rotr(e,6) ^ rotr(e,11) ^ rotr(e,25);\n      var ch = (e & f) ^ (~e & g);\n      var t1 = (h + S1 + ch + K[i3] + w[i3]) >>> 0;\n      var S0 = rotr(a,2) ^ rotr(a,13) ^ rotr(a,22);\n      var maj = (a & b) ^ (a & c) ^ (b & c);\n      var t2 = (S0 + maj) >>> 0;\n      h=g; g=f; f=e; e=(d+t1)>>>0; d=c; c=b; b=a; a=(t1+t2)>>>0;\n    }\n    h0=(h0+a)>>>0; h1=(h1+b)>>>0; h2=(h2+c)>>>0; h3=(h3+d)>>>0;\n    h4=(h4+e)>>>0; h5=(h5+f)>>>0; h6=(h6+g)>>>0; h7=(h7+h)>>>0;\n  }\n  return [h0,h1,h2,h3,h4,h5,h6,h7].map(function (x) { return (x >>> 0).toString(16).padStart(8,'0'); }).join('');\n}\nfunction constantTimeEquals(a, b) {\n  var la = a.length, lb = b.length, max = la > lb ? la : lb, diff = la ^ lb;\n  for (var k = 0; k < max; k++) {\n    var ca = k < la ? a.charCodeAt(k) : 0;\n    var cb = k < lb ? b.charCodeAt(k) : 0;\n    diff |= (ca ^ cb);\n  }\n  return diff === 0;\n}\n\nvar fileBytes = base64ToBytes(\"@{base64(triggerBody())}\");\nvar declared = \"first(outputs('Get_Upload_Ticket')?['body/value']?['DeclaredSha256'])\".toLowerCase();\nvar computed = sha256Hex(fileBytes);\nreturn { computedSha256: computed, byteLength: fileBytes.length, match: constantTimeEquals(computed, declared) };\n"
+                                              },
+                                              "runAfter": {},
+                                              "metadata": {
+                                                "operationMetadataId": "f75ba129-227d-4924-94d1-0eeb96e2caf9"
+                                              }
+                                            },
+                                            "Compose_Checksum_Match": {
+                                              "type": "Compose",
+                                              "inputs": "@coalesce(outputs('Verify_Upload_Checksum')?['body']?['match'], outputs('Verify_Upload_Checksum')?['match'])",
+                                              "runAfter": {
+                                                "Verify_Upload_Checksum": [
+                                                  "Succeeded"
+                                                ]
+                                              },
+                                              "metadata": {
+                                                "operationMetadataId": "4d8f96ba-d431-4e77-8378-75694dc81dfe"
+                                              }
+                                            },
+                                            "Condition_Checksum_Matches": {
+                                              "type": "If",
+                                              "expression": {
+                                                "and": [
+                                                  {
+                                                    "equals": [
+                                                      "@outputs('Compose_Checksum_Match')",
+                                                      true
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              "actions": {
+                                                "Compose_Storage_Folder_Path": {
+                                                  "type": "Compose",
+                                                  "inputs": "@concat('/NITDA_Central_Registry/Portal/', first(outputs('Get_Upload_Ticket')?['body/value']?['SubmissionRef']))",
+                                                  "runAfter": {},
+                                                  "metadata": {
+                                                    "operationMetadataId": "0d57e143-c167-46c0-ba1d-92ef5e0f162e"
+                                                  }
+                                                },
+                                                "Create_Stored_File": {
+                                                  "type": "OpenApiConnection",
+                                                  "inputs": {
+                                                    "parameters": {
+                                                      "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                                      "folderPath": "@outputs('Compose_Storage_Folder_Path')",
+                                                      "name": "@first(outputs('Get_Upload_Ticket')?['body/value']?['StoredName'])",
+                                                      "body": "@triggerBody()"
+                                                    },
+                                                    "host": {
+                                                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                      "operationId": "CreateFile",
+                                                      "connectionName": "shared_sharepointonline"
+                                                    }
+                                                  },
+                                                  "runtimeConfiguration": {
+                                                    "contentTransfer": {
+                                                      "transferMode": "Chunked"
+                                                    }
+                                                  },
+                                                  "runAfter": {
+                                                    "Compose_Storage_Folder_Path": [
+                                                      "Succeeded"
+                                                    ]
+                                                  },
+                                                  "metadata": {
+                                                    "operationMetadataId": "4d6d52c1-7464-4b81-ab97-9cb06f342663"
+                                                  }
+                                                },
+                                                "Compose_Attachment_Link": {
+                                                  "type": "Compose",
+                                                  "inputs": "@coalesce(outputs('Create_Stored_File')?['body/Path'], outputs('Create_Stored_File')?['body/Id'], outputs('Create_Stored_File')?['body/Name'], '')",
+                                                  "runAfter": {
+                                                    "Create_Stored_File": [
+                                                      "Succeeded"
+                                                    ]
+                                                  },
+                                                  "metadata": {
+                                                    "operationMetadataId": "8ca90fae-2631-495d-8588-747411324abe"
+                                                  }
+                                                },
+                                                "Redeem_Upload_Ticket": {
+                                                  "type": "OpenApiConnection",
+                                                  "inputs": {
+                                                    "parameters": {
+                                                      "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                                      "table": "NITDA_Portal_Attachments",
+                                                      "id": "@first(outputs('Get_Upload_Ticket')?['body/value']?['ID'])",
+                                                      "item/Redeemed": true,
+                                                      "item/RedeemedAtUtc": "@utcNow()",
+                                                      "item/AttachmentLink": "@outputs('Compose_Attachment_Link')",
+                                                      "item/Status": "Stored"
+                                                    },
+                                                    "host": {
+                                                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                      "operationId": "PatchItem",
+                                                      "connectionName": "shared_sharepointonline"
+                                                    }
+                                                  },
+                                                  "runAfter": {
+                                                    "Compose_Attachment_Link": [
+                                                      "Succeeded"
+                                                    ]
+                                                  },
+                                                  "metadata": {
+                                                    "operationMetadataId": "a01cce2a-d035-40ba-9dbc-6701f8de1eda"
+                                                  }
+                                                },
+                                                "Response_Upload_Stored": {
+                                                  "type": "Response",
+                                                  "kind": "Http",
+                                                  "inputs": {
+                                                    "statusCode": 200,
+                                                    "headers": {
+                                                      "Content-Type": "application/json",
+                                                      "Access-Control-Allow-Origin": "*",
+                                                      "Access-Control-Allow-Methods": "PUT, OPTIONS",
+                                                      "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID, X-Upload-Ticket"
+                                                    },
+                                                    "body": {
+                                                      "stored": true,
+                                                      "attachmentLink": "@outputs('Compose_Attachment_Link')",
+                                                      "reason": ""
+                                                    }
+                                                  },
+                                                  "runAfter": {
+                                                    "Redeem_Upload_Ticket": [
+                                                      "Succeeded"
+                                                    ]
+                                                  },
+                                                  "metadata": {
+                                                    "operationMetadataId": "a72aa235-f09c-4243-91c4-7694ac6be715"
+                                                  }
+                                                }
+                                              },
+                                              "else": {
+                                                "actions": {
+                                                  "Response_Upload_Checksum_Mismatch": {
+                                                    "type": "Response",
+                                                    "kind": "Http",
+                                                    "inputs": {
+                                                      "statusCode": 422,
+                                                      "headers": {
+                                                        "Content-Type": "application/json",
+                                                        "Access-Control-Allow-Origin": "*",
+                                                        "Access-Control-Allow-Methods": "PUT, OPTIONS",
+                                                        "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID, X-Upload-Ticket"
+                                                      },
+                                                      "body": {
+                                                        "stored": false,
+                                                        "reason": "checksum-mismatch"
+                                                      }
+                                                    },
+                                                    "runAfter": {},
+                                                    "metadata": {
+                                                      "operationMetadataId": "55a1dfef-d637-4f80-ac3e-0ef71009d01e"
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "runAfter": {
+                                                "Compose_Checksum_Match": [
+                                                  "Succeeded"
+                                                ]
+                                              },
+                                              "metadata": {
+                                                "operationMetadataId": "6024e47d-d5da-4155-9655-2a113fe45081"
+                                              }
+                                            }
+                                          },
+                                          "else": {
+                                            "actions": {
+                                              "Compose_Storage_Folder_Path": {
+                                                "type": "Compose",
+                                                "inputs": "@concat('/NITDA_Central_Registry/Portal/', first(outputs('Get_Upload_Ticket')?['body/value']?['SubmissionRef']))",
+                                                "runAfter": {},
+                                                "metadata": {
+                                                  "operationMetadataId": "95581fb0-1cd4-4629-958b-05f399dbeaaa"
+                                                }
+                                              },
+                                              "Create_Stored_File": {
+                                                "type": "OpenApiConnection",
+                                                "inputs": {
+                                                  "parameters": {
+                                                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                                    "folderPath": "@outputs('Compose_Storage_Folder_Path')",
+                                                    "name": "@first(outputs('Get_Upload_Ticket')?['body/value']?['StoredName'])",
+                                                    "body": "@triggerBody()"
+                                                  },
+                                                  "host": {
+                                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                    "operationId": "CreateFile",
+                                                    "connectionName": "shared_sharepointonline"
+                                                  }
+                                                },
+                                                "runtimeConfiguration": {
+                                                  "contentTransfer": {
+                                                    "transferMode": "Chunked"
+                                                  }
+                                                },
+                                                "runAfter": {
+                                                  "Compose_Storage_Folder_Path": [
+                                                    "Succeeded"
+                                                  ]
+                                                },
+                                                "metadata": {
+                                                  "operationMetadataId": "8d905e32-8369-4ce4-bd60-646b0e83050d"
+                                                }
+                                              },
+                                              "Compose_Attachment_Link": {
+                                                "type": "Compose",
+                                                "inputs": "@coalesce(outputs('Create_Stored_File')?['body/Path'], outputs('Create_Stored_File')?['body/Id'], outputs('Create_Stored_File')?['body/Name'], '')",
+                                                "runAfter": {
+                                                  "Create_Stored_File": [
+                                                    "Succeeded"
+                                                  ]
+                                                },
+                                                "metadata": {
+                                                  "operationMetadataId": "1cb8c406-ebc3-437d-8cc3-125c7ed353cf"
+                                                }
+                                              },
+                                              "Redeem_Upload_Ticket": {
+                                                "type": "OpenApiConnection",
+                                                "inputs": {
+                                                  "parameters": {
+                                                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                                    "table": "NITDA_Portal_Attachments",
+                                                    "id": "@first(outputs('Get_Upload_Ticket')?['body/value']?['ID'])",
+                                                    "item/Redeemed": true,
+                                                    "item/RedeemedAtUtc": "@utcNow()",
+                                                    "item/AttachmentLink": "@outputs('Compose_Attachment_Link')",
+                                                    "item/Status": "Stored"
+                                                  },
+                                                  "host": {
+                                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                    "operationId": "PatchItem",
+                                                    "connectionName": "shared_sharepointonline"
+                                                  }
+                                                },
+                                                "runAfter": {
+                                                  "Compose_Attachment_Link": [
+                                                    "Succeeded"
+                                                  ]
+                                                },
+                                                "metadata": {
+                                                  "operationMetadataId": "086fcbc8-e1d9-4888-8042-5f07661ee7b1"
+                                                }
+                                              },
+                                              "Response_Upload_Stored": {
+                                                "type": "Response",
+                                                "kind": "Http",
+                                                "inputs": {
+                                                  "statusCode": 200,
+                                                  "headers": {
+                                                    "Content-Type": "application/json",
+                                                    "Access-Control-Allow-Origin": "*",
+                                                    "Access-Control-Allow-Methods": "PUT, OPTIONS",
+                                                    "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID, X-Upload-Ticket"
+                                                  },
+                                                  "body": {
+                                                    "stored": true,
+                                                    "attachmentLink": "@outputs('Compose_Attachment_Link')",
+                                                    "reason": ""
+                                                  }
+                                                },
+                                                "runAfter": {
+                                                  "Redeem_Upload_Ticket": [
+                                                    "Succeeded"
+                                                  ]
+                                                },
+                                                "metadata": {
+                                                  "operationMetadataId": "42ab1410-80b7-450c-b185-3c249952665e"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "runAfter": {},
+                                          "metadata": {
+                                            "operationMetadataId": "e17e11fe-e3f9-4555-9518-bd6a35af4014"
+                                          }
+                                        }
+                                      },
+                                      "else": {
+                                        "actions": {
+                                          "Response_Upload_Size_Mismatch": {
+                                            "type": "Response",
+                                            "kind": "Http",
+                                            "inputs": {
+                                              "statusCode": 413,
+                                              "headers": {
+                                                "Content-Type": "application/json",
+                                                "Access-Control-Allow-Origin": "*",
+                                                "Access-Control-Allow-Methods": "PUT, OPTIONS",
+                                                "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID, X-Upload-Ticket"
+                                              },
+                                              "body": {
+                                                "stored": false,
+                                                "reason": "size-mismatch"
+                                              }
+                                            },
+                                            "runAfter": {},
+                                            "metadata": {
+                                              "operationMetadataId": "ebf0e9a3-9bcc-400a-9b83-7bc10c318f46"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "runAfter": {
+                                        "Compose_Byte_Length": [
+                                          "Succeeded"
+                                        ]
+                                      },
+                                      "metadata": {
+                                        "operationMetadataId": "730639f1-2331-4f7f-96a2-1fc4ab1f1a42"
+                                      }
+                                    }
+                                  }
+                                },
+                                "runAfter": {},
+                                "metadata": {
+                                  "operationMetadataId": "7f5684a0-1ff3-4d83-a883-b229496d0b77"
+                                }
+                              }
+                            }
+                          },
+                          "runAfter": {},
+                          "metadata": {
+                            "operationMetadataId": "bd3b2c97-da75-4c87-9b27-1d064dcf3d58"
+                          }
+                        }
+                      },
+                      "else": {
+                        "actions": {
+                          "Response_Upload_Ticket_Not_Found": {
+                            "type": "Response",
+                            "kind": "Http",
+                            "inputs": {
+                              "statusCode": 404,
+                              "headers": {
+                                "Content-Type": "application/json",
+                                "Access-Control-Allow-Origin": "*",
+                                "Access-Control-Allow-Methods": "PUT, OPTIONS",
+                                "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID, X-Upload-Ticket"
+                              },
+                              "body": {
+                                "stored": false,
+                                "reason": "ticket-not-found"
+                              }
+                            },
+                            "runAfter": {},
+                            "metadata": {
+                              "operationMetadataId": "f313ffad-5bc6-481f-a3a0-794fcb9a1aa8"
+                            }
+                          }
+                        }
+                      },
+                      "runAfter": {
+                        "Get_Upload_Ticket": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "95a36aab-9302-4cbb-b2d1-f3edd66c8323"
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {
+                      "Response_Upload_Rate_Limited": {
+                        "type": "Response",
+                        "kind": "Http",
+                        "inputs": {
+                          "statusCode": 429,
+                          "headers": {
+                            "Content-Type": "application/json",
+                            "Access-Control-Allow-Origin": "*",
+                            "Access-Control-Allow-Methods": "PUT, OPTIONS",
+                            "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID, X-Upload-Ticket"
+                          },
+                          "body": {
+                            "stored": false,
+                            "reason": "too-many-requests"
+                          }
+                        },
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "f9739736-dbd9-4196-8644-c289110ca9e9"
+                        }
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Compose_RL_Upload_Source_New_Count": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "31c0796b-e017-4e2e-aa73-fd69425b2d7c"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_Source_Ip": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "3020cbeb-e679-41cb-9674-92d3811aa98d"
+            }
+          }
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "36c61b21-f04b-4c80-8bd6-a8ae09798910"
+        }
+      },
+      "Scope_Upload_Catch": {
+        "type": "Scope",
+        "actions": {
+          "Response_Upload_Processing_Failed": {
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+              "statusCode": 500,
+              "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "PUT, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID, X-Upload-Ticket"
+              },
+              "body": {
+                "stored": false,
+                "reason": "upload-processing-failed"
+              }
+            },
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "a44da01b-e629-4b35-8031-2699a381fcd5"
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Upload_Main": [
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "a5a2d861-1930-46a5-8752-0714d3b32cac"
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "connectionReferences": {
+    "shared_sharepointonline": {
+      "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+      "tier": "NotSpecified"
+    }
+  },
+  "allConnectionData": {
+    "Get_Rate_Limit_Upload_Source": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+        },
+        "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Update_Rate_Limit_Upload_Source": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+        },
+        "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Rate_Limit_Upload_Source": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+        },
+        "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Get_Upload_Ticket": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+        },
+        "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Mark_Ticket_Expired": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+        },
+        "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Stored_File": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+        },
+        "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Redeem_Upload_Ticket": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+        },
+        "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {}
+}

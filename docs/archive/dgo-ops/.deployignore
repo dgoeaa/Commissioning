@@ -1,0 +1,14 @@
+docs-root/
+quality/
+templates/
+manifests/
+design-system/
+*.state.json
+*_state.json
+*_forensic.json
+*_complete.json
+main_design_state.json
+precision_auditor*.py
+package.json
+package-lock.json
+playwright.config.js

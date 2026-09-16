@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<!-- @dsCard group="Brand" name="Email → Task" subtitle="Inbound email routed as task" -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="color-scheme" content="light">
+  <title>@{coalesce(outputs('Compose_Subject'), 'Email Task Assignment')}</title>
+  <!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
+  <style type="text/css">
+    html, body { margin:0 !important; padding:0 !important; width:100% !important; background-color:#F4F2F3; }
+    * { -ms-text-size-adjust:100%; -webkit-text-size-adjust:100%; box-sizing:border-box; }
+    table, td { mso-table-lspace:0pt !important; mso-table-rspace:0pt !important; }
+    table { border-spacing:0 !important; border-collapse:collapse !important; margin:0 auto; }
+    img { border:0; outline:none; display:block; }
+    body, table, td, p, a, div, span { font-family:Verdana, Geneva, 'DejaVu Sans', sans-serif; -webkit-font-smoothing:antialiased; }
+    a { text-decoration:none; }
+    @media only screen and (max-width: 650px) {
+      .container { width:100% !important; border-radius:0 !important; }
+      .mobile-padding { padding-left:16px !important; padding-right:16px !important; }
+      .stack { display:block !important; width:100% !important; }
+      .grid-col { display:block !important; width:100% !important; border-right:none !important; border-bottom:1px solid #E8E6E7 !important; }
+      .button-full { display:block !important; width:100% !important; text-align:center !important; margin-bottom:10px !important; }
+      .btn-gap { display:none !important; }
+      .hide-mobile { display:none !important; }
+    }
+  </style>
+</head>
+<body style="background-color:#F4F2F3; padding:24px 0; margin:0;">
+  <div style="display:none; font-size:1px; color:#F4F2F3; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden;">
+    @{coalesce(outputs('Compose_Preheader'), 'An incoming email has been routed to you as an official task.')}
+  </div>
+
+  <center style="width:100%; background-color:#F4F2F3;">
+    <table role="presentation" class="container" width="650" cellspacing="0" cellpadding="0" border="0" style="width:650px; background-color:#FFFFFF; border:1px solid #E8E6E7; border-radius:14px; overflow:hidden; box-shadow:0 12px 28px rgba(5,88,59,0.10);">
+
+      <tr>
+        <td align="center" style="background-color:#033F2A; padding:10px 20px;">
+          <div style="font-size:10px; font-weight:800; color:#FFFFFF; text-transform:uppercase; letter-spacing:2.5px;">Federal Republic of Nigeria</div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="mobile-padding" style="padding:24px 30px; border-bottom:3px solid #17B255;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td width="90" align="left" valign="middle">
+                <img src="@{coalesce(outputs('Compose_Org_Logo_Url'), 'https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/942233_926692/NITDA%20LOGO%20png%20smallest_1.png')}" alt="NITDA" width="80" style="width:80px;">
+              </td>
+              <td align="left" valign="middle" style="padding-left:14px;">
+                <div style="font-size:15px; font-weight:900; color:#05583B; text-transform:uppercase; line-height:20px;">National Information Technology<br>Development Agency</div>
+                <div style="font-size:11px; font-weight:700; color:#5F5C5D; text-transform:uppercase; letter-spacing:1px; margin-top:6px;">@{coalesce(outputs('Compose_Org_Office_Line'), 'Office of the Director General / CEO')}</div>
+              </td>
+              <td align="right" valign="middle" class="hide-mobile">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1.4px;">Email &rarr; Task</div>
+                <div style="font-size:11px; color:#1B1A1A; font-weight:700; margin-top:4px; font-family:'Helvetica Neue', Arial, sans-serif;">@{formatDateTime(utcNow(),'dd MMM yyyy')}</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr><td style="padding:0; height:6px; line-height:6px; background-color:@{coalesce(outputs('Compose_Priority_Color'), '#05583B')};">@{coalesce(outputs('Compose_Header_Band_SVG'), '')}</td></tr>
+
+      <tr>
+        <td class="mobile-padding" style="padding:32px 30px 8px 30px;">
+          <span style="display:inline-block; font-size:10px; font-weight:800; color:#FFFFFF; background-color:#05583B; padding:5px 10px; border-radius:999px; letter-spacing:1px; text-transform:uppercase;">Email Task</span>
+          <span style="display:inline-block; margin-left:6px; font-size:10px; font-weight:800; text-transform:uppercase; padding:5px 10px; border-radius:999px; letter-spacing:1px; color:@{coalesce(outputs('Compose_Priority_Text'), '#119143')}; background-color:@{coalesce(outputs('Compose_Priority_Bg'), '#E6EEEB')}; border:1px solid @{coalesce(outputs('Compose_Priority_Border'), '#A2E0BB')};">@{coalesce(outputs('Compose_Priority_Icon_SVG'), '')} Priority &middot; @{coalesce(outputs('Compose_Priority_Level'), 'Normal')}</span>
+          <span style="display:inline-block; margin-left:6px; font-size:10px; font-weight:800; text-transform:uppercase; padding:5px 10px; border-radius:999px; letter-spacing:1px; color:@{coalesce(outputs('Compose_Status_Color'), '#2A2829')}; background-color:@{coalesce(outputs('Compose_Status_Bg'), '#FAF9F9')}; border:1px solid @{coalesce(outputs('Compose_Status_Border'), '#D6D4D5')};">@{coalesce(outputs('Compose_Status_Text'), 'Pending Action')}</span>
+
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top:14px;"><tr><td valign="top" width="56" style="padding-right:14px;">@{coalesce(outputs('Compose_Status_Hero_SVG'), '')}</td><td valign="top"><h1 style="margin:0 0 6px 0; font-size:24px; font-weight:800; color:#1B1A1A; font-family:'Helvetica Neue', Arial, sans-serif; line-height:31px;">@{coalesce(outputs('Compose_Hero_Title'), 'Incoming Email Routed as Task')}</h1>
+          <div style="font-size:13px; color:#5F5C5D; line-height:21px;">Ref <strong style="color:#1B1A1A; font-family:'Courier New', monospace;">@{coalesce(outputs('Compose_Reference_Id'), 'TASK-UNSPECIFIED')}</strong> &middot; Recipient <strong style="color:#1B1A1A;">@{coalesce(outputs('Compose_Recipient_Name'), 'Designated Officer')}</strong></div>
+          <p style="font-size:14px; line-height:23px; color:#2A2829; margin:14px 0 0 0;">@{coalesce(outputs('Compose_Body_Lede'), 'An incoming email has been routed to your office as an official task. The original sender, timestamp, excerpt, and attachments are preserved below for context.')}</p></td></tr></table>
+        </td>
+      </tr>
+
+      <!-- ORIGINAL EMAIL ENVELOPE (email-to-task distinct section) -->
+      <tr>
+        <td class="mobile-padding" style="padding:18px 30px 6px 30px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border:1px solid #E8E6E7; border-radius:12px; overflow:hidden;">
+            <tr>
+              <td colspan="2" style="padding:12px 18px; background-color:#FAF9F9; border-bottom:1px solid #E8E6E7;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
+                  <td align="left" valign="middle" style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1.1px;">
+                    <span style="display:inline-block; width:18px; height:18px; background-color:#05583B; border-radius:4px; vertical-align:middle; margin-right:8px; line-height:18px; text-align:center; color:#FFFFFF; font-size:10px; font-weight:800;">&#9993;</span>Original Email
+                  </td>
+                  <td align="right" valign="middle">
+                    <span style="display:inline-block; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1px; padding:4px 9px; border-radius:999px; color:@{coalesce(outputs('Compose_Importance_Text'), '#5F5C5D')}; background-color:@{coalesce(outputs('Compose_Importance_Bg'), '#F4F2F3')}; border:1px solid @{coalesce(outputs('Compose_Importance_Border'), '#E8E6E7')};">
+                      @{coalesce(outputs('Compose_Importance_Glyph'), '&bull;')} @{coalesce(outputs('Compose_Source_Importance'), 'Normal')}
+                    </span>
+                  </td>
+                </tr></table>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" valign="top" style="padding:16px 18px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                  <tr>
+                    <td valign="top" width="52" style="padding-right:14px;">
+                      <div style="width:44px; height:44px; border-radius:50%; background-color:#05583B; background-image:linear-gradient(135deg, #05583B 0%, #17B255 100%); box-shadow:0 2px 6px rgba(5,88,59,0.18);">
+                        <table role="presentation" width="44" height="44" cellspacing="0" cellpadding="0" border="0"><tr><td align="center" valign="middle" style="color:#FFFFFF; font-family:'Helvetica Neue', Arial, sans-serif; font-size:14px; font-weight:800; letter-spacing:0.5px;">@{coalesce(outputs('Compose_Source_Sender_Initials'), 'NA')}</td></tr></table>
+                      </div>
+                    </td>
+                    <td valign="top" style="padding-top:2px;">
+                      <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">From</div>
+                      <div style="font-size:14px; line-height:19px; color:#1B1A1A; font-weight:800;">@{coalesce(outputs('Compose_Source_Sender_Name'), '—')}</div>
+                      <a href="mailto:@{coalesce(outputs('Compose_Source_Sender_Email'), '')}" style="font-size:12px; line-height:17px; color:#05583B; font-weight:600;">@{coalesce(outputs('Compose_Source_Sender_Email'), '—')}</a>
+                      @{if(empty(coalesce(outputs('Compose_Source_Sender_Org'), '')), '', concat('<div style="font-size:11px; line-height:16px; color:#807D7E; margin-top:2px;">', outputs('Compose_Source_Sender_Org'), '</div>'))}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="60" valign="top" style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px; padding:3px 12px 3px 0; line-height:18px;">To</td>
+                    <td valign="top" style="padding:3px 0; font-size:13px; line-height:18px; color:#2A2829;">@{coalesce(outputs('Compose_Source_To'), '—')}</td>
+                  </tr>
+                  @{if(empty(coalesce(outputs('Compose_Source_Cc'), '')), '', concat('<tr><td width="60" valign="top" style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px; padding:3px 12px 3px 0; line-height:18px;">Cc</td><td valign="top" style="padding:3px 0; font-size:13px; line-height:18px; color:#2A2829;">', outputs('Compose_Source_Cc'), '</td></tr>'))}
+                  <tr>
+                    <td width="60" valign="top" style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px; padding:3px 12px 3px 0; line-height:18px;">Date</td>
+                    <td valign="top" style="padding:3px 0; font-size:13px; line-height:18px; color:#2A2829;">@{coalesce(outputs('Compose_Source_Received_At'), '—')}</td>
+                  </tr>
+                  <tr>
+                    <td width="60" valign="top" style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px; padding:6px 12px 3px 0; line-height:18px;">Subject</td>
+                    <td valign="top" style="padding:6px 0 3px 0;">
+                      <a href="@{coalesce(outputs('Compose_Record_Url'), '#')}" style="font-size:15px; line-height:22px; color:#05583B; font-weight:800; text-decoration:none;">@{coalesce(outputs('Compose_Subject'), 'View Email')} <span style="font-size:11px; color:#807D7E;">&#8599;</span></a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="padding:16px 18px; background-color:#FAF9F9; border-top:1px solid #E8E6E7;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
+                  <td valign="top" style="padding-bottom:8px;">
+                    <span style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px;">Body Preview</span>
+                  </td>
+                  <td valign="top" align="right" style="padding-bottom:8px; font-size:10px; font-weight:700; color:#AFADAE; letter-spacing:0.5px;">
+                    @{coalesce(outputs('Compose_Source_Word_Count'), '~')} words &middot; @{coalesce(outputs('Compose_Source_Reading_Time'), '1 min')} read
+                  </td>
+                </tr></table>
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
+                  <td valign="top" width="24" style="padding-right:8px;">
+                    <div style="font-family:Georgia, serif; font-size:34px; line-height:22px; color:#17B255; font-weight:700;">&ldquo;</div>
+                  </td>
+                  <td valign="top">
+                    <div style="font-size:13px; line-height:21px; color:#2A2829; font-style:italic;">@{coalesce(outputs('Compose_Source_Thread_Excerpt'), '(no excerpt available)')}</div>
+                  </td>
+                </tr></table>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="padding:10px 18px; background-color:#FAF9F9; border-top:1px solid #E8E6E7; font-size:11px; line-height:16px; color:#807D7E;">
+                Routed to <strong style="color:#1B1A1A;">@{coalesce(outputs('Compose_Source_Inbox'), 'official inbox')}</strong> &middot; converted by <strong style="color:#1B1A1A;">@{coalesce(outputs('Compose_Routed_By'), 'Workflow Service')}</strong>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- ATTACHMENTS LIST (email-to-task distinct section) -->
+      <tr>
+        <td class="mobile-padding" style="padding:18px 30px 6px 30px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border:1px solid #E8E6E7; border-radius:12px; overflow:hidden;">
+            <tr>
+              <td style="padding:12px 18px; background-color:#FAF9F9; border-bottom:1px solid #E8E6E7;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
+                  <td align="left" valign="middle" style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1.1px;">
+                    <span style="display:inline-block; width:18px; height:18px; background-color:#17B255; border-radius:4px; vertical-align:middle; margin-right:8px; line-height:18px; text-align:center; color:#FFFFFF; font-size:11px; font-weight:800;">&#128206;</span>Attachments
+                  </td>
+                  <td align="right" valign="middle">
+                    <span style="display:inline-block; font-size:10px; font-weight:800; color:#FFFFFF; background-color:#05583B; padding:3px 9px; border-radius:999px; letter-spacing:0.5px;">@{coalesce(outputs('Compose_Source_Attachment_Count'), '0')} file(s)</span>
+                  </td>
+                </tr></table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:6px 18px;">
+                @{if(equals(int(coalesce(outputs('Compose_Source_Attachment_Count'), '0')), 0), '<div style="padding:12px 0; font-size:13px; color:#AFADAE;">No attachments on the original message.</div>', coalesce(variables('varAttachmentRowsHTML'), ''))}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- DASHBOARD STAT GRID -->
+      <tr>
+        <td class="mobile-padding" style="padding:18px 30px 6px 30px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border:1px solid #E8E6E7; border-radius:12px; overflow:hidden; background-color:#FAF9F9;">
+            <tr>
+              <td class="grid-col" width="33.33%" valign="top" style="padding:16px 18px; border-right:1px solid #E8E6E7;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px;">Priority</div>
+                <div style="margin-top:6px; font-size:16px; font-weight:800; color:@{coalesce(outputs('Compose_Priority_Text'), '#119143')};">@{coalesce(outputs('Compose_Priority_Level'), 'Normal')}</div>
+                <div style="margin-top:8px; height:5px; border-radius:999px; background-color:@{coalesce(outputs('Compose_Priority_Color'), '#17B255')};"></div>
+              </td>
+              <td class="grid-col" width="33.33%" valign="top" style="padding:16px 18px; border-right:1px solid #E8E6E7;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px;">Status</div>
+                <div style="margin-top:6px; font-size:16px; font-weight:800; color:#1B1A1A;">@{coalesce(outputs('Compose_Status_Text'), 'Pending Action')}</div>
+              </td>
+              <td class="grid-col" width="33.34%" valign="top" style="padding:16px 18px;">
+                <div style="font-size:10px; font-weight:800; color:#807D7E; text-transform:uppercase; letter-spacing:1px;">Acknowledge By</div>
+                <div style="margin-top:6px; font-size:16px; font-weight:800; color:#1B1A1A;">@{coalesce(triggerBody()?['NewActivityTask']?['AckDue'], '—')}</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- REMARKS -->
+      <tr>
+        <td class="mobile-padding" style="padding:18px 30px 6px 30px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#E6EEEB; border:1px solid #CDDDD7; border-left:4px solid #17B255; border-radius:0 8px 8px 0;">
+            <tr><td style="padding:14px 18px;">
+              <div style="font-size:10px; font-weight:800; color:#05583B; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Routing Remarks</div>
+              <div style="font-size:13px; color:#1B1A1A; font-style:italic; line-height:21px;">"@{coalesce(outputs('Compose_Remarks'), 'Please proceed with the necessary action as required.')}"</div>
+            </td></tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- ACTIONS -->
+      <tr>
+        <td class="mobile-padding" style="padding:22px 30px 8px 30px;">
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td class="button-full" align="left" valign="top">
+                <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="@{coalesce(outputs('Compose_Acknowledge_Url'), '#')}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="14%" strokecolor="#05583B" fillcolor="#05583B"><w:anchorlock/><center style="color:#FFFFFF;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;font-weight:bold;">Acknowledge Task</center></v:roundrect><![endif]-->
+                <!--[if !mso]><!-- --><a href="@{coalesce(outputs('Compose_Acknowledge_Url'), '#')}" style="display:inline-block; background-color:#05583B; color:#FFFFFF; font-size:14px; font-weight:800; padding:14px 24px; border-radius:8px;">Acknowledge Task</a><!--<![endif]-->
+              </td>
+              <td class="btn-gap" width="10">&nbsp;</td>
+              <td class="button-full" align="left" valign="top">
+                <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="@{coalesce(outputs('Compose_Record_Url'), '#')}" style="height:48px;v-text-anchor:middle;width:180px;" arcsize="14%" strokecolor="#D6D4D5" fillcolor="#FFFFFF"><w:anchorlock/><center style="color:#2A2829;font-family:Verdana,Geneva,'DejaVu Sans',sans-serif;font-size:14px;font-weight:bold;">Open Record</center></v:roundrect><![endif]-->
+                <!--[if !mso]><!-- --><a href="@{coalesce(outputs('Compose_Record_Url'), '#')}" style="display:inline-block; background-color:#FFFFFF; color:#2A2829; font-size:14px; font-weight:800; padding:14px 24px; border-radius:8px; border:1px solid #D6D4D5;">Open Record</a><!--<![endif]-->
+              </td>
+            </tr>
+          </table>
+          <div style="font-size:12px; line-height:19px; color:#807D7E; padding-top:12px;">If the buttons do not open: <a href="@{coalesce(outputs('Compose_Acknowledge_Url'), '#')}" style="color:#05583B; word-break:break-all;">@{coalesce(outputs('Compose_Acknowledge_Url'), '#')}</a></div>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="mobile-padding" style="background-color:#FAF9F9; padding:24px 30px; border-top:1px solid #E8E6E7; margin-top:18px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td class="stack" valign="top" align="left" style="font-size:12px; line-height:20px; color:#807D7E;">
+                <strong style="color:#05583B;">@{coalesce(outputs('Compose_Org_Name_Long'), 'NITDA')}</strong><br>
+                @{coalesce(outputs('Compose_Org_Address_Line'), 'Port Harcourt Crescent, Garki, Abuja')}<br>
+                <a href="@{coalesce(outputs('Compose_Org_Portal_Url'), 'https://nitda.gov.ng')}" style="color:#05583B;">@{coalesce(outputs('Compose_Org_Portal_Url'), 'www.nitda.gov.ng')}</a>
+              </td>
+              <td class="stack" valign="top" align="right" style="font-size:11px; line-height:18px; color:#AFADAE; text-align:right;">
+                <a href="@{coalesce(outputs('Compose_Org_Support_Url'), '#')}" style="color:#05583B; font-weight:700;">Support</a><br>
+                Workflow Service
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <div style="padding:18px; font-size:10px; color:#AFADAE; text-align:center;">&copy; @{formatDateTime(utcNow(), 'yyyy')} NITDA &middot; Unified Assignment System</div>
+  </center>
+</body>
+</html>

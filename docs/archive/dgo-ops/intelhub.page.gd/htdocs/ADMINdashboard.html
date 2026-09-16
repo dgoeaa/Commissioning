@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>NITDA Intelligent Portal – Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'nitda-green': '#008751',
+            'nitda-deep': '#006A4E',
+            'nitda-accent': '#E6F6F0'
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <link href="brand.css" rel="stylesheet">
+</head>
+<body class="bg-slate-950 text-slate-50 font-inter">
+  <div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-slate-950/90 border-b border-slate-800 sticky top-0 z-30 backdrop-blur">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="landing.html" class="flex items-center gap-2">
+            <div class="h-9 w-9 rounded-2xl bg-nitda-green/10 flex items-center justify-center text-nitda-green">
+              <i class="fas fa-shield-alt text-lg" aria-hidden="true"></i>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-sm font-semibold text-slate-50 tracking-tight">NITDA Intelligent Portal</span>
+              <span class="text-[11px] text-slate-400 hidden sm:block">Digital Submission, Tracking &amp; Support</span>
+            </div>
+          </a>
+          <nav class="hidden md:flex items-center gap-6 text-sm text-slate-200">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit.html" class="nav-link">Submit</a>
+            <a href="track.html" class="nav-link">Track</a>
+            <a href="support.html" class="nav-link">Support</a>
+            <a href="ADMINdashboard.html" class="nav-link">Admin</a>
+          </nav>
+          <button id="nav-toggle" class="md:hidden inline-flex items-center justify-center rounded-xl border border-slate-700 px-2.5 py-1.5 text-slate-200 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-nitda-green focus:ring-offset-2 focus:ring-offset-slate-950" aria-label="Toggle navigation" aria-expanded="false">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+        <nav id="mobile-nav" class="md:hidden hidden border-t border-slate-800 pb-3">
+          <div class="flex flex-col gap-1 pt-2 text-sm text-slate-200">
+            <a href="index.html" class="mobile-nav-link">Home</a>
+            <a href="submit.html" class="mobile-nav-link">Submit</a>
+            <a href="track.html" class="mobile-nav-link">Track</a>
+            <a href="support.html" class="mobile-nav-link">Support</a>
+            <a href="ADMINdashboard.html" class="mobile-nav-link">Admin</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="flex-1">
+      <section class="py-10 sm:py-12 lg:py-16">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          <!-- Login panel -->
+          <div id="admin-login" class="max-w-md mx-auto mb-8 rounded-3xl border border-slate-800 bg-slate-900/80 p-5 sm:p-6 shadow-xl shadow-slate-900/60">
+            <h1 class="text-xl font-semibold text-slate-50 mb-1">Administrator sign in</h1>
+            <p class="text-[12px] text-slate-400 mb-4">
+              Metrics and operational insights are restricted to authorised personnel.
+            </p>
+            <div class="space-y-3">
+              <div>
+                <label for="admin-username" class="form-label">Username</label>
+                <input id="admin-username" type="text" class="form-input" autocomplete="off" />
+              </div>
+              <div>
+                <label for="admin-password" class="form-label">Password</label>
+                <input id="admin-password" type="password" class="form-input" autocomplete="off" />
+              </div>
+              <p id="admin-login-error" class="hidden text-[11px] text-red-400">Invalid credentials. Please try again.</p>
+              <button id="admin-login-btn" class="w-full inline-flex items-center justify-center rounded-2xl bg-nitda-green px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 hover:bg-emerald-600">
+                Sign in
+              </button>
+              <p class="text-[11px] text-slate-500">
+                This is a front-end demonstration only. Integrate with your identity provider (e.g. Azure AD) for production.
+              </p>
+              <div class="text-[11px] text-slate-500 mt-1">
+                <p class="mb-0.5">Demo credentials (for testing):</p>
+                <p><span class="font-semibold text-slate-300">Username:</span> admin &nbsp;|&nbsp; <span class="font-semibold text-slate-300">Password:</span> nitda@2025</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Admin content (hidden until login) -->
+          <div id="admin-content" class="hidden">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+              <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-slate-50 mb-1">Administrative dashboard</h1>
+                <p class="text-sm text-slate-300 max-w-2xl">
+                  Monitor the volume and status of submissions processed through the portal.
+                </p>
+              </div>
+              <span class="inline-flex items-center rounded-2xl border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-[11px] text-amber-100">
+                <i class="fas fa-triangle-exclamation mr-1.5 text-[10px]" aria-hidden="true"></i>
+                Sample data only – wire to live metrics from your backend.
+              </span>
+            </div>
+
+            <!-- Metrics cards (sample/static for now) -->
+            <div class="grid gap-5 sm:grid-cols-3 mb-8">
+              <div class="rounded-3xl border border-emerald-500/40 bg-emerald-500/10 p-4 shadow-sm">
+                <p class="text-[11px] text-emerald-100 mb-1">Total submissions</p>
+                <p class="text-2xl font-semibold text-emerald-300">128</p>
+                <p class="text-[11px] text-emerald-100/80 mt-1">Across all MDAs for the current period.</p>
+              </div>
+              <div class="rounded-3xl border border-amber-400/40 bg-amber-500/10 p-4 shadow-sm">
+                <p class="text-[11px] text-amber-100 mb-1">Under review</p>
+                <p class="text-2xl font-semibold text-amber-200">34</p>
+                <p class="text-[11px] text-amber-100/80 mt-1">Awaiting action or additional documentation.</p>
+              </div>
+              <div class="rounded-3xl border border-sky-400/40 bg-sky-500/10 p-4 shadow-sm">
+                <p class="text-[11px] text-sky-100 mb-1">Approved</p>
+                <p class="text-2xl font-semibold text-sky-200">76</p>
+                <p class="text-[11px] text-sky-100/80 mt-1">Completed successfully and communicated.</p>
+              </div>
+            </div>
+
+            <!-- Guidance panel -->
+            <div class="rounded-3xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6">
+              <h2 class="text-sm font-semibold text-slate-100 mb-3">Next steps for production integration</h2>
+              <ol class="list-decimal list-inside text-[13px] text-slate-300 space-y-1.5">
+                <li>Expose an internal metrics API from your backend or data warehouse (e.g. using REST or GraphQL).</li>
+                <li>Replace these sample counts with live values from that API, refreshed on page load or at intervals.</li>
+                <li>Secure this page behind your chosen authentication mechanism (SSO, Azure AD, or existing IAM platform).</li>
+                <li>Audit all admin access and maintain appropriate logging for compliance and governance.</li>
+              </ol>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-slate-800 bg-slate-950/90">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500">
+        <p>&copy; 2025 NITDA Intelligent Portal. All rights reserved.</p>
+        <p class="flex items-center gap-2">
+          <span class="inline-flex h-1 w-1 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true"></span>
+          <span>Secure digital services for Nigeria&apos;s public sector.</span>
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Mobile nav
+    (function() {
+      const toggle = document.getElementById('nav-toggle');
+      const mobileNav = document.getElementById('mobile-nav');
+      if (toggle && mobileNav) {
+        toggle.addEventListener('click', function () {
+          const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+          toggle.setAttribute('aria-expanded', String(!isExpanded));
+          mobileNav.classList.toggle('hidden');
+        });
+      }
+    })();
+
+    // Simple front-end admin login gate (demo only)
+    (function () {
+      const loginBox   = document.getElementById('admin-login');
+      const content    = document.getElementById('admin-content');
+      const userInput  = document.getElementById('admin-username');
+      const passInput  = document.getElementById('admin-password');
+      const btn        = document.getElementById('admin-login-btn');
+      const errorLabel = document.getElementById('admin-login-error');
+
+      if (!loginBox || !content || !userInput || !passInput || !btn || !errorLabel) return;
+
+      function showContent() {
+        loginBox.classList.add('hidden');
+        content.classList.remove('hidden');
+      }
+
+      function handleLogin() {
+        const u = (userInput.value || '').trim();
+        const p = (passInput.value || '').trim();
+        // Demo credentials - replace with real authentication in production
+        if (u === 'admin' && p === 'nitda@2025') {
+          errorLabel.classList.add('hidden');
+          sessionStorage.setItem('nitdaAdminAuthed', '1');
+          showContent();
+        } else {
+          errorLabel.classList.remove('hidden');
+        }
+      }
+
+      btn.addEventListener('click', function () {
+        handleLogin();
+      });
+
+      passInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleLogin();
+        }
+      });
+
+      // If already authenticated in this session, show dashboard directly
+      if (sessionStorage.getItem('nitdaAdminAuthed') === '1') {
+        showContent();
+      }
+    })();
+  </script>
+</body>
+</html>
