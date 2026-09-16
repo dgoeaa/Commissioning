@@ -93,3 +93,13 @@ docs/deployment/internal/dynamic-operations.json
 docs/deployment/internal/flows/designer-paste/DGO_SCHEDULED_SWEEP.variables.md
 docs/deployment/power-automate-flows/fresh-flow/BUILD.md
 docs/deployment/rotation/ROTATION.md
+
+# The register, rendered again. PRODUCTION_READINESS_REGISTER.json is the source
+# and stays tracked; these are printings of it that carried the same paragraphs
+# a fourth and fifth time. Each verified byte-identical from its builder.
+docs/deployment/MASTER_REGISTER.md
+docs/deployment/MASTER_REGISTER.json
+docs/deployment/EXTERNAL_EXECUTION.md
+docs/deployment/EXTERNAL_EXECUTION.json
+docs/deployment/CLOSED.md
+docs/deployment/OUTSTANDING.md

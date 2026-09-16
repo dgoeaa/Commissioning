@@ -19,3 +19,7 @@ build:freshflow       # docs/deployment/power-automate-flows/fresh-flow/BUILD.md
 rotation:worksheet    # docs/deployment/rotation/ROTATION.md
 provisioning          # docs/reference/provisioning/ — flows, packages, register
 provisioningconsole   # docs/reference/provisioning/provisioning-{detail,index}.js
+master                # docs/deployment/MASTER_REGISTER.{md,json}
+external              # docs/deployment/EXTERNAL_EXECUTION.{md,json}
+closed                # docs/deployment/CLOSED.md
+outstanding           # docs/deployment/OUTSTANDING.md
