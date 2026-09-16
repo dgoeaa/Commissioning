@@ -42,6 +42,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { documentFiles } from './lib/tracked-files.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'docs/deployment/HANDOVER_BRIEF.md');
@@ -128,8 +129,11 @@ const gating = master.gatingCommissioning || [];
  * the top of the file" is a test the reader can apply to the one document in front of them.
  */
 const generatedDocs = (() => {
-  const files = execFileSync('git', ['ls-files', 'docs'], { cwd: ROOT, encoding: 'utf8' })
-    .split('\n').filter((f) => f.endsWith('.md'));
+  /* Tracked AND generated-but-ignored: the four documents MUST_CARRY_BANNER names are printed by
+   * `npm run generate`, not carried in the tree, so `ls-files` alone cannot see them and this
+   * check would pass over an empty set. See documentFiles() for why this is not a directory walk. */
+  const files = documentFiles({ root: ROOT, pathspec: ['docs'], what: 'documents' })
+    .filter((f) => f.endsWith('.md'));
   const BANNER = /GENERATED FILE|[Gg]enerated by|[Dd]o not edit|DO NOT EDIT/;
   const SAYS_HOW = /--check|npm run|scripts\//;
   return files.filter((rel) => {

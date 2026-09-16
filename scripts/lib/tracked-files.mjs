@@ -70,3 +70,37 @@ export function trackedFiles({ root, pathspec = [], extraArgs = [], allowEmpty =
   }
   return files;
 }
+
+/**
+ * Tracked files, PLUS the derived documents that are present but git-ignored.
+ *
+ * WHY THIS EXISTS
+ *
+ * `trackedFiles` above says "tracked" is what this repository means by "real". That stopped being
+ * the whole truth when the derived documentation was untracked: `docs/deployment/EXECUTION_RUNBOOK.md`
+ * is as real to a reader as it ever was, and it is still held to its register by a `--check` — it is
+ * simply printed by `npm run generate` rather than carried in the tree. A gate that enumerates
+ * documents with `ls-files` alone now silently skips every one of them, which is the same green-tick-
+ * over-an-empty-set failure this module exists to refuse, just narrower.
+ *
+ * The fix is NOT a directory walk. The reason `ls-files` was chosen holds: a walk picks up scratch
+ * files, half-finished edits and anything else that happens to be lying in the tree, and it differs
+ * between clones. So this asks git a second question instead — "which ignored files are present?" —
+ * and unions the answers. Both halves are git's own, both are reproducible from a clone plus
+ * `npm run generate`, and a file appears only if `.gitignore` deliberately names it.
+ *
+ * An EMPTY ignored half is legitimate and not an error: it means `npm run generate` has not run
+ * yet. Callers that need the derived documents to exist should say so themselves, with a message
+ * naming that command, rather than having this throw something less specific.
+ */
+export function documentFiles({ root, pathspec = [], what = 'documents' }) {
+  const tracked = trackedFiles({ root, pathspec, what });
+  const derived = trackedFiles({
+    root,
+    pathspec,
+    extraArgs: ['--others', '--ignored', '--exclude-standard'],
+    allowEmpty: true,
+    what: `${what} that are generated and git-ignored`,
+  });
+  return [...new Set([...tracked, ...derived])].sort();
+}

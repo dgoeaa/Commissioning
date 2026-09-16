@@ -54,3 +54,42 @@ __pycache__/
 # The single-file console export. Built on demand from docs/reference/provisioning/
 # by `npm run provisioningconsole:one`; the folder in docs/ is the committed form.
 dist-console/
+
+# ── Derived documentation ────────────────────────────────────────────────────
+# Printed from a tracked source by a builder in scripts/. Committing them put
+# the same facts in two places and let the copy drift: every one below was
+# verified to rebuild BYTE-IDENTICALLY from what this repository already holds,
+# so nothing is lost by not carrying them.
+#
+# `npm run generate` rebuilds the set, and `npm run test:node` runs it first.
+# The builders are listed in scripts/generate-all.builders.
+#
+# Do NOT add a file here unless its builder reproduces it exactly. A document
+# that is merely ABOUT a generated thing — docs/deployment/README.md,
+# docs/reference/README.md — is hand-written and belongs in the tree.
+
+# The provisioned state, printed out of the packages — `npm run provisioning`
+# and `npm run provisioningconsole`. 136 files, 15 MB, the largest single
+# derived tree in the repository. console.css, console.js and index.html are
+# the console's hand-written source and STAY tracked.
+docs/reference/provisioning/README.md
+docs/reference/provisioning/ENDPOINT_REGISTER.md
+docs/reference/provisioning/flows/
+docs/reference/provisioning/packages/
+docs/reference/provisioning/provisioning-detail.js
+docs/reference/provisioning/provisioning-index.js
+
+# Renderings of a register or of the flow estate
+docs/reference/FLOW_CATALOGUE.md
+docs/reference/REGISTRY_DECISIONS.md
+docs/deployment/ACTION_PLAN.md
+docs/deployment/CLOSURE_DISPOSITION.md
+docs/deployment/EXECUTION_RUNBOOK.md
+docs/deployment/IMPLEMENTATION_WALKTHROUGH.md
+docs/deployment/sharepoint/FLOW_STRUCTURES.md
+docs/deployment/sharepoint/LISTS.md
+docs/deployment/sharepoint/PORTAL_DATA_CONTRACT.md
+docs/deployment/internal/dynamic-operations.json
+docs/deployment/internal/flows/designer-paste/DGO_SCHEDULED_SWEEP.variables.md
+docs/deployment/power-automate-flows/fresh-flow/BUILD.md
+docs/deployment/rotation/ROTATION.md
