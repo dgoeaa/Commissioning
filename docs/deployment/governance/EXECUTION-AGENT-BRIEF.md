@@ -174,7 +174,7 @@ Where any two disagree on a command, `CLEAR-THE-LAST-BLOCKER.md` governs for Pha
 | # | Access | Verify by | Needed for |
 |---|---|---|---|
 | 1 | Node ≥ 22, npm, git | `node -v && npm -v && git --version` | all |
-| 2 | Read access to the repository, branch `claude/system-remediation-gaps-ahpmsy` | `git rev-parse --abbrev-ref HEAD` | all |
+| 2 | Read access to the repository, branch `digital-servant-commissioning` | `git rev-parse --abbrev-ref HEAD` | all |
 | 3 | Site Owner (Manage Lists) on `DGO_ECM_GOVERNANCE` | open the site; Site contents loads | WP-3, WP-5 |
 | 4 | Site Owner (Manage Lists) on `NITDADGO-EAAACTIVITYTRACKING` | open the site; Site contents loads | WP-4 |
 | 5 | Power Automate maker in `Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1` | the environment selector shows it; a flow opens for editing | WP-1, WP-2, WP-6 |
@@ -260,7 +260,7 @@ anything.
 ```bash
 git clone <repository URL> dgo
 cd dgo
-git checkout claude/system-remediation-gaps-ahpmsy
+git checkout digital-servant-commissioning
 git rev-parse HEAD          # record this commit in the report
 npm install
 npm run test:node           # must exit 0
