@@ -249,7 +249,20 @@ const REQUIRED = ['id', 'title', 'category', 'description', 'status', 'evidence'
     if (head && pinned) {
       const current = head.startsWith(pinned) || pinned.startsWith(head);
       let drifted = [];
+      /* UNREACHABLE IS NOT THE SAME AS DRIFTED, AND THE DIFFERENCE IS THE WHOLE REMEDY.
+         If the pin names a commit this history does not contain — a re-upload, a rebase, or a
+         value that was never a commit — then nothing was compared and no path was found to have
+         changed. Reporting that as "1 path(s) have changed" is a count of a sentinel string, and
+         it sends the reader off to re-read a path that is not named because it does not exist.
+         The honest report is that the property is UNVERIFIABLE here, with the one action that
+         makes it verifiable again. */
+      let reachable = true;
       if (!current) {
+        try {
+          execFileSync('git', ['cat-file', '-e', `${pinned}^{commit}`], { cwd: ROOT, stdio: 'pipe' });
+        } catch { reachable = false; }
+      }
+      if (!current && reachable) {
         try {
           const relevant = new Set(DIRS);
           for (const it of reg.items) for (const e of it.evidence || []) if (e.type === 'file' && e.ref) relevant.add(e.ref);
@@ -264,11 +277,11 @@ const REQUIRED = ['id', 'title', 'category', 'description', 'status', 'evidence'
              is measured only over commits that left the register alone. Those are the ones where
              evidence moved and nobody looked. */
           const commits = execFileSync('git', ['rev-list', `${pinned}..HEAD`],
-            { cwd: ROOT, encoding: 'utf8' }).split('\n').filter(Boolean);
+            { cwd: ROOT, encoding: 'utf8', stdio: 'pipe' }).split('\n').filter(Boolean);
           const unreviewed = new Set();
           for (const c of commits) {
             const files = execFileSync('git', ['show', '--pretty=format:', '--name-only', c],
-              { cwd: ROOT, encoding: 'utf8' }).split('\n').filter(Boolean);
+              { cwd: ROOT, encoding: 'utf8', stdio: 'pipe' }).split('\n').filter(Boolean);
             if (files.includes(REGISTER)) continue;          // revised here; its evidence was re-read
             for (const f of files) if (isRelevant(f)) unreviewed.add(f);
           }
@@ -282,22 +295,32 @@ const REQUIRED = ['id', 'title', 'category', 'description', 'status', 'evidence'
             let net = '';
             try {
               net = execFileSync('git', ['diff', '--shortstat', `${pinned}..HEAD`, '--', f],
-                { cwd: ROOT, encoding: 'utf8' }).trim();
+                { cwd: ROOT, encoding: 'utf8', stdio: 'pipe' }).trim();
             } catch { net = ''; }
             return net ? `${f}  (changed)` : `${f}  (touched, no net change)`;
           });
         } catch {
-          /* The pinned commit is not in this history — a rebase, or a value that was never a
-             commit. That is itself a reason to re-read: nothing can be diffed against it. */
-          drifted = ['(the pinned commit is not in this history)'];
+          /* Reachable, but the walk still failed. Report it as drift of unknown extent rather
+             than as nothing. */
+          drifted = ['(the history could not be walked from the pinned commit)'];
         }
       }
-      ok(current || drifted.length === 0,
-        `the register is pinned to a commit whose evidence still stands (${pinned}${current ? ' — HEAD' : ''})`,
-        `${drifted.length} path(s) the register cites have changed since ${pinned}:\n       `
-        + `${drifted.slice(0, 8).join('\n       ')}${drifted.length > 8 ? `\n       …and ${drifted.length - 8} more` : ''}\n`
-        + '       Re-read them, revise the items they bear on, and update compiledAgainstCommit, '
-        + 'compiledUtc and registerVersion together.');
+      if (!reachable) {
+        ok(false,
+          `the register is pinned to a commit this history contains (${pinned})`,
+          `${pinned} is not in this history, so "has the evidence changed since it?" cannot be\n`
+          + '       answered here — nothing was compared, and no cited path is known to have changed.\n'
+          + '       This is what a re-upload or a rewritten history leaves behind.\n'
+          + '       An owner re-reads the evidence the register cites, then sets compiledAgainstCommit\n'
+          + '       to a commit IN this history, with compiledUtc and registerVersion, together.');
+      } else {
+        ok(current || drifted.length === 0,
+          `the register is pinned to a commit whose evidence still stands (${pinned}${current ? ' — HEAD' : ''})`,
+          `${drifted.length} path(s) the register cites have changed since ${pinned}:\n       `
+          + `${drifted.slice(0, 8).join('\n       ')}${drifted.length > 8 ? `\n       …and ${drifted.length - 8} more` : ''}\n`
+          + '       Re-read them, revise the items they bear on, and update compiledAgainstCommit, '
+          + 'compiledUtc and registerVersion together.');
+      }
     } else if (head) {
       ok(false, 'the register names the commit it was compiled against',
         'compiledAgainstCommit is unset, so nothing can tell whether it describes this tree.');
