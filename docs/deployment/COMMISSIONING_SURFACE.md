@@ -20,10 +20,10 @@ Close an item and its evidence leaves this list on the next run.
 |---|---:|---:|---|
 | **Active** | 74 | 2.3 MB | cited by an open item, or an entry point |
 | **Retained** | 911 | 51.8 MB | evidence and record — true about its own date |
-| Everything else | 842 | 25.1 MB | the two applications, their tooling, and their suites |
-| **Tracked** | **1802** | **78.3 MB** | |
+| Everything else | 843 | 25.1 MB | the two applications, their tooling, and their suites |
+| **Tracked** | **1803** | **78.3 MB** | |
 
-**74 of 1802 tracked files** are what the 22 open
+**74 of 1803 tracked files** are what the 22 open
 items point at. The rest is not clutter to be deleted — it is the evidence a baseline exists to
 keep — but none of it should be read as a statement about today.
 

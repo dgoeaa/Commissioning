@@ -57,6 +57,10 @@ const EXEMPT_FILES = [
    * measurements are not measurements of the tree it now sits in. A record, at the root
    * rather than under docs/audits/ only because that is where it was written. */
   'OPERATIONAL_PARAMETERS_AUDIT.md',
+  /* This suite itself. Its header quotes the two commands verbatim, because a rule whose
+   * reason has been paraphrased away is one somebody later deletes as unexplained. Quoting
+   * them is the point, so it cannot also be an offence. */
+  'tests/estate-identity.test.mjs',
 ];
 
 /* Session scope-lock tooling. It names branches as test fixtures, which is what it is for,
