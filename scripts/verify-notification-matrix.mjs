@@ -439,7 +439,7 @@ const DERIVE = {
     'no due-date sweep can exist without a schedule (PRE-2)'),
 
   'RN-015': () => (!/'notify-owner'\s*:/.test(src.ownership)
-    ? ['LOCAL_ONLY', 'notify-owner has no action-ownership spec, so no declared backend (GAP-001)']
+    ? ['LOCAL_ONLY', 'notify-owner has no action-ownership spec, so no declared backend']
     : ['PROVISIONED', 'notify-owner now carries a declared backend']),
 
   /* Same shape as RN-021: IP_OTP_Endpoint is live and addresses the officer, Web - OTP Generate
@@ -542,7 +542,7 @@ const DERIVE = {
     : ['PROVISIONED', `an SMS carrier exists: ${sms[0]}`]),
 
   'RN-034': () => (!/'escalate-priority'\s*:/.test(src.ownership)
-    ? ['LOCAL_ONLY', 'escalate-priority has no action-ownership spec, so no declared backend (GAP-001)']
+    ? ['LOCAL_ONLY', 'escalate-priority has no action-ownership spec, so no declared backend']
     : ['PROVISIONED', 'escalate-priority now carries a declared backend']),
 
   'RN-035': () => (carrierFor('task-reminder')

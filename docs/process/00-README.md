@@ -5,7 +5,7 @@
 > any file in this directory: edit the artifact, or the script that reads it, and regenerate.
 > `npm test` fails if the committed inventory has drifted from what the sources say.
 
-Inventory generated 2026-09-11. Standard `dgo-process-documentation/v2`.
+Inventory generated 2026-09-17. Standard `dgo-process-documentation/v2`.
 
 | # | Document | What it carries |
 | --- | --- | --- |
@@ -30,7 +30,7 @@ Inventory generated 2026-09-11. Standard `dgo-process-documentation/v2`.
 | 19 | [Monitoring, audit and performance catalogue](19-MONITORING-AUDIT-AND-PERFORMANCE.md) | 54 monitoring records and every audit event. |
 | 20 | [End-to-end process diagrams](20-PROCESS-DIAGRAMS.md) | Eight diagrams drawn, four named and not drawn, with the reason. |
 | 21 | [Traceability matrix](21-TRACEABILITY-MATRIX.md) | 4060 chains from source evidence to exception path. |
-| 22 | [Gap, conflict and validation register](22-GAP-CONFLICT-AND-VALIDATION-REGISTER.md) | 77 gaps with fifteen attributes each. |
+| 22 | [Gap, conflict and validation register](22-GAP-CONFLICT-AND-VALIDATION-REGISTER.md) | 0 gaps with fifteen attributes each. |
 | 23 | [Coverage and reconciliation matrix](23-COVERAGE-AND-RECONCILIATION.md) | Every source accounted for, every process reconciled. |
 | 24 | [Completeness and consistency review](24-COMPLETENESS-AND-CONSISTENCY-REVIEW.md) | The twenty-five required checks, executed. |
 | 25 | [Prioritized recommendations](25-RECOMMENDATIONS.md) | What to do next, with the owner each item needs. |
@@ -41,7 +41,7 @@ Inventory generated 2026-09-11. Standard `dgo-process-documentation/v2`.
 ## Scope of this copy
 
 This is the **estate-wide** copy of the process documentation package. It is generated in
-`dgoeaa/ecm_docs_dev`, which holds the deployment documentation, the flow estate exports, the
+`dgoeaa/Commissioning`, which holds the deployment documentation, the flow estate exports, the
 published integration contracts, the captured run records and the system-of-record inventory,
 as well as the platform's own `config/`, `core/` and `modules/` trees.
 

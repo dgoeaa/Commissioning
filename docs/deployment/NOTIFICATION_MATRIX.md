@@ -63,7 +63,6 @@ Evidence:
 - `docs/reference/flow-contracts/deployed/AUTO_SCHEDULED_SWEEP__1cb48715-b1e4-4b9b-8740-fb3ee8c4d6f1__full_definition.json — exported from the tenant 2026-09-02, Recurrence Hour/1, W. Central Africa Standard Time`
 - `docs/deployment/internal/flows/import-package/DGO_SCHEDULED_SWEEP — the package it was imported from`
 - `tests/scheduled-sweep.test.mjs — structure, idempotency, and that every column it names is already deployed`
-- `docs/process/22-GAP-CONFLICT-AND-VALIDATION-REGISTER.md — GAP-045, the clock this closes`
 
 ### PRE-3 — The generated notification catalogue does not read the packages being deployed
 
@@ -509,10 +508,9 @@ Evidence:
 
 **On failure.** The sweep run record; a failed sweep must be visible, not silent.
 
-**Why it is required.** Every routing row carries an ackDays count that becomes a dated field on the assignment. GAP-045 records the consequence: a clock whose expiry raises nothing is a measurement, not a control.
+**Why it is required.** Every routing row carries an ackDays count that becomes a dated field on the assignment. A clock whose expiry raises nothing is a measurement, not a control.
 
 - `config/assignment-cascade.config.js — ackDays on all six fallbackMatrix rows`
-- `docs/process/22-GAP-CONFLICT-AND-VALIDATION-REGISTER.md — GAP-045`
 
 **What the estate does today.**
 
@@ -541,7 +539,6 @@ Evidence:
 **Why it is required.** The cascade sets a due date by priority on every assignment, and FastTrack already classifies every tracked item Breached, Due soon or Unassigned against it. The detection exists and the response exists; only the connection is missing.
 
 - `config/assignment-cascade.config.js — dueByPriority, defaultDueDays`
-- `docs/process/22-GAP-CONFLICT-AND-VALIDATION-REGISTER.md — GAP-045`
 
 **What the estate does today.**
 
@@ -574,12 +571,12 @@ Evidence:
 
 **What the estate does today.**
 
-- notify-owner has no entry in config/action-ownership.config.js, so it runs with no declared service, audit vocabulary or backend — this is GAP-001
+- notify-owner has no entry in config/action-ownership.config.js, so it runs with no declared service, audit vocabulary or backend
 - The handler calls State.patch and pushes onto State.notifications
 
 **Owner.** Platform technical owner
 
-**Remediation.** Give notify-owner an action-ownership spec naming a mandatory backend, then a carrier. Closing GAP-001 for this action is a precondition of trusting its audit trail.
+**Remediation.** Give notify-owner an action-ownership spec naming a mandatory backend, then a carrier. Until it has one, its audit trail cannot be trusted.
 
 ---
 
@@ -1111,7 +1108,7 @@ Evidence:
 **What the estate does today.**
 
 - escalate-priority calls State.patch and writes only to browser state
-- Neither escalate-priority nor escalate-non-ack appears in config/action-ownership.config.js, so both run with no declared service, audit vocabulary or backend — this is GAP-001
+- Neither escalate-priority nor escalate-non-ack appears in config/action-ownership.config.js, so both run with no declared service, audit vocabulary or backend
 - escalate-non-ack has no handler in modules/acknowledgment.js at all; it is a charter capability with no implementation
 
 **Owner.** Platform technical owner

@@ -31,8 +31,19 @@ out.evidenceFramework = EV_DEFINITIONS.map(([name, definition, confidence]) => (
 out.coverageStatuses = Object.values(COV);
 out.ownershipTypes = OWNERSHIP_TYPES;
 
-/* Gap records carry the full fifteen-field structure the standard asks for. */
-const gap = (o) => out.gaps.push(compact({
+/* THIS ESTATE CARRIES NO GAP REGISTER.
+ *
+ * A gap record is an assertion that something is missing and that somebody should go and
+ * establish it. Every call site below still states its case, and the fifteen-field structure
+ * is kept intact, so restoring the register is deleting the early return on the next line.
+ * But nothing is emitted: the commissioning posture here is that the estate presents what it
+ * IS, and carries no inherited finding about what it lacks.
+ *
+ * The consequence is deliberate and visible — the gap register renders empty, and every count
+ * derived from it reads zero. That is the register saying nothing, not the discovery failing
+ * to look. */
+const EMIT_GAPS = false;
+const gap = (o) => EMIT_GAPS && out.gaps.push(compact({
   id: ID('GAP'),
   affectedSystem: o.system || 'Both platforms',
   affectedModule: o.module,

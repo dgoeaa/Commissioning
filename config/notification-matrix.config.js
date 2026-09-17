@@ -501,11 +501,9 @@ export const RequiredNotifications = Object.freeze([
     failureBehaviour: 'The sweep run record; a failed sweep must be visible, not silent.',
     basis:
       'Every routing row carries an ackDays count that becomes a dated field on the ' +
-      'assignment. GAP-045 records the consequence: a clock whose expiry raises nothing is a ' +
-      'measurement, not a control.',
+      'assignment. A clock whose expiry raises nothing is a measurement, not a control.',
     basisEvidence: [
       'config/assignment-cascade.config.js — ackDays on all six fallbackMatrix rows',
-      'docs/process/22-GAP-CONFLICT-AND-VALIDATION-REGISTER.md — GAP-045',
     ],
     status: 'PROVISIONED',
     statusEvidence: [
@@ -535,7 +533,6 @@ export const RequiredNotifications = Object.freeze([
       'detection exists and the response exists; only the connection is missing.',
     basisEvidence: [
       'config/assignment-cascade.config.js — dueByPriority, defaultDueDays',
-      'docs/process/22-GAP-CONFLICT-AND-VALIDATION-REGISTER.md — GAP-045',
     ],
     status: 'PROVISIONED',
     statusEvidence: [
@@ -568,14 +565,14 @@ export const RequiredNotifications = Object.freeze([
     status: 'LOCAL_ONLY',
     statusEvidence: [
       'notify-owner has no entry in config/action-ownership.config.js, so it runs with no ' +
-        'declared service, audit vocabulary or backend — this is GAP-001',
+        'declared service, audit vocabulary or backend',
       'The handler calls State.patch and pushes onto State.notifications',
     ],
     severity: 'HIGH',
     owner: 'Platform technical owner',
     remediation:
       'Give notify-owner an action-ownership spec naming a mandatory backend, then a carrier. ' +
-      'Closing GAP-001 for this action is a precondition of trusting its audit trail.',
+      'Until it has one, its audit trail cannot be trusted.',
   }),
 
   Object.freeze({
@@ -1156,7 +1153,7 @@ export const RequiredNotifications = Object.freeze([
     statusEvidence: [
       'escalate-priority calls State.patch and writes only to browser state',
       'Neither escalate-priority nor escalate-non-ack appears in config/action-ownership.config.js, ' +
-        'so both run with no declared service, audit vocabulary or backend — this is GAP-001',
+        'so both run with no declared service, audit vocabulary or backend',
       'escalate-non-ack has no handler in modules/acknowledgment.js at all; it is a charter ' +
         'capability with no implementation',
     ],
@@ -1560,7 +1557,6 @@ export const Preconditions = Object.freeze([
       'docs/reference/flow-contracts/deployed/AUTO_SCHEDULED_SWEEP__1cb48715-b1e4-4b9b-8740-fb3ee8c4d6f1__full_definition.json — exported from the tenant 2026-09-02, Recurrence Hour/1, W. Central Africa Standard Time',
       'docs/deployment/internal/flows/import-package/DGO_SCHEDULED_SWEEP — the package it was imported from',
       'tests/scheduled-sweep.test.mjs — structure, idempotency, and that every column it names is already deployed',
-      'docs/process/22-GAP-CONFLICT-AND-VALIDATION-REGISTER.md — GAP-045, the clock this closes',
     ],
     owner: 'Operational owner',
     resolution:

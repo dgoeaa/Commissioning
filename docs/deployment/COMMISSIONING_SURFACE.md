@@ -18,12 +18,12 @@ Close an item and its evidence leaves this list on the next run.
 
 | | Files | Bytes | |
 |---|---:|---:|---|
-| **Active** | 74 | 2.3 MB | cited by an open item, or an entry point |
-| **Retained** | 911 | 51.8 MB | evidence and record — true about its own date |
+| **Active** | 72 | 2.2 MB | cited by an open item, or an entry point |
+| **Retained** | 911 | 51.7 MB | evidence and record — true about its own date |
 | Everything else | 843 | 25.1 MB | the two applications, their tooling, and their suites |
-| **Tracked** | **1803** | **78.3 MB** | |
+| **Tracked** | **1803** | **78.1 MB** | |
 
-**74 of 1803 tracked files** are what the 22 open
+**72 of 1803 tracked files** are what the 22 open
 items point at. The rest is not clutter to be deleted — it is the evidence a baseline exists to
 keep — but none of it should be read as a statement about today.
 
@@ -150,8 +150,6 @@ The 23 npm commands the open items name.
 | [`docs/deployment/sharepoint/remediation/06-writeback-citizen-actions.json`](../../docs/deployment/sharepoint/remediation/06-writeback-citizen-actions.json) | ITEM-11 |
 | [`docs/deployment/sharepoint/remediation/patched/README.md`](../../docs/deployment/sharepoint/remediation/patched/README.md) | ITEM-2 |
 | [`docs/deployment/sharepoint/remediation/patched/Web_Send_Email.definition.json`](../../docs/deployment/sharepoint/remediation/patched/Web_Send_Email.definition.json) | ITEM-50 |
-| [`docs/process/18-NOTIFICATION-AND-ESCALATION-CATALOGUE.md`](../../docs/process/18-NOTIFICATION-AND-ESCALATION-CATALOGUE.md) | ITEM-50 |
-| [`docs/process/22-GAP-CONFLICT-AND-VALIDATION-REGISTER.md`](../../docs/process/22-GAP-CONFLICT-AND-VALIDATION-REGISTER.md) | ITEM-51 |
 | [`docs/reference/FLOW_CATALOGUE.md`](../../docs/reference/FLOW_CATALOGUE.md) | ITEM-52, ITEM-9 |
 | [`docs/reference/endpoint-register.json`](../../docs/reference/endpoint-register.json) | ITEM-43 |
 | [`docs/reference/flow-contracts/deployed/`](../../docs/reference/flow-contracts/deployed/) | ITEM-37 |
@@ -188,7 +186,7 @@ Read as a statement about its own date, never about today.
 | `docs/audits/` | 23 | 0.5 MB | Audits, kept unedited. An audit rewritten when it becomes inconvenient is not a record. |
 | `docs/forensic/` | 16 | 0.2 MB | A forensic snapshot of one commit, deliberately not rewritten by later reorganisation. |
 | `docs/handoff/` | 11 | 0.1 MB | The mobile-shell workstream, written against a lineage not in this history. |
-| `docs/process/` | 136 | 6.5 MB | Generated from one discovery run — `npm run process:discover`. |
+| `docs/process/` | 136 | 6.4 MB | Generated from one discovery run — `npm run process:discover`. |
 | `docs/deployment/sharepoint/evidence/` | 31 | 2.5 MB | Tenant readings, by date. |
 
 ---

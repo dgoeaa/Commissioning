@@ -2264,11 +2264,6 @@
           "states": "all six templates require recipientEmail"
         },
         {
-          "type": "file",
-          "ref": "docs/process/18-NOTIFICATION-AND-ESCALATION-CATALOGUE.md",
-          "states": "NOTIF-182 records the OTP code addressed to dgsregistry@nitda.gov.ng"
-        },
-        {
           "type": "command",
           "ref": "npm run notifications",
           "states": "prints the fixed-recipient census by address"
@@ -2303,7 +2298,7 @@
     {
       "sourceRegister": "carried from claude/system-notifications-provisioning-h5h1gy, where it was ITEM-41; renumbered on consolidation 2026-09-05 because ITEM-41 names a different item on the branch it merged into",
       "dependencies": [
-        "GAP-001 must be closed for notify-owner before its audit trail can be trusted"
+        "notify-owner must have an action-ownership spec naming a declared backend before its audit trail can be trusted"
       ],
       "constraints": [
         "RN-020 is in-app only and is bounded by the notification centre being device-local by design."
@@ -2341,11 +2336,6 @@
           "type": "file",
           "ref": "modules/acknowledgment.js",
           "states": "line 54 — remind-assignee calls State.patch and toasts 'Reminder recorded for <assignee>'"
-        },
-        {
-          "type": "file",
-          "ref": "docs/process/22-GAP-CONFLICT-AND-VALIDATION-REGISTER.md",
-          "states": "GAP-001 — the FastTrack escalation and owner-notification actions are authorised by the module charter alone and carry no audit vocabulary"
         },
         {
           "type": "command",
