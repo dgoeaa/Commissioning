@@ -1,0 +1,931 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Button",
+        "inputs": {
+          "schema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "title": "Provision Document Portal SharePoint Lists",
+            "description": "Creates the seven NITDA_Portal_* lists and their fields if they don't already exist. Idempotent \u2014 safe to run again.",
+            "properties": {
+              "siteUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Optional. Defaults to https://nitdanigeria.sharepoint.com/sites/NEDMS if left blank."
+              }
+            },
+            "required": []
+          }
+        }
+      }
+    },
+    "actions": {
+      "Scope_Provision_Main": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Site_Url": {
+            "type": "Compose",
+            "inputs": "@coalesce(trim(coalesce(triggerBody()?['siteUrl'], '')), 'https://nitdanigeria.sharepoint.com/sites/NEDMS')",
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "037a0d53-685b-4f2f-861a-4179b564860a"
+            }
+          },
+          "Initialize_variable_varLists": {
+            "type": "InitializeVariable",
+            "inputs": {
+              "variables": [
+                {
+                  "name": "varLists",
+                  "type": "array",
+                  "value": [
+                    {
+                      "listTitle": "NITDA_Portal_Submissions",
+                      "description": "One row per registered piece of correspondence. Written once by SUBMISSION (create, then patch to set the minted reference); read by STATUS.",
+                      "fields": [
+                        {
+                          "internalName": "ReferenceID",
+                          "schemaXml": "<Field Type='Text' DisplayName='Reference ID' StaticName='ReferenceID' Name='ReferenceID' Required='FALSE' Indexed='TRUE' />"
+                        },
+                        {
+                          "internalName": "Subject",
+                          "schemaXml": "<Field Type='Text' DisplayName='Subject' StaticName='Subject' Name='Subject' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Category",
+                          "schemaXml": "<Field Type='Text' DisplayName='Category' StaticName='Category' Name='Category' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "CorrespondenceType",
+                          "schemaXml": "<Field Type='Text' DisplayName='Correspondence Type' StaticName='CorrespondenceType' Name='CorrespondenceType' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Channel",
+                          "schemaXml": "<Field Type='Text' DisplayName='Channel' StaticName='Channel' Name='Channel' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "SenderName",
+                          "schemaXml": "<Field Type='Text' DisplayName='Sender Name' StaticName='SenderName' Name='SenderName' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "SenderEmail",
+                          "schemaXml": "<Field Type='Text' DisplayName='Sender Email' StaticName='SenderEmail' Name='SenderEmail' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "SenderPhone",
+                          "schemaXml": "<Field Type='Text' DisplayName='Sender Phone' StaticName='SenderPhone' Name='SenderPhone' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "SenderOrganisation",
+                          "schemaXml": "<Field Type='Text' DisplayName='Sender Organisation' StaticName='SenderOrganisation' Name='SenderOrganisation' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "SenderOrganisationType",
+                          "schemaXml": "<Field Type='Text' DisplayName='Sender Organisation Type' StaticName='SenderOrganisationType' Name='SenderOrganisationType' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "EventDate",
+                          "schemaXml": "<Field Type='Text' DisplayName='Event Date' StaticName='EventDate' Name='EventDate' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Description",
+                          "schemaXml": "<Field Type='Note' DisplayName='Description' StaticName='Description' Name='Description' NumLines='6' RichText='FALSE' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "AttachmentCount",
+                          "schemaXml": "<Field Type='Number' DisplayName='Attachment Count' StaticName='AttachmentCount' Name='AttachmentCount' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "SubmittedAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Submitted At (UTC)' StaticName='SubmittedAtUtc' Name='SubmittedAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "UpdatedAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Updated At (UTC)' StaticName='UpdatedAtUtc' Name='UpdatedAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "AcknowledgedAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Acknowledged At (UTC)' StaticName='AcknowledgedAtUtc' Name='AcknowledgedAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "ClosedAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Closed At (UTC)' StaticName='ClosedAtUtc' Name='ClosedAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Status",
+                          "schemaXml": "<Field Type='Text' DisplayName='Status' StaticName='Status' Name='Status' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "StatusLabel",
+                          "schemaXml": "<Field Type='Text' DisplayName='Status Label' StaticName='StatusLabel' Name='StatusLabel' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "ActionRequired",
+                          "schemaXml": "<Field Type='Boolean' DisplayName='Action Required' StaticName='ActionRequired' Name='ActionRequired' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "VerifiedSubmission",
+                          "schemaXml": "<Field Type='Boolean' DisplayName='Verified Submission' StaticName='VerifiedSubmission' Name='VerifiedSubmission' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "SourceIp",
+                          "schemaXml": "<Field Type='Text' DisplayName='Source IP' StaticName='SourceIp' Name='SourceIp' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "LocalId",
+                          "schemaXml": "<Field Type='Text' DisplayName='Local ID' StaticName='LocalId' Name='LocalId' Required='FALSE' />"
+                        }
+                      ]
+                    },
+                    {
+                      "listTitle": "NITDA_Portal_SubmissionEvents",
+                      "description": "The public timeline STATUS reads back. SUBMISSION writes exactly one 'received' row; an internal triage workflow would append the rest \u2014 out of scope for these six flows.",
+                      "fields": [
+                        {
+                          "internalName": "SubmissionRef",
+                          "schemaXml": "<Field Type='Text' DisplayName='Submission Reference' StaticName='SubmissionRef' Name='SubmissionRef' Required='FALSE' Indexed='TRUE' />"
+                        },
+                        {
+                          "internalName": "AtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='At (UTC)' StaticName='AtUtc' Name='AtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Status",
+                          "schemaXml": "<Field Type='Text' DisplayName='Status' StaticName='Status' Name='Status' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Label",
+                          "schemaXml": "<Field Type='Text' DisplayName='Label' StaticName='Label' Name='Label' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Actor",
+                          "schemaXml": "<Field Type='Text' DisplayName='Actor' StaticName='Actor' Name='Actor' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Note",
+                          "schemaXml": "<Field Type='Note' DisplayName='Note' StaticName='Note' Name='Note' NumLines='4' RichText='FALSE' Required='FALSE' />"
+                        }
+                      ]
+                    },
+                    {
+                      "listTitle": "NITDA_Portal_Attachments",
+                      "description": "One row per upload ticket, minted by SUBMISSION, redeemed exactly once by UPLOAD.",
+                      "fields": [
+                        {
+                          "internalName": "SubmissionRef",
+                          "schemaXml": "<Field Type='Text' DisplayName='Submission Reference' StaticName='SubmissionRef' Name='SubmissionRef' Required='FALSE' Indexed='TRUE' />"
+                        },
+                        {
+                          "internalName": "DeclaredName",
+                          "schemaXml": "<Field Type='Text' DisplayName='Declared Name' StaticName='DeclaredName' Name='DeclaredName' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "StoredName",
+                          "schemaXml": "<Field Type='Text' DisplayName='Stored Name' StaticName='StoredName' Name='StoredName' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "DeclaredSizeBytes",
+                          "schemaXml": "<Field Type='Number' DisplayName='Declared Size (bytes)' StaticName='DeclaredSizeBytes' Name='DeclaredSizeBytes' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "DeclaredSha256",
+                          "schemaXml": "<Field Type='Text' DisplayName='Declared SHA-256' StaticName='DeclaredSha256' Name='DeclaredSha256' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Redeemed",
+                          "schemaXml": "<Field Type='Boolean' DisplayName='Redeemed' StaticName='Redeemed' Name='Redeemed' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "RedeemedAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Redeemed At (UTC)' StaticName='RedeemedAtUtc' Name='RedeemedAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "ExpiresAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Expires At (UTC)' StaticName='ExpiresAtUtc' Name='ExpiresAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "CreatedAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Created At (UTC)' StaticName='CreatedAtUtc' Name='CreatedAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "AttachmentLink",
+                          "schemaXml": "<Field Type='Text' DisplayName='Attachment Link' StaticName='AttachmentLink' Name='AttachmentLink' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Status",
+                          "schemaXml": "<Field Type='Text' DisplayName='Status' StaticName='Status' Name='Status' Required='FALSE' />"
+                        }
+                      ]
+                    },
+                    {
+                      "listTitle": "NITDA_Portal_SupportCases",
+                      "description": "Helpdesk cases, written by SUPPORT only. Never touches the registry \u2014 a case is not correspondence.",
+                      "fields": [
+                        {
+                          "internalName": "Name",
+                          "schemaXml": "<Field Type='Text' DisplayName='Name' StaticName='Name' Name='Name' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Email",
+                          "schemaXml": "<Field Type='Text' DisplayName='Email' StaticName='Email' Name='Email' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Topic",
+                          "schemaXml": "<Field Type='Text' DisplayName='Topic' StaticName='Topic' Name='Topic' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "AboutReference",
+                          "schemaXml": "<Field Type='Text' DisplayName='About Reference' StaticName='AboutReference' Name='AboutReference' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Message",
+                          "schemaXml": "<Field Type='Note' DisplayName='Message' StaticName='Message' Name='Message' NumLines='6' RichText='FALSE' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Status",
+                          "schemaXml": "<Field Type='Text' DisplayName='Status' StaticName='Status' Name='Status' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "SubmittedAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Submitted At (UTC)' StaticName='SubmittedAtUtc' Name='SubmittedAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "SourceIp",
+                          "schemaXml": "<Field Type='Text' DisplayName='Source IP' StaticName='SourceIp' Name='SourceIp' Required='FALSE' />"
+                        }
+                      ]
+                    },
+                    {
+                      "listTitle": "NITDA_Portal_VerificationChallenges",
+                      "description": "One row per mailed OTP code. Written by VERIFY, consumed by VERIFY_CONFIRM. The code itself is never stored \u2014 only its salted hash.",
+                      "fields": [
+                        {
+                          "internalName": "Email",
+                          "schemaXml": "<Field Type='Text' DisplayName='Email' StaticName='Email' Name='Email' Required='FALSE' Indexed='TRUE' />"
+                        },
+                        {
+                          "internalName": "CodeHash",
+                          "schemaXml": "<Field Type='Text' DisplayName='Code Hash' StaticName='CodeHash' Name='CodeHash' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "ExpiresAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Expires At (UTC)' StaticName='ExpiresAtUtc' Name='ExpiresAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "CreatedAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Created At (UTC)' StaticName='CreatedAtUtc' Name='CreatedAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Attempts",
+                          "schemaXml": "<Field Type='Number' DisplayName='Attempts' StaticName='Attempts' Name='Attempts' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Consumed",
+                          "schemaXml": "<Field Type='Boolean' DisplayName='Consumed' StaticName='Consumed' Name='Consumed' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "SourceIp",
+                          "schemaXml": "<Field Type='Text' DisplayName='Source IP' StaticName='SourceIp' Name='SourceIp' Required='FALSE' />"
+                        }
+                      ]
+                    },
+                    {
+                      "listTitle": "NITDA_Portal_VerificationProofs",
+                      "description": "The single-use proof VERIFY_CONFIRM mints and SUBMISSION / STATUS redeem.",
+                      "fields": [
+                        {
+                          "internalName": "Email",
+                          "schemaXml": "<Field Type='Text' DisplayName='Email' StaticName='Email' Name='Email' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Purpose",
+                          "schemaXml": "<Field Type='Text' DisplayName='Purpose' StaticName='Purpose' Name='Purpose' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "ExpiresAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Expires At (UTC)' StaticName='ExpiresAtUtc' Name='ExpiresAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "CreatedAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Created At (UTC)' StaticName='CreatedAtUtc' Name='CreatedAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "Consumed",
+                          "schemaXml": "<Field Type='Boolean' DisplayName='Consumed' StaticName='Consumed' Name='Consumed' Required='FALSE' />"
+                        }
+                      ]
+                    },
+                    {
+                      "listTitle": "NITDA_Portal_RateLimits",
+                      "description": "A rolling fixed-window counter, one row per (flow, source) bucket, shared by all six flows.",
+                      "fields": [
+                        {
+                          "internalName": "WindowStartUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Window Start (UTC)' StaticName='WindowStartUtc' Name='WindowStartUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "UpdatedAtUtc",
+                          "schemaXml": "<Field Type='DateTime' DisplayName='Updated At (UTC)' StaticName='UpdatedAtUtc' Name='UpdatedAtUtc' Format='DateTime' Required='FALSE' />"
+                        },
+                        {
+                          "internalName": "RequestCount",
+                          "schemaXml": "<Field Type='Number' DisplayName='Request Count' StaticName='RequestCount' Name='RequestCount' Required='FALSE' />"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "runAfter": {
+              "Compose_Site_Url": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "2047180a-86d0-4317-ae0e-f2bad6cb07dd"
+            }
+          },
+          "Initialize_variable_varListsCreated": {
+            "type": "InitializeVariable",
+            "inputs": {
+              "variables": [
+                {
+                  "name": "varListsCreated",
+                  "type": "integer",
+                  "value": 0
+                }
+              ]
+            },
+            "runAfter": {
+              "Initialize_variable_varLists": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "df806c1e-6c66-46ed-8d9f-d6bbc88b29f1"
+            }
+          },
+          "Initialize_variable_varListsExisting": {
+            "type": "InitializeVariable",
+            "inputs": {
+              "variables": [
+                {
+                  "name": "varListsExisting",
+                  "type": "integer",
+                  "value": 0
+                }
+              ]
+            },
+            "runAfter": {
+              "Initialize_variable_varListsCreated": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "db2a204e-50a9-4edc-b79d-107b98ceb326"
+            }
+          },
+          "Initialize_variable_varFieldsCreated": {
+            "type": "InitializeVariable",
+            "inputs": {
+              "variables": [
+                {
+                  "name": "varFieldsCreated",
+                  "type": "integer",
+                  "value": 0
+                }
+              ]
+            },
+            "runAfter": {
+              "Initialize_variable_varListsExisting": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "efb94a90-a708-4861-90c8-724b43751008"
+            }
+          },
+          "Initialize_variable_varFieldsExisting": {
+            "type": "InitializeVariable",
+            "inputs": {
+              "variables": [
+                {
+                  "name": "varFieldsExisting",
+                  "type": "integer",
+                  "value": 0
+                }
+              ]
+            },
+            "runAfter": {
+              "Initialize_variable_varFieldsCreated": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "1822cb61-6d18-450e-a173-ce2fe67d8f28"
+            }
+          },
+          "Initialize_variable_varErrors": {
+            "type": "InitializeVariable",
+            "inputs": {
+              "variables": [
+                {
+                  "name": "varErrors",
+                  "type": "array",
+                  "value": []
+                }
+              ]
+            },
+            "runAfter": {
+              "Initialize_variable_varFieldsExisting": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "5681b117-e85a-4f46-b4c5-ead2be463c4e"
+            }
+          },
+          "Foreach_List": {
+            "type": "Foreach",
+            "foreach": "@variables('varLists')",
+            "actions": {
+              "Get_List": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "@outputs('Compose_Site_Url')",
+                    "parameters/method": "GET",
+                    "parameters/uri": "_api/web/lists/getbytitle('@{items('Foreach_List')?['listTitle']}')?$select=Title",
+                    "parameters/headers": {
+                      "Accept": "application/json;odata=nometadata"
+                    }
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "connection": "shared_sharepointonline",
+                    "operationId": "HttpRequest"
+                  }
+                },
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "8e8e9a45-f2a5-4814-b846-731ca41ac749"
+                }
+              },
+              "Condition_List_Exists": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@outputs('Get_List')['statusCode']",
+                        200
+                      ]
+                    }
+                  ]
+                },
+                "actions": {
+                  "Increment_variable_varListsExisting": {
+                    "type": "IncrementVariable",
+                    "inputs": {
+                      "name": "varListsExisting",
+                      "value": 1
+                    },
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "f4630f8a-ab3c-4cf1-bd92-d5ff3965ff72"
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_List": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "parameters": {
+                          "dataset": "@outputs('Compose_Site_Url')",
+                          "parameters/method": "POST",
+                          "parameters/uri": "_api/web/lists",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=verbose",
+                            "Content-Type": "application/json;odata=verbose"
+                          },
+                          "parameters/body": {
+                            "__metadata": {
+                              "type": "SP.List"
+                            },
+                            "BaseTemplate": 100,
+                            "Title": "@items('Foreach_List')?['listTitle']",
+                            "Description": "@items('Foreach_List')?['description']",
+                            "OnQuickLaunch": true
+                          }
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                          "connection": "shared_sharepointonline",
+                          "operationId": "HttpRequest"
+                        }
+                      },
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "efe0aa4a-f78c-4eb7-83e4-cb62df5f24e7"
+                      }
+                    },
+                    "Increment_variable_varListsCreated": {
+                      "type": "IncrementVariable",
+                      "inputs": {
+                        "name": "varListsCreated",
+                        "value": 1
+                      },
+                      "runAfter": {
+                        "Create_List": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "77de4218-ba91-48d8-b842-13e7c0ceb15f"
+                      }
+                    },
+                    "Append_to_array_variable_varErrors_List": {
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varErrors",
+                        "value": {
+                          "list": "@items('Foreach_List')?['listTitle']",
+                          "field": null,
+                          "statusCode": "@outputs('Create_List')['statusCode']",
+                          "body": "@outputs('Create_List')['body']"
+                        }
+                      },
+                      "runAfter": {
+                        "Create_List": [
+                          "Failed",
+                          "TimedOut"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "24f40965-10a0-4c65-804d-bb667adeef87"
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Get_List": [
+                    "Succeeded",
+                    "Failed",
+                    "TimedOut"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "47343681-0efc-48c2-82b0-7f400050dedf"
+                }
+              },
+              "Foreach_Field": {
+                "type": "Foreach",
+                "foreach": "@items('Foreach_List')?['fields']",
+                "actions": {
+                  "Get_Field": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "@outputs('Compose_Site_Url')",
+                        "parameters/method": "GET",
+                        "parameters/uri": "_api/web/lists/getbytitle('@{items('Foreach_List')?['listTitle']}')/fields?$filter=InternalName eq '@{items('Foreach_Field')?['internalName']}'&$select=InternalName",
+                        "parameters/headers": {
+                          "Accept": "application/json;odata=nometadata"
+                        }
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "connection": "shared_sharepointonline",
+                        "operationId": "HttpRequest"
+                      }
+                    },
+                    "runAfter": {},
+                    "runtimeConfiguration": {
+                      "contentTransfer": {}
+                    },
+                    "metadata": {
+                      "operationMetadataId": "23239e0d-7034-42da-918a-6a2b5a15cedc"
+                    }
+                  },
+                  "Condition_Field_Exists": {
+                    "type": "If",
+                    "expression": {
+                      "and": [
+                        {
+                          "equals": [
+                            "@outputs('Get_Field')['statusCode']",
+                            200
+                          ]
+                        },
+                        {
+                          "greater": [
+                            "@length(body('Get_Field')?['value'])",
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "actions": {
+                      "Increment_variable_varFieldsExisting": {
+                        "type": "IncrementVariable",
+                        "inputs": {
+                          "name": "varFieldsExisting",
+                          "value": 1
+                        },
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "29b53bf2-ea4a-41d1-b895-34047e4d2c93"
+                        }
+                      }
+                    },
+                    "else": {
+                      "actions": {
+                        "Create_Field": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "parameters": {
+                              "dataset": "@outputs('Compose_Site_Url')",
+                              "parameters/method": "POST",
+                              "parameters/uri": "_api/web/lists/getbytitle('@{items('Foreach_List')?['listTitle']}')/fields/createfieldasxml",
+                              "parameters/headers": {
+                                "Accept": "application/json;odata=verbose",
+                                "Content-Type": "application/json;odata=verbose"
+                              },
+                              "parameters/body": {
+                                "parameters": {
+                                  "__metadata": {
+                                    "type": "SP.XmlSchemaFieldCreationInformation"
+                                  },
+                                  "SchemaXml": "@items('Foreach_Field')?['schemaXml']"
+                                }
+                              }
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                              "connection": "shared_sharepointonline",
+                              "operationId": "HttpRequest"
+                            }
+                          },
+                          "runAfter": {},
+                          "metadata": {
+                            "operationMetadataId": "546473ce-66fc-4ff7-becb-6ada1899868d"
+                          }
+                        },
+                        "Condition_Field_Create_Succeeded": {
+                          "type": "If",
+                          "expression": {
+                            "and": [
+                              {
+                                "less": [
+                                  "@outputs('Create_Field')['statusCode']",
+                                  300
+                                ]
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "Increment_variable_varFieldsCreated": {
+                              "type": "IncrementVariable",
+                              "inputs": {
+                                "name": "varFieldsCreated",
+                                "value": 1
+                              },
+                              "runAfter": {},
+                              "metadata": {
+                                "operationMetadataId": "3b60a1bb-1f67-4300-b75e-0824786dc0ed"
+                              }
+                            }
+                          },
+                          "else": {
+                            "actions": {
+                              "Append_to_array_variable_varErrors_Field": {
+                                "type": "AppendToArrayVariable",
+                                "inputs": {
+                                  "name": "varErrors",
+                                  "value": {
+                                    "list": "@items('Foreach_List')?['listTitle']",
+                                    "field": "@items('Foreach_Field')?['internalName']",
+                                    "statusCode": "@outputs('Create_Field')['statusCode']",
+                                    "body": "@outputs('Create_Field')['body']"
+                                  }
+                                },
+                                "runAfter": {},
+                                "metadata": {
+                                  "operationMetadataId": "fee68105-bc1c-402d-be6c-6fac71748266"
+                                }
+                              }
+                            }
+                          },
+                          "runAfter": {
+                            "Create_Field": [
+                              "Succeeded",
+                              "Failed",
+                              "TimedOut"
+                            ]
+                          },
+                          "metadata": {
+                            "operationMetadataId": "a8a70c61-1048-46a1-9650-74e03a63958e"
+                          }
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Get_Field": [
+                        "Succeeded",
+                        "Failed",
+                        "TimedOut"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "b3c50592-8668-4be3-97e7-95f3b4b98181"
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Condition_List_Exists": [
+                    "Succeeded"
+                  ]
+                },
+                "runtimeConfiguration": {
+                  "concurrency": {
+                    "repetitions": 1
+                  }
+                },
+                "metadata": {
+                  "operationMetadataId": "34dbf825-0c57-4dc8-b10e-2d1741b63c2e"
+                }
+              }
+            },
+            "runAfter": {
+              "Initialize_variable_varErrors": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "concurrency": {
+                "repetitions": 1
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "2bacbc29-a2c0-4cd9-a178-0374da2d76b8"
+            }
+          },
+          "Compose_Summary": {
+            "type": "Compose",
+            "inputs": {
+              "siteUrl": "@outputs('Compose_Site_Url')",
+              "listsCreated": "@variables('varListsCreated')",
+              "listsAlreadyPresent": "@variables('varListsExisting')",
+              "fieldsCreated": "@variables('varFieldsCreated')",
+              "fieldsAlreadyPresent": "@variables('varFieldsExisting')",
+              "errorCount": "@length(variables('varErrors'))",
+              "errors": "@variables('varErrors')"
+            },
+            "runAfter": {
+              "Foreach_List": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "f12fd86d-25be-4c9e-9bbf-6b05de32aecd"
+            }
+          },
+          "Condition_Provisioning_Succeeded": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@length(variables('varErrors'))",
+                    0
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Terminate_Succeeded": {
+                "type": "Terminate",
+                "inputs": {
+                  "runStatus": "Succeeded"
+                },
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "9d08c00e-9592-497d-aa30-ca7006616efa"
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Terminate_Failed": {
+                  "type": "Terminate",
+                  "inputs": {
+                    "runStatus": "Failed",
+                    "runError": {
+                      "code": "ProvisioningIncomplete",
+                      "message": "@concat(string(length(variables('varErrors'))), ' error(s) \u2014 see the Compose_Summary action output for the full list. Lists created: ', string(variables('varListsCreated')), '. Fields created: ', string(variables('varFieldsCreated')), '.')"
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "ffaa6de1-df96-4220-a21d-94b87da16e5e"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_Summary": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "69471313-1c4f-4948-a922-c5be2fb2af39"
+            }
+          }
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "240dc565-f03a-4d4c-8f65-1f80bc876d76"
+        }
+      },
+      "Scope_Provision_Catch": {
+        "type": "Scope",
+        "actions": {
+          "Terminate_Unhandled_Failure": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Failed",
+              "runError": {
+                "code": "ProvisioningProcessingFailed",
+                "message": "An unhandled exception stopped provisioning before it could report a summary. Check Scope_Provision_Main's run history for the failing action."
+              }
+            },
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "a674c310-e816-4869-bdb4-9cb69c9d366c"
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Provision_Main": [
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "43d564c9-e89e-48eb-9b03-a32f50ec5622"
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "connectionReferences": {
+    "shared_sharepointonline": {
+      "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+      "tier": "NotSpecified"
+    }
+  },
+  "allConnectionData": {
+    "Get_List": {
+      "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+      "tier": "NotSpecified"
+    },
+    "Create_List": {
+      "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+      "tier": "NotSpecified"
+    },
+    "Get_Field": {
+      "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+      "tier": "NotSpecified"
+    },
+    "Create_Field": {
+      "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+      "tier": "NotSpecified"
+    }
+  },
+  "staticResults": {}
+}

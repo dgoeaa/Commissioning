@@ -1,0 +1,171 @@
+{
+  "nodeId": "Scope_Variables_Portal_UPLOAD_ECM_DOCS",
+  "serializedValue": {
+    "type": "Scope",
+    "actions": {
+      "Initialize_variable_varStatusCode": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStatusCode",
+              "type": "integer",
+              "value": 500
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000001"
+        }
+      },
+      "Initialize_variable_varData": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varData",
+              "type": "object",
+              "value": {}
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000002"
+        },
+        "runAfter": {
+          "Initialize_variable_varStatusCode": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Initialize_variable_varErrors": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varErrors",
+              "type": "array",
+              "value": []
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000003"
+        },
+        "runAfter": {
+          "Initialize_variable_varData": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Initialize_variable_varRequestId": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varRequestId",
+              "type": "string",
+              "value": "@coalesce(triggerBody()?['requestId'],triggerBody()?['request_id'],guid())"
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000004"
+        },
+        "runAfter": {
+          "Initialize_variable_varErrors": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Initialize_variable_varStartTicks": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varStartTicks",
+              "type": "integer",
+              "value": "@ticks(utcNow())"
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000005"
+        },
+        "runAfter": {
+          "Initialize_variable_varRequestId": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Initialize_variable_varReceivedAtUtc": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varReceivedAtUtc",
+              "type": "string",
+              "value": "@utcNow()"
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000006"
+        },
+        "runAfter": {
+          "Initialize_variable_varStartTicks": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Initialize_variable_varCompletedAtUtc": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varCompletedAtUtc",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000007"
+        },
+        "runAfter": {
+          "Initialize_variable_varReceivedAtUtc": [
+            "Succeeded"
+          ]
+        }
+      },
+      "Initialize_variable_varDurationMs": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varDurationMs",
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "b0000000-0000-4000-8000-000000000008"
+        },
+        "runAfter": {
+          "Initialize_variable_varCompletedAtUtc": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    "runAfter": {},
+    "metadata": {
+      "operationMetadataId": "b0000000-0000-4000-8000-000000000000"
+    }
+  },
+  "allConnectionData": {},
+  "staticResults": {},
+  "isScopeNode": true,
+  "mslaNode": true
+}

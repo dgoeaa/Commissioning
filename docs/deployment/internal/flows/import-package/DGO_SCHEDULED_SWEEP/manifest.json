@@ -1,0 +1,79 @@
+{
+ "schema": "1.0",
+ "details": {
+  "displayName": "DGO_SCHEDULED_SWEEP",
+  "description": "Hourly sweep: acknowledgement and due clocks, outbox retry and alert, citizen status notices, support replies.",
+  "createdTime": "2026-09-02T00:00:00.0000000Z",
+  "packageTelemetryId": "00000000-0000-0000-0000-000000000000",
+  "creator": "N/A",
+  "sourceEnvironment": ""
+ },
+ "resources": {
+  "7c2f5a91-4d38-4b6e-9a02-51d7c8e6b430": {
+   "type": "Microsoft.Flow/flows",
+   "suggestedCreationType": "New",
+   "creationType": "Existing, New",
+   "details": {
+    "displayName": "DGO_SCHEDULED_SWEEP"
+   },
+   "configurableBy": "User",
+   "hierarchy": "Root",
+   "dependsOn": [
+    "a7f62b31-e5ce-475a-aa41-8b963c880569",
+    "5d81e0a2-33bc-4f17-9e64-8ab2d95c701f",
+    "278a7ed0-132e-458c-8cc6-c1e45f684cd1",
+    "9f3c1b74-6e25-4a80-b3d9-2c7e10f45a86"
+   ]
+  },
+  "a7f62b31-e5ce-475a-aa41-8b963c880569": {
+   "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+   "name": "shared_sharepointonline",
+   "type": "Microsoft.PowerApps/apis",
+   "suggestedCreationType": "Existing",
+   "details": {
+    "displayName": "SharePoint"
+   },
+   "configurableBy": "System",
+   "hierarchy": "Child",
+   "dependsOn": []
+  },
+  "278a7ed0-132e-458c-8cc6-c1e45f684cd1": {
+   "id": "/providers/Microsoft.PowerApps/apis/shared_office365",
+   "name": "shared_office365",
+   "type": "Microsoft.PowerApps/apis",
+   "suggestedCreationType": "Existing",
+   "details": {
+    "displayName": "Office 365 Outlook"
+   },
+   "configurableBy": "System",
+   "hierarchy": "Child",
+   "dependsOn": []
+  },
+  "5d81e0a2-33bc-4f17-9e64-8ab2d95c701f": {
+   "type": "Microsoft.PowerApps/apis/connections",
+   "suggestedCreationType": "Existing",
+   "creationType": "Existing",
+   "details": {
+    "displayName": "dgsRegistry@nitda.gov.ng"
+   },
+   "configurableBy": "User",
+   "hierarchy": "Child",
+   "dependsOn": [
+    "a7f62b31-e5ce-475a-aa41-8b963c880569"
+   ]
+  },
+  "9f3c1b74-6e25-4a80-b3d9-2c7e10f45a86": {
+   "type": "Microsoft.PowerApps/apis/connections",
+   "suggestedCreationType": "Existing",
+   "creationType": "Existing",
+   "details": {
+    "displayName": "dgsRegistry@nitda.gov.ng"
+   },
+   "configurableBy": "User",
+   "hierarchy": "Child",
+   "dependsOn": [
+    "278a7ed0-132e-458c-8cc6-c1e45f684cd1"
+   ]
+  }
+ }
+}

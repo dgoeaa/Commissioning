@@ -1,0 +1,38 @@
+{
+  "schema": "nitda-notification-decisions/v1",
+  "status": "BLOCKED",
+  "approvedServiceMailbox": "dgsregistry@nitda.gov.ng",
+  "administratorNotificationTarget": null,
+  "intakeNotificationTarget": null,
+  "recurrence": {
+    "frequency": null,
+    "interval": null,
+    "timeZone": "W. Central Africa Standard Time"
+  },
+  "retryPolicy": {
+    "maxAttempts": null,
+    "delayMinutes": [],
+    "permanentFailureAlertAfterAttempt": null
+  },
+  "claimPolicy": {
+    "claimExpiryMinutes": null,
+    "maximumConcurrency": null
+  },
+  "reassignment": {
+    "notifyNewHolder": true,
+    "notifyPreviousHolder": null
+  },
+  "comments": {
+    "audiences": []
+  },
+  "statusMappings": {
+    "Accepted": null,
+    "Archived": null
+  },
+  "approvals": {
+    "businessOwner": null,
+    "technicalOwner": null,
+    "securityPrivacyOwner": null,
+    "approvedAtUtc": null
+  }
+}

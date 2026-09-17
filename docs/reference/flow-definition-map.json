@@ -1,0 +1,1291 @@
+{
+  "schema": "dgo-flow-definition-map/v1",
+  "purpose": "Which exported flow definition corresponds to which tenant register workflow, joined on normalised display name because the two corpora carry different identifier spaces — a 36-character Power Automate flow GUID in the exports, a 32-hex workflow id in the register — and share no id. Derived by scripts/reconcile-flow-definitions.mjs; do not hand-edit.",
+  "generatedBy": "scripts/reconcile-flow-definitions.mjs",
+  "limits": {
+    "joinField": "normalised display name",
+    "idOverlap": 0,
+    "idOverlapNote": "Zero exported definitions carry an id the register knows. The join is therefore by name and is evidence rather than proof: two flows may share a name, and a rename breaks the link silently. A registry row carrying both ids — DGO_HTTPFlowRegistry.FlowId alongside RegistryKey — is what would replace this with a real join."
+  },
+  "totals": {
+    "exportedDefinitions": 77,
+    "registerWorkflows": 51,
+    "contractKeys": 25,
+    "matchedByName": 13,
+    "unmatchedExports": 64,
+    "unexportedRegisterWorkflows": 37,
+    "ambiguousMatches": 1,
+    "exportsWithHttpTrigger": 56
+  },
+  "matched": [
+    {
+      "file": "Bulk Assign Direct__57f137b6-5cab-7991-4084-20605a3a9d43__full_definition.json",
+      "name": "Bulk Assign Direct",
+      "internalName": "57f137b6-5cab-7991-4084-20605a3a9d43",
+      "registerWorkflowIds": [
+        "7e71fffe770a45ccb93bf216bb53786e"
+      ],
+      "servesKeys": [],
+      "ambiguous": false
+    },
+    {
+      "file": "CG_Status_Check_Endpoint__badb65d8-f472-407e-8975-c29d77b855d7__full_definition.json",
+      "name": "CG_Status_Check_Endpoint",
+      "internalName": "badb65d8-f472-407e-8975-c29d77b855d7",
+      "registerWorkflowIds": [
+        "cf1e66eb8ac2460794b7f683d9aa8ac0"
+      ],
+      "servesKeys": [],
+      "ambiguous": false
+    },
+    {
+      "file": "CG_Submission_Endpoint__de9ef13b-ae4c-42b0-9afa-20e71a180759__full_definition.json",
+      "name": "CG_Submission_Endpoint",
+      "internalName": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+      "registerWorkflowIds": [
+        "1041ed37ce924e3c886d891f23e8142c"
+      ],
+      "servesKeys": [
+        "SUBMISSION"
+      ],
+      "ambiguous": false
+    },
+    {
+      "file": "CG_Support_Endpoint__1b2c2e53-6c07-46a3-80b2-c43be1ef69db__full_definition.json",
+      "name": "CG_Support_Endpoint",
+      "internalName": "1b2c2e53-6c07-46a3-80b2-c43be1ef69db",
+      "registerWorkflowIds": [
+        "8f948e0a298b493b8c56fae2b37397bf"
+      ],
+      "servesKeys": [],
+      "ambiguous": false
+    },
+    {
+      "file": "CG_Upload_Endpoint__df82e331-b800-4a8d-996e-d2b2ca846c77__full_definition.json",
+      "name": "CG_Upload_Endpoint",
+      "internalName": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+      "registerWorkflowIds": [
+        "62fe121e5a95416bb91275e43dd0e37e"
+      ],
+      "servesKeys": [
+        "UPLOAD"
+      ],
+      "ambiguous": false
+    },
+    {
+      "file": "CG_Verification_Confirmation_Endpoint__5e13db77-c1e1-4ed4-b109-cb5d9d247b49__full_definition.json",
+      "name": "CG_Verification_Confirmation_Endpoint",
+      "internalName": "5e13db77-c1e1-4ed4-b109-cb5d9d247b49",
+      "registerWorkflowIds": [
+        "2569134db3514e838594319ea8e2a4a9"
+      ],
+      "servesKeys": [],
+      "ambiguous": false
+    },
+    {
+      "file": "CG_Verification_Endpoint__86897b2f-9770-4efa-8486-2642f24bb947__full_definition.json",
+      "name": "CG_Verification_Endpoint",
+      "internalName": "86897b2f-9770-4efa-8486-2642f24bb947",
+      "registerWorkflowIds": [
+        "ee627334d2e34ba7ac1b899bdb3ff2d0"
+      ],
+      "servesKeys": [],
+      "ambiguous": false
+    },
+    {
+      "file": "CG_Writeback_Endpoint__21d4bfd3-f595-46fa-81bb-c29dabc12e7a__full_definition.json",
+      "name": "CG_Writeback_Endpoint",
+      "internalName": "21d4bfd3-f595-46fa-81bb-c29dabc12e7a",
+      "registerWorkflowIds": [
+        "91292a0347d443619316b3d0118462f2"
+      ],
+      "servesKeys": [],
+      "ambiguous": false
+    },
+    {
+      "file": "Deployed - Create Task__b9d07010-1d98-417c-ad97-a305af770772__full_definition.json",
+      "name": "Deployed - Create Task",
+      "internalName": "b9d07010-1d98-417c-ad97-a305af770772",
+      "registerWorkflowIds": [
+        "6b3bad3005b44bf6bced0f8074d3f2ed"
+      ],
+      "servesKeys": [],
+      "ambiguous": false
+    },
+    {
+      "file": "Deployed Bulk Task Assignment_Create Task__122bb363-ddea-40c7-8578-d0d613a17bf7__full_definition.json",
+      "name": "Deployed Bulk Task Assignment_Create Task",
+      "internalName": "122bb363-ddea-40c7-8578-d0d613a17bf7",
+      "registerWorkflowIds": [
+        "c43388639d14452faef4ca3042a95b23"
+      ],
+      "servesKeys": [],
+      "ambiguous": false
+    },
+    {
+      "file": "Fetch Activities__09912e0b-3131-4734-93f7-3bba014c9d62__full_definition.json",
+      "name": "Fetch Activities",
+      "internalName": "09912e0b-3131-4734-93f7-3bba014c9d62",
+      "registerWorkflowIds": [
+        "c4c26f93ba1e4d7db5247536c30cdc11",
+        "85c556f10b8244ba9d839a2ebe240b91"
+      ],
+      "servesKeys": [
+        "FETCH_ACTIVITIES",
+        "GET_DOCS"
+      ],
+      "ambiguous": true
+    },
+    {
+      "file": "IP_OTP_VERIFY__c5e314c7-68b5-4bdc-8935-0954ef6a256d__full_definition.json",
+      "name": "IP_OTP_VERIFY",
+      "internalName": "c5e314c7-68b5-4bdc-8935-0954ef6a256d",
+      "registerWorkflowIds": [
+        "b372d45e4b2a47d88b8e8b032da67fcd"
+      ],
+      "servesKeys": [
+        "OTP_GENERATE",
+        "OTP_VERIFY"
+      ],
+      "ambiguous": false
+    },
+    {
+      "file": "IP_SCAN_INTAKE__5504d7f9-cc96-470c-be79-217582faf415__full_definition.json",
+      "name": "IP_SCAN_INTAKE",
+      "internalName": "5504d7f9-cc96-470c-be79-217582faf415",
+      "registerWorkflowIds": [
+        "88401ce1f44148539c0da53c9491f8e6"
+      ],
+      "servesKeys": [
+        "SCAN_INTAKE"
+      ],
+      "ambiguous": false
+    }
+  ],
+  "unmatchedExports": [
+    {
+      "file": "01 - Fetch_All_Data___References_Matrix-POST__3eec824c-c1ae-28d6-cc1f-a2d5c4314a04__full_definition.json",
+      "name": "01 - Fetch_All_Data_&_References_Matrix-POST",
+      "internalName": "3eec824c-c1ae-28d6-cc1f-a2d5c4314a04",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "01 - Fetch_References_and_Lookups_Data - POST__3dc47349-f67f-e04f-27f9-9f38bb9e174a__full_definition.json",
+      "name": "01 - Fetch_References_and_Lookups_Data - POST",
+      "internalName": "3dc47349-f67f-e04f-27f9-9f38bb9e174a",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "01 - GOV - Provision HTTP Flow Registry__30e04477-a5fa-4275-ac73-4537640f1ae3__full_definition.json",
+      "name": "01 - GOV - Provision HTTP Flow Registry",
+      "internalName": "30e04477-a5fa-4275-ac73-4537640f1ae3",
+      "triggerKinds": [
+        "Request/Button"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "01-Fetch_Docs_POST__e663a119-b4d6-750b-6fd2-67ba2af37b0d__full_definition.json",
+      "name": "01-Fetch_Docs_POST",
+      "internalName": "e663a119-b4d6-750b-6fd2-67ba2af37b0d",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "02 - Fetch_References_and_Lookups_Data - POST__e1a827d5-9e2b-dd03-9510-c24ace9c3999__full_definition.json",
+      "name": "02 - Fetch_References_and_Lookups_Data - POST",
+      "internalName": "e1a827d5-9e2b-dd03-9510-c24ace9c3999",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "02 - GOV - Register HTTP Flow Truth__a45cec1b-e8e2-4b80-9eaf-cac6e5064d95__full_definition.json",
+      "name": "02 - GOV - Register HTTP Flow Truth",
+      "internalName": "a45cec1b-e8e2-4b80-9eaf-cac6e5064d95",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "02- Fetch_All_Data___References_Matrix-POST__10f0d76b-4b29-00d0-6482-2c7897e0cdad__full_definition.json",
+      "name": "02- Fetch_All_Data_&_References_Matrix-POST",
+      "internalName": "10f0d76b-4b29-00d0-6482-2c7897e0cdad",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "02-Fetch_Docs_POST__e83e7462-7e8d-c780-ab04-9c4b48e5f15e__full_definition.json",
+      "name": "02-Fetch_Docs_POST",
+      "internalName": "e83e7462-7e8d-c780-ab04-9c4b48e5f15e",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "03 - Fetch_All_Data___References_Matrix-POST__672e6085-f68d-7074-120a-b1e6d648197f__full_definition.json",
+      "name": "03 - Fetch_All_Data_&_References_Matrix-POST",
+      "internalName": "672e6085-f68d-7074-120a-b1e6d648197f",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "03 - GOV - Record HTTP Flow Execution__c6e573d8-69f6-46d5-ac95-928e78df3c6b__full_definition.json",
+      "name": "03 - GOV - Record HTTP Flow Execution",
+      "internalName": "c6e573d8-69f6-46d5-ac95-928e78df3c6b",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "04 - GOV - Audit HTTP Flow Registry Flow Update__a52c5119-fab5-4605-9853-7e4561796b3f__full_definition.json",
+      "name": "04 - GOV - Audit HTTP Flow Registry Flow Update",
+      "internalName": "a52c5119-fab5-4605-9853-7e4561796b3f",
+      "triggerKinds": [
+        "Recurrence"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "05 - GOV - Retire HTTP Flow__eb5450b3-fb35-4a06-8483-68e06da12010__full_definition.json",
+      "name": "05 - GOV - Retire HTTP Flow",
+      "internalName": "eb5450b3-fb35-4a06-8483-68e06da12010",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "06 - GOV - Registry Exception__befc43d2-95fa-4567-8020-342e5c9e912d__full_definition.json",
+      "name": "06 - GOV - Registry Exception",
+      "internalName": "befc43d2-95fa-4567-8020-342e5c9e912d",
+      "triggerKinds": [
+        "Recurrence"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "07 - GOV - Consumer HTTP Self-Registration Template__9ec66366-d8db-4eaa-8507-a7aea1dde327__full_definition.json",
+      "name": "07 - GOV - Consumer HTTP Self-Registration Template",
+      "internalName": "9ec66366-d8db-4eaa-8507-a7aea1dde327",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "08 - GOV - Discover and Register HTTP Consumers__5c9080fb-cd82-4def-b170-4c3fb8734317__full_definition.json",
+      "name": "08 - GOV - Discover and Register HTTP Consumers",
+      "internalName": "5c9080fb-cd82-4def-b170-4c3fb8734317",
+      "triggerKinds": [
+        "Recurrence"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "AUTO_SCHEDULED_SWEEP__1cb48715-b1e4-4b9b-8740-fb3ee8c4d6f1__full_definition.json",
+      "name": "AUTO_SCHEDULED_SWEEP",
+      "internalName": "1cb48715-b1e4-4b9b-8740-fb3ee8c4d6f1",
+      "triggerKinds": [
+        "Recurrence"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "CG_SEND_EMAIL__63a7f2d7-d137-467a-9578-8099c52407dc__full_definition.json",
+      "name": "CG_SEND_EMAIL",
+      "internalName": "63a7f2d7-d137-467a-9578-8099c52407dc",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": [
+        "Tenant"
+      ]
+    },
+    {
+      "file": "DGO_AI_Assist__89925df0-276f-da78-1cba-5847cf24c7d9__full_definition.json",
+      "name": "DGO_AI_Assist",
+      "internalName": "89925df0-276f-da78-1cba-5847cf24c7d9",
+      "triggerKinds": [
+        "Request/PowerAppV2"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "DGSO INCOMING AI PROCESSING__b6d92bae-591e-fa1e-52eb-b350cad988a7__full_definition.json",
+      "name": " DGSO INCOMING AI PROCESSING",
+      "internalName": "b6d92bae-591e-fa1e-52eb-b350cad988a7",
+      "triggerKinds": [
+        "OpenApiConnection"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "Digital Hub Email AI Assist__34761736-eb9a-30f7-c43b-c9b2ea6ad297__full_definition.json",
+      "name": "Digital Hub Email AI Assist",
+      "internalName": "34761736-eb9a-30f7-c43b-c9b2ea6ad297",
+      "triggerKinds": [
+        "Request/PowerAppV2"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "ECM_DOCS_INTAKE__df7ddff1-9275-4f23-acf6-e169525f4e2f__full_definition.json",
+      "name": "ECM_DOCS_INTAKE",
+      "internalName": "df7ddff1-9275-4f23-acf6-e169525f4e2f",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "Tenant"
+      ]
+    },
+    {
+      "file": "ECM_EDM_ARCHIVE__b56ce201-87bf-4c49-9d7d-7a5503cdcf3e__full_definition.json",
+      "name": "ECM_EDM_ARCHIVE",
+      "internalName": "b56ce201-87bf-4c49-9d7d-7a5503cdcf3e",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": [
+        "Tenant"
+      ]
+    },
+    {
+      "file": "FETCH_DOCS_V2_POST__34a6d00d-8c25-62f7-50ae-f1f564f64945__full_definition.json",
+      "name": "FETCH_DOCS_V2_POST",
+      "internalName": "34a6d00d-8c25-62f7-50ae-f1f564f64945",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Fetch_Emails_HTTP_POST__29399421-e863-4bb8-a348-66385814d046__full_definition.json",
+      "name": "Fetch_Emails_HTTP_POST",
+      "internalName": "29399421-e863-4bb8-a348-66385814d046",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Fetch_Emails_POST__a2b43ce3-3dd4-57bd-ced3-673b708b26e6__full_definition.json",
+      "name": "Fetch_Emails_POST",
+      "internalName": "a2b43ce3-3dd4-57bd-ced3-673b708b26e6",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Fetch_Tasks_POST__d477fe23-3865-ce72-6837-1d166abf6802__full_definition.json",
+      "name": "Fetch_Tasks_POST",
+      "internalName": "d477fe23-3865-ce72-6837-1d166abf6802",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Get Correspondences__4d1c9a59-1d81-47ed-9c7c-38172edd5584__full_definition.json",
+      "name": "Get Correspondences",
+      "internalName": "4d1c9a59-1d81-47ed-9c7c-38172edd5584",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Get Docs HTTP__a9439b39-ed2f-6bca-58d7-ebbbc891d998__full_definition.json",
+      "name": "Get Docs HTTP",
+      "internalName": "a9439b39-ed2f-6bca-58d7-ebbbc891d998",
+      "triggerKinds": [
+        "Request/PowerAppV2"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "Get Email Attachments__340190e6-0041-5673-8f42-d04d40ffe719__full_definition.json",
+      "name": "Get Email Attachments",
+      "internalName": "340190e6-0041-5673-8f42-d04d40ffe719",
+      "triggerKinds": [
+        "Request/PowerAppV2"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "Get Emails HTTP__e209e8a5-6f31-5664-f40d-85c58c43efbd__full_definition.json",
+      "name": "Get Emails HTTP",
+      "internalName": "e209e8a5-6f31-5664-f40d-85c58c43efbd",
+      "triggerKinds": [
+        "Request/PowerAppV2"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "Get Selected Activities and Tasks__912f4b9f-d1e3-4d1e-a789-8128eb581045__full_definition.json",
+      "name": "Get Selected Activities and Tasks",
+      "internalName": "912f4b9f-d1e3-4d1e-a789-8128eb581045",
+      "triggerKinds": [
+        "Request/PowerAppV2"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "Get Tasks HTTP__2b146c0c-a7d2-c676-5447-76807c98e6b9__full_definition.json",
+      "name": "Get Tasks HTTP",
+      "internalName": "2b146c0c-a7d2-c676-5447-76807c98e6b9",
+      "triggerKinds": [
+        "Request/PowerAppV2"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "GetDocsPaginatedData__81cacabd-66c8-438e-b162-68e2ccb6754f__full_definition.json",
+      "name": "GetDocsPaginatedData",
+      "internalName": "81cacabd-66c8-438e-b162-68e2ccb6754f",
+      "triggerKinds": [
+        "Request/PowerAppV2"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "Global_Gap_Remediation_Provisioning__3f96478b-117f-4d70-aa09-668c121e084d__full_definition.json",
+      "name": "Global_Gap_Remediation_Provisioning",
+      "internalName": "3f96478b-117f-4d70-aa09-668c121e084d",
+      "triggerKinds": [
+        "Request/Button"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "IP_OTP_Endpoint__5d0d0a72-1467-4949-a808-61b58cdea0ce__full_definition.json",
+      "name": "IP_OTP_Endpoint",
+      "internalName": "5d0d0a72-1467-4949-a808-61b58cdea0ce",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Instant OpenRouter AI Chat__98fb5275-474b-4926-a60e-1657098abf0d__full_definition.json",
+      "name": "Instant OpenRouter AI Chat",
+      "internalName": "98fb5275-474b-4926-a60e-1657098abf0d",
+      "triggerKinds": [
+        "Request/Button"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "OPS_REFERENCES_AND_LOOKUPS__9695b92b-f67a-6593-7f86-6134691c737e__full_definition.json",
+      "name": "OPS_REFERENCES_AND_LOOKUPS",
+      "internalName": "9695b92b-f67a-6593-7f86-6134691c737e",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Persistent GPT AI Chat in App__033e5d70-ea07-4632-8e9a-f32590913637__full_definition.json",
+      "name": "Persistent GPT AI Chat in App",
+      "internalName": "033e5d70-ea07-4632-8e9a-f32590913637",
+      "triggerKinds": [
+        "Request/PowerAppV2"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "Portal_Datta_Architecture_Provisioning__b340affe-8322-4f18-a108-89eec84c7f12__full_definition.json",
+      "name": "Portal_Datta_Architecture_Provisioning",
+      "internalName": "b340affe-8322-4f18-a108-89eec84c7f12",
+      "triggerKinds": [
+        "Request/Button"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "Portal_ECM_DOCS_STATUS__e21e7b9f-58c3-45be-bd47-6754ce6a895f__full_definition.json",
+      "name": "Portal_ECM_DOCS_STATUS",
+      "internalName": "e21e7b9f-58c3-45be-bd47-6754ce6a895f",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "GET"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Portal_ECM_DOCS_SUPPORT__1b2c2e53-6c07-46a3-80b2-c43be1ef69db__full_definition.json",
+      "name": "Portal_ECM_DOCS_SUPPORT",
+      "internalName": "1b2c2e53-6c07-46a3-80b2-c43be1ef69db",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "GET"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Portal_Status_Enquiry__badb65d8-f472-407e-8975-c29d77b855d7__full_definition.json",
+      "name": "Portal_Status_Enquiry",
+      "internalName": "badb65d8-f472-407e-8975-c29d77b855d7",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": [
+        "Tenant"
+      ]
+    },
+    {
+      "file": "Portal_UBMISSION_ECM_DOCS__270fb295-b1de-40e2-b36d-889a61a887a0__full_definition.json",
+      "name": "Portal_UBMISSION_ECM_DOCS",
+      "internalName": "270fb295-b1de-40e2-b36d-889a61a887a0",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "GET"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Portal_UPLOAD_ECM_DOCS__ae4b2a44-2388-42c7-baaf-86de3d6fa664__full_definition.json",
+      "name": "Portal_UPLOAD_ECM_DOCS",
+      "internalName": "ae4b2a44-2388-42c7-baaf-86de3d6fa664",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Portal_Upload_HTTP__39d65c5b-5539-43de-aec6-52bfcd31bcc1__full_definition.json",
+      "name": "Portal_Upload_HTTP",
+      "internalName": "39d65c5b-5539-43de-aec6-52bfcd31bcc1",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "GET"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Portal_Verify_Confirm__3b69aa71-ffed-4956-9d20-2aa3021a8da0__full_definition.json",
+      "name": "Portal_Verify_Confirm",
+      "internalName": "3b69aa71-ffed-4956-9d20-2aa3021a8da0",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Portal_Verify__86897b2f-9770-4efa-8486-2642f24bb947__full_definition.json",
+      "name": "Portal_Verify",
+      "internalName": "86897b2f-9770-4efa-8486-2642f24bb947",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Repair the DGO__ governance lists__bc095fa2-28a4-4312-9076-87caac5ca116__full_definition.json",
+      "name": "Repair the DGO_* governance lists",
+      "internalName": "bc095fa2-28a4-4312-9076-87caac5ca116",
+      "triggerKinds": [
+        "Request/Button"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "SUBMISSION_ECM_DOCS_PORTAL__de9ef13b-ae4c-42b0-9afa-20e71a180759__full_definition.json",
+      "name": "SUBMISSION_ECM_DOCS_PORTAL",
+      "internalName": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "GET"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "UPLOAD_ECM_DOCS_PORTAL__9bd6724c-5a8f-4e74-9d3e-3c1eeaef2d06__full_definition.json",
+      "name": "UPLOAD_ECM_DOCS_PORTAL",
+      "internalName": "9bd6724c-5a8f-4e74-9d3e-3c1eeaef2d06",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Universal Dynamic_Multi-Actions_Executor__1abbe547-9d7e-430e-bc2d-3ed59bc738b9__full_definition.json",
+      "name": "Universal Dynamic_Multi-Actions_Executor",
+      "internalName": "1abbe547-9d7e-430e-bc2d-3ed59bc738b9",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "WEB Get Docs  HTTP GET__d4907f18-4dba-3f06-28de-2ed24f5f7936__full_definition.json",
+      "name": "WEB Get Docs  HTTP GET",
+      "internalName": "d4907f18-4dba-3f06-28de-2ed24f5f7936",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "GET"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Web - Email AI Assist__aacdf9d5-da49-b6da-24d1-e28adc68cd7e__full_definition.json",
+      "name": "Web - Email AI Assist",
+      "internalName": "aacdf9d5-da49-b6da-24d1-e28adc68cd7e",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Web - Email Task Created__3f2f649b-55af-48e0-9a1e-43135e11a4b0__full_definition.json",
+      "name": "Web - Email Task Created",
+      "internalName": "3f2f649b-55af-48e0-9a1e-43135e11a4b0",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Web - Email To Task Processing__447b1b4d-eca0-f95d-912b-0557639c98c8__full_definition.json",
+      "name": "Web - Email To Task Processing",
+      "internalName": "447b1b4d-eca0-f95d-912b-0557639c98c8",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Web - Get Email Attachments__8726fb6f-6c5c-2140-447d-f97cc5a01c38__full_definition.json",
+      "name": "Web - Get Email Attachments",
+      "internalName": "8726fb6f-6c5c-2140-447d-f97cc5a01c38",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Web - Get Tasks GET SWITCH__49de1ff0-2c9a-ac37-1070-5ba9103c3bac__full_definition.json",
+      "name": "Web - Get Tasks GET SWITCH",
+      "internalName": "49de1ff0-2c9a-ac37-1070-5ba9103c3bac",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "GET"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Web - OTP Generate__a03d0ae8-a106-4aee-9985-d73ea7997653__full_definition.json",
+      "name": "Web - OTP Generate",
+      "internalName": "a03d0ae8-a106-4aee-9985-d73ea7997653",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Web - OTP Verify__3e201620-f1e8-4c17-a90a-4d95b94a24c2__full_definition.json",
+      "name": "Web - OTP Verify",
+      "internalName": "3e201620-f1e8-4c17-a90a-4d95b94a24c2",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Web - Preprocess user message__fdd3f24e-285e-46e4-a9fd-be068a80287f__full_definition.json",
+      "name": "Web - Preprocess user message",
+      "internalName": "fdd3f24e-285e-46e4-a9fd-be068a80287f",
+      "triggerKinds": [
+        "Request/Button"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": []
+    },
+    {
+      "file": "Web - Send Email__e5e2c6a2-52ea-2ba8-b0b3-60f25d43387f__full_definition.json",
+      "name": "Web - Send Email",
+      "internalName": "e5e2c6a2-52ea-2ba8-b0b3-60f25d43387f",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [],
+      "triggerAuthenticationType": [
+        "Tenant"
+      ]
+    },
+    {
+      "file": "Web - Subsidiary Doc Actions__6d819704-0e1d-4557-9886-f1afe80155e4__full_definition.json",
+      "name": "Web - Subsidiary Doc Actions",
+      "internalName": "6d819704-0e1d-4557-9886-f1afe80155e4",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "Web - Task Update__811af8bf-daaa-452c-ba71-9676fe037c0b__full_definition.json",
+      "name": "Web - Task Update",
+      "internalName": "811af8bf-daaa-452c-ba71-9676fe037c0b",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    },
+    {
+      "file": "optimized Bulk Assign Direct__9e098918-9ef7-013f-321a-f2604316ea6f__full_definition.json",
+      "name": "optimized Bulk Assign Direct",
+      "internalName": "9e098918-9ef7-013f-321a-f2604316ea6f",
+      "triggerKinds": [
+        "Request/Http"
+      ],
+      "httpMethods": [
+        "POST"
+      ],
+      "triggerAuthenticationType": [
+        "All"
+      ]
+    }
+  ],
+  "unexportedRegisterWorkflows": [
+    {
+      "workflowId": "378b491ec39a4beca886ddec250e6961",
+      "names": [
+        "IP_SEND_EMAIL",
+        "EMAIL"
+      ],
+      "servesKeys": [
+        "EMAIL"
+      ]
+    },
+    {
+      "workflowId": "a942d230337c4ddfa9a386e92bbd048b",
+      "names": [
+        "IP_Create_Email_Assignment",
+        "EMAIL_RELATED_TASK"
+      ],
+      "servesKeys": [
+        "EMAIL_RELATED_TASK"
+      ]
+    },
+    {
+      "workflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "names": [
+        "AI_Document_Processing",
+        "AI_EMAIL_ANALYSIS",
+        "AI_DOC_ANALYSIS",
+        "AI_CHAT"
+      ],
+      "servesKeys": [
+        "AI_EMAIL_ANALYSIS",
+        "AI_DOC_ANALYSIS",
+        "AI_CHAT"
+      ]
+    },
+    {
+      "workflowId": "9bca499081814c25a1715054ac8466b2",
+      "names": [
+        "IP_DGO_OTP_Endpoint",
+        "OTP_GENERATE_LEGACY"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "df90ba34cb494ba59700ec60f39590a1",
+      "names": [
+        "IP_Subsidiary_Actions_Endpoint"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "aa662769f13a4666bfadf3039cd8d247",
+      "names": [
+        "FETCH_ALL",
+        "IP_FETCH_ALL_ENDPOINT"
+      ],
+      "servesKeys": [
+        "FETCH_ALL"
+      ]
+    },
+    {
+      "workflowId": "885fad5ec91f460490e8c772d5d10cb8",
+      "names": [
+        "IP_Reference_Data_Endpoint",
+        "REFERENCE_DATA"
+      ],
+      "servesKeys": [
+        "REFERENCE_DATA"
+      ]
+    },
+    {
+      "workflowId": "72acfc6a694f414f9fe39c939ead7f08",
+      "names": [
+        "Single_Task_Assignment",
+        "SINGLE_ASSIGNMENT"
+      ],
+      "servesKeys": [
+        "SINGLE_ASSIGNMENT"
+      ]
+    },
+    {
+      "workflowId": "c8033987b2d94fa3bec8c71f609cd71e",
+      "names": [
+        "DOC INFO UPDATE"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "27272c09bb4a4cc2985134310c080bab",
+      "names": [
+        "IP_Single_Assignment_Endpoint"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "9464c917ef7c409a882736464a66da6b",
+      "names": [
+        "IP_Bulk_Assignment_Endpoint"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "90235520ba464495bbd81871055408f4",
+      "names": [
+        "IP_Global_Actions_Endpoint",
+        "IP_Fetch_All_Endpoint"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "d5e4b3da41e34819b3f953d2acbc2dd7",
+      "names": [
+        "IP_Dynamic_Global_Actions_Endpoint",
+        "DYNAMIC_ACTIONS",
+        "SUBSIDIARY_ACTIONS"
+      ],
+      "servesKeys": [
+        "SUBSIDIARY_ACTIONS",
+        "DYNAMIC_ACTIONS"
+      ]
+    },
+    {
+      "workflowId": "20e6340941ce4b1bbb87b43c9102a777",
+      "names": [
+        "IP_Fetch_Email_Attachment",
+        "FETCH_EMAIL_ATTACHMENTS"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "0c2497d2b9884412b4ead9eb94f8da0d",
+      "names": [
+        "RE-ALIGNMENT-DOCUMENT_INCOMING_CORRESPONDENCE_PROCESSING"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "84f062159fe9422eb0195c251ca285b8",
+      "names": [
+        "EDTMS NITDA_Update_Task (Resolution)"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "3bd7208d65b541539b2c206239e7790a",
+      "names": [
+        "HtTP_Create_New_Document_metadata_and_watermark",
+        "new_document_watermark"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "a705e453f922457c95ca19f32731e4d7",
+      "names": [
+        "BULK OPS DATA RETRIEVAL HTTP",
+        "BULK_ASSIGNMENT"
+      ],
+      "servesKeys": [
+        "BULK_ASSIGNMENT"
+      ]
+    },
+    {
+      "workflowId": "62b0802c45a7477da46e05278fcd7f2f",
+      "names": [
+        "Fetch_Users_Categories_Departments_Data_Sync"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "ff455c68e9ac493e858fb984bcfd01fb",
+      "names": [
+        "Fetch_References_and_Lookups_Data"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "818ec4053f1e4f0b87845114241d8b74",
+      "names": [
+        "Get Docs"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "37642ba3597f4cf58288cc71b5e6b519",
+      "names": [
+        "fetch tasks"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "3931e2ff995242b6b2c920c8b2209797",
+      "names": [
+        "get emails"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "1154b50e1d17420dadb3b012e7e2a02c",
+      "names": [
+        "optimized bulk assign"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "d2c773332f6f4fbf97ee4a5baa01f70b",
+      "names": [
+        "IP_Retrieve_Email_Attachment_Endpoint",
+        "DGO_ENDPOINT_FETCH_EMAIL_ATTACHMENTS"
+      ],
+      "servesKeys": [
+        "FETCH_EMAIL_ATTACHMENTS"
+      ]
+    },
+    {
+      "workflowId": "8f6a40a682bb4e79acd2ac5d42f15705",
+      "names": [
+        "IP_Bulk_Assign_Endpoint",
+        "DGO_ENDPOINT_BULK_ASSIGNMENT_DIRECT"
+      ],
+      "servesKeys": [
+        "BULK_ASSIGNMENT_DIRECT"
+      ]
+    },
+    {
+      "workflowId": "a942d230337c4ddfa9a386e92bbd048b",
+      "names": [
+        "IP_Create_Email_Assignment_Endpoint",
+        "DGO_ENDPOINT_EMAIL_RELATED_TASK"
+      ],
+      "servesKeys": [
+        "EMAIL_RELATED_TASK"
+      ]
+    },
+    {
+      "workflowId": "052013da80724713a4285edee72ccb4a",
+      "names": [
+        "CG_Portal_Support_Endpoint",
+        "PF_ENDPOINT_SUPPORT"
+      ],
+      "servesKeys": [
+        "SUPPORT"
+      ]
+    },
+    {
+      "workflowId": "c0d58004c53348539d0d5aeaf49dcded",
+      "names": [
+        "CG_Portal_Verification_Endpoint",
+        "PF_ENDPOINT_VERIFY"
+      ],
+      "servesKeys": [
+        "VERIFY"
+      ]
+    },
+    {
+      "workflowId": "b270894ff410499ebbc090e32ffe899b",
+      "names": [
+        "CG_Portal_Verification_Confirmation_Endpoint",
+        "PF_ENDPOINT_VERIFY_CONFIRM"
+      ],
+      "servesKeys": [
+        "VERIFY_CONFIRM"
+      ]
+    },
+    {
+      "workflowId": "34dd28b4a5664927b66e581c74a0ab94",
+      "names": [
+        "CG_Portal_Status_Check_Endpoint",
+        "PF_ENDPOINT_STATUS"
+      ],
+      "servesKeys": [
+        "STATUS"
+      ]
+    },
+    {
+      "workflowId": "abf3a3ca53e64ba58c9ce5933e4e97e3",
+      "names": [
+        "CG_Portal_Writeback_Endpoint",
+        "PF_ENDPOINT_WRITEBACK"
+      ],
+      "servesKeys": [
+        "WRITEBACK"
+      ]
+    },
+    {
+      "workflowId": "bc83d98acf474a088832d78f50085388",
+      "names": [
+        "DYNAMIC_ACTIONS",
+        "EMAIL"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "fe794e0139784ac694768e5a716e0be7",
+      "names": [
+        "AI_EMAIL_ANALYSIS"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "a13c8b577bd44f8787c50d095ea3faf9",
+      "names": [
+        "AI_CHAT"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "314aaf27593147089b38322e5ca25936",
+      "names": [
+        "OTP_GENERATE"
+      ],
+      "servesKeys": []
+    },
+    {
+      "workflowId": "c5e314c768b54bdc89350954ef6a256d",
+      "names": [
+        "OTP_VERIFY"
+      ],
+      "servesKeys": []
+    }
+  ]
+}

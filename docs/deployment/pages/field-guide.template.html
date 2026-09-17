@@ -1,0 +1,435 @@
+<title>Commissioning Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Archivo:wght@400;500;600;700&family=Azeret+Mono:wght@400;500&display=swap">
+<style>
+/* ── Tokens ───────────────────────────────────────────────────────────
+   Full light palette on bare :root so the un-stamped (system) document
+   resolves; dark redefines only tokens, once behind the media query
+   guarded against an explicit light choice, once behind the dark stamp.
+
+   Accent is indigo-violet and carries NO meaning about state. Green means
+   one thing only — this step is done — and red means blocked. If the
+   accent were green, "done" and "page furniture" would be the same
+   colour on a page whose whole job is telling you what is done. */
+:root{
+  --ground:#F7F5F2; --surface:#FFFFFF; --surface-2:#EFEBE6; --surface-3:#E4DED7;
+  --ink:#1A1714; --ink-soft:#6A625B; --ink-faint:#9A918A;
+  --rule:#DDD6CE; --rule-soft:#EBE6E0;
+  --accent:#4A3F8F; --accent-soft:#E9E6F5;
+  --done:#2F6B45; --done-soft:#E2F0E7;
+  --blocked:#A33A2A; --blocked-soft:#F8E7E3;
+  --waiting:#8A6516; --waiting-soft:#F7EEDB;
+  --shadow:0 1px 2px rgba(26,23,20,.05), 0 12px 30px -20px rgba(26,23,20,.35);
+  --focus:#4A3F8F;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#14120F; --surface:#1C1917; --surface-2:#252220; --surface-3:#2F2B28;
+    --ink:#EDE8E3; --ink-soft:#A9A09A; --ink-faint:#756D67;
+    --rule:#332E2A; --rule-soft:#262220;
+    --accent:#A79AE8; --accent-soft:#221E38;
+    --done:#6FBB8E; --done-soft:#16281E;
+    --blocked:#E0866F; --blocked-soft:#2B1712;
+    --waiting:#D6AB52; --waiting-soft:#2A2213;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 30px -20px rgba(0,0,0,.9);
+    --focus:#A79AE8;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#14120F; --surface:#1C1917; --surface-2:#252220; --surface-3:#2F2B28;
+  --ink:#EDE8E3; --ink-soft:#A9A09A; --ink-faint:#756D67;
+  --rule:#332E2A; --rule-soft:#262220;
+  --accent:#A79AE8; --accent-soft:#221E38;
+  --done:#6FBB8E; --done-soft:#16281E;
+  --blocked:#E0866F; --blocked-soft:#2B1712;
+  --waiting:#D6AB52; --waiting-soft:#2A2213;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 30px -20px rgba(0,0,0,.9);
+  --focus:#A79AE8;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ground);color:var(--ink);font:400 15px/1.55 "Archivo","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:500;text-wrap:balance;margin:0}
+code,.mono{font-family:"Azeret Mono",ui-monospace,Menlo,monospace}
+.num{font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:3px}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+
+/* ── Masthead ───────────────────────────────────────────────────── */
+.mast{background:var(--surface);border-bottom:1px solid var(--rule)}
+.mast .wrap{padding-block:26px 22px}
+.kick{font:500 11px/1 "Azeret Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:flex;gap:9px;flex-wrap:wrap}
+h1{font-size:clamp(27px,4.8vw,40px);line-height:1.1;letter-spacing:-.014em;margin-top:11px}
+.lede{max-width:62ch;color:var(--ink-soft);margin-top:11px;font-size:15.5px}
+
+/* ── Next up: the one answer the page exists to give ────────────── */
+.next{
+  margin-top:22px;border:1px solid var(--accent);border-radius:7px;overflow:hidden;
+  background:var(--accent-soft);
+}
+.next-head{
+  font:500 10.5px/1 "Azeret Mono",monospace;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--accent);padding:12px 17px 0;
+}
+.next-body{padding:8px 17px 16px}
+.next-body h2{font-size:19px;line-height:1.3;margin-bottom:5px}
+.next-body p{margin:0;font-size:14px;color:var(--ink-soft);max-width:70ch}
+.next-body .who{font:500 12px/1 "Azeret Mono",monospace;color:var(--ink-soft);margin-top:9px;display:block}
+.next-cta{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
+
+/* ── Progress ───────────────────────────────────────────────────── */
+.bar{display:flex;height:7px;border-radius:99px;overflow:hidden;background:var(--surface-3);margin-top:20px}
+.bar i{display:block;height:100%}
+.bar .d{background:var(--done)}
+.bar .a{background:var(--accent)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:9px;font-size:12.5px;color:var(--ink-soft)}
+.legend b{font-family:"Azeret Mono",monospace;font-weight:500;color:var(--ink)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:baseline}
+.dot.d{background:var(--done)} .dot.a{background:var(--accent)} .dot.r{background:var(--surface-3)}
+
+/* ── Track rail ─────────────────────────────────────────────────── */
+.rail{position:sticky;top:env(safe-area-inset-top, 0px);z-index:30;background:var(--surface);border-bottom:1px solid var(--rule)}
+.rail .wrap{display:flex;gap:5px;overflow-x:auto;padding-block:9px;scrollbar-width:thin}
+.rail button{
+  border:1px solid var(--rule);background:var(--surface);border-radius:99px;cursor:pointer;
+  padding:7px 13px;white-space:nowrap;font:500 12.5px/1 "Archivo",sans-serif;color:var(--ink-soft);
+  display:flex;gap:7px;align-items:center;flex:0 0 auto;
+}
+.rail button:hover{border-color:var(--accent);color:var(--accent)}
+.rail button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] .rail button[aria-pressed="true"],
+html:not([data-theme="light"]) .rail button[aria-pressed="true"]{color:#14120F}
+.rail .c{font-family:"Azeret Mono",monospace;font-size:11px;opacity:.75}
+
+/* ── Track ──────────────────────────────────────────────────────── */
+main{padding-block:34px 60px}
+.track-head{margin-bottom:22px}
+.track-head h2{font-size:25px;letter-spacing:-.01em}
+.track-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.pill{font:500 11px/1 "Azeret Mono",monospace;padding:6px 9px;border-radius:3px;background:var(--surface-2);color:var(--ink-soft)}
+.pill.who{background:var(--accent-soft);color:var(--accent)}
+.track-head p{max-width:70ch;color:var(--ink-soft);font-size:14.5px;margin:13px 0 0}
+
+/* ── Steps ──────────────────────────────────────────────────────── */
+.steps{display:flex;flex-direction:column;gap:9px;margin-top:24px}
+.step{border:1px solid var(--rule);border-radius:7px;background:var(--surface);overflow:hidden}
+.step.is-done{background:var(--done-soft);border-color:var(--done)}
+.step.is-blocked{opacity:.66}
+.step-top{display:grid;grid-template-columns:auto 1fr auto;gap:13px;align-items:start;padding:13px 15px}
+.tick{
+  width:26px;height:26px;border-radius:5px;border:1.5px solid var(--rule);background:var(--surface);
+  cursor:pointer;display:grid;place-items:center;flex:0 0 auto;padding:0;color:transparent;
+  font:700 14px/1 "Archivo",sans-serif;
+}
+.tick:hover{border-color:var(--done)}
+.tick[aria-pressed="true"]{background:var(--done);border-color:var(--done);color:#fff}
+.tick[disabled]{cursor:not-allowed;opacity:.4}
+.step-id{font:500 12px/1.5 "Azeret Mono",monospace;color:var(--ink-faint)}
+.step-t{font-size:15px;line-height:1.4;font-weight:500;cursor:pointer}
+.step.is-done .step-t{text-decoration:line-through;text-decoration-color:var(--done);color:var(--ink-soft)}
+/* align-items:flex-start, not the flex default: stretch made a one-line badge fill the row's
+   height, so "gates commissioning" rendered as a slab twice the height of the badge beside it. */
+.flags{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;align-items:flex-start}
+.flag{font:500 10px/1 "Azeret Mono",monospace;padding:5px 7px;border-radius:3px;white-space:nowrap;background:var(--surface-2);color:var(--ink-soft)}
+.flag.blocked{background:var(--blocked-soft);color:var(--blocked)}
+.flag.gate{background:var(--accent);color:#fff}
+:root[data-theme="dark"] .flag.gate, html:not([data-theme="light"]) .flag.gate{color:#14120F}
+.flag.carry{background:var(--waiting-soft);color:var(--waiting)}
+
+.step-body{padding:0 15px 16px;border-top:1px solid var(--rule-soft);margin-top:2px}
+.fld{margin-top:14px}
+.fld dt{font:500 10px/1.5 "Azeret Mono",monospace;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:5px}
+.fld dd{margin:0;font-size:14px;line-height:1.55;max-width:74ch}
+.fld ol,.fld ul{margin:0;padding-left:20px}
+.fld li{margin-bottom:5px}
+.cmds{display:flex;gap:6px;flex-wrap:wrap}
+.cmds code{background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:4px;padding:5px 8px;font-size:12px}
+.absent{color:var(--waiting);font-style:italic}
+
+/* Carry-back: the reason this page holds state at all. */
+.carry{margin-top:16px;border-left:3px solid var(--waiting);background:var(--waiting-soft);padding:13px 15px;border-radius:0 5px 5px 0}
+.carry b{display:block;font:500 10.5px/1 "Azeret Mono",monospace;letter-spacing:.11em;text-transform:uppercase;color:var(--waiting);margin-bottom:7px}
+.carry p{margin:0 0 10px;font-size:13.5px;line-height:1.5}
+.carry textarea{
+  width:100%;min-height:74px;font:400 12.5px/1.6 "Azeret Mono",monospace;padding:9px 11px;
+  border:1px solid var(--rule);border-radius:5px;background:var(--surface);color:var(--ink);resize:vertical;
+}
+.carry .row{display:flex;gap:9px;align-items:center;margin-top:9px;flex-wrap:wrap}
+.btn{
+  border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:99px;
+  padding:8px 15px;cursor:pointer;font:500 13px/1 "Archivo",sans-serif;
+}
+:root[data-theme="dark"] .btn, html:not([data-theme="light"]) .btn{color:#14120F}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.saved{font:500 12px/1 "Azeret Mono",monospace;color:var(--done)}
+
+.offline{margin-top:16px;border-left:3px solid var(--ink-faint);background:var(--surface-2);padding:12px 15px;border-radius:0 5px 5px 0;font-size:13.5px;color:var(--ink-soft);max-width:74ch}
+
+/* ── Close ──────────────────────────────────────────────────────── */
+.close{background:var(--surface);border-top:1px solid var(--rule)}
+.close .wrap{padding-block:30px 46px}
+.close blockquote{margin:0 0 18px;font-family:"Fraunces",Georgia,serif;font-size:clamp(18px,3vw,23px);line-height:1.34;max-width:30ch;border-left:3px solid var(--accent);padding-left:17px}
+.close .cmds{margin-bottom:18px}
+.close p{font-size:13px;color:var(--ink-faint);max-width:72ch;line-height:1.6;margin:0}
+
+@media (max-width:620px){
+  .step-top{grid-template-columns:auto 1fr;gap:10px}
+  .flags{grid-column:1/-1;justify-content:flex-start;padding-left:39px}
+  .next-body h2{font-size:17px}
+}
+</style>
+
+<header class="mast">
+  <div class="wrap">
+    <p class="kick"><span>DGO / Commissioning</span><span>&middot;</span><span>Commissioning</span><span>&middot;</span><span>npm run external</span></p>
+    <h1>What is left, and who can do it</h1>
+    <p class="lede">
+      Every item that could be closed in the repository has been. These
+      <strong id="totalN">&mdash;</strong> need a tenant session, an institutional decision, or an
+      observation only a live run can make. Grouped by who holds the access, ordered by what the
+      sources say must go first.
+    </p>
+
+    <div class="next" id="next"></div>
+
+    <div class="bar" id="bar"></div>
+    <div class="legend" id="legend"></div>
+  </div>
+</header>
+
+<nav class="rail" aria-label="Tracks"><div class="wrap" id="rail"></div></nav>
+
+<main class="wrap" id="main"></main>
+
+<footer class="close">
+  <div class="wrap">
+    <blockquote>Where this page and a command disagree, the command governs.</blockquote>
+    <div class="cmds">
+      <code>npm run master</code><code>npm run outstanding</code><code>npm run external</code><code>npm run commission</code>
+    </div>
+    <p id="prov">
+      Generated from <code>MASTER_REGISTER.json</code>. Every step is an open item in a register and
+      this page owns none of them — when a register says an item has closed, its step leaves on the
+      next build. Ticks and recorded values live with this page; they are a working record of what
+      was done, not a change to any register.
+    </p>
+  </div>
+</footer>
+
+<script id="plan" type="application/json">__DATA__</script>
+<script>
+const PLAN = JSON.parse(document.getElementById('plan').textContent);
+const STEPS = PLAN.tracks.flatMap(t => t.steps);
+const byId = new Map(STEPS.map(s => [s.id, s]));
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const el = id => document.getElementById(id);
+
+/* State lives in db when the viewer can run it, and in memory when they cannot.
+   The page renders identically either way — a guide that shows nothing until a
+   capability answers is a guide that fails exactly when the network is worst. */
+let db = null;
+const state = new Map();          // id -> {done, doneBy, doneAt, value}
+let track = PLAN.tracks[0].id;
+
+const get = id => state.get(id) || {};
+const isDone = id => Boolean(get(id).done);
+
+/* A step is workable when nothing it waits on is still open here. Blocking is read
+   from the register's own graph, never guessed. */
+const blockers = s => s.waitsOn.filter(w => byId.has(w) && !isDone(w));
+
+function nextUp() {
+  return STEPS.find(s => !isDone(s.id) && blockers(s).length === 0) || null;
+}
+
+/* ── Render ─────────────────────────────────────────────────────── */
+
+function renderNext() {
+  const s = nextUp();
+  const doneCount = STEPS.filter(x => isDone(x.id)).length;
+  if (!s) {
+    el('next').innerHTML = `<p class="next-head">Nothing is waiting</p>
+      <div class="next-body"><h2>Every step here is ticked.</h2>
+      <p>${doneCount} of ${STEPS.length} recorded as done. Re-run <code>npm run master</code> to see
+      what the registers now say.</p></div>`;
+    return;
+  }
+  el('next').innerHTML = `<p class="next-head">Do this next</p>
+    <div class="next-body">
+      <h2>${esc(s.title)}</h2>
+      <p>${esc(s.what || '')}</p>
+      <span class="who">${esc(s.id)} &middot; ${esc(s.actor)}${
+        s.waitedOnBy.length ? ` &middot; ${s.waitedOnBy.length} item${s.waitedOnBy.length === 1 ? '' : 's'} wait on it` : ''}</span>
+      <div class="next-cta">
+        <button class="btn" data-goto="${esc(s.id)}">Open this step</button>
+      </div>
+    </div>`;
+}
+
+function renderProgress() {
+  const done = STEPS.filter(s => isDone(s.id)).length;
+  const ready = STEPS.filter(s => !isDone(s.id) && blockers(s).length === 0).length;
+  const waiting = STEPS.length - done - ready;
+  const pc = n => (n / STEPS.length * 100).toFixed(2) + '%';
+  el('bar').innerHTML = `<i class="d" style="width:${pc(done)}"></i><i class="a" style="width:${pc(ready)}"></i>`;
+  el('legend').innerHTML =
+    `<span><span class="dot d"></span><b>${done}</b> done</span>` +
+    `<span><span class="dot a"></span><b>${ready}</b> can start now</span>` +
+    `<span><span class="dot r"></span><b>${waiting}</b> waiting on something here</span>`;
+  el('totalN').textContent = `${STEPS.length} items`;
+}
+
+function renderRail() {
+  el('rail').innerHTML = PLAN.tracks.map(t => {
+    const d = t.steps.filter(s => isDone(s.id)).length;
+    return `<button type="button" data-track="${esc(t.id)}" aria-pressed="${t.id === track}">
+      ${esc(t.title)} <span class="c">${d}/${t.steps.length}</span></button>`;
+  }).join('');
+}
+
+function list(a) {
+  if (!a || !a.length) return '<span class="absent">none stated</span>';
+  const numbered = a.every(x => /^\s*\d+[.)]\s/.test(String(x)));
+  return numbered
+    ? `<ol>${a.map(x => `<li>${esc(String(x).replace(/^\s*\d+[.)]\s*/, ''))}</li>`).join('')}</ol>`
+    : `<ul>${a.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+}
+
+function stepHtml(s) {
+  const st = get(s.id);
+  const bl = blockers(s);
+  const gates = (PLAN.gating || []).includes(s.id);
+  return `<article class="step ${st.done ? 'is-done' : ''} ${bl.length ? 'is-blocked' : ''}" id="s-${esc(s.id)}">
+    <div class="step-top">
+      <button class="tick" type="button" data-tick="${esc(s.id)}" aria-pressed="${Boolean(st.done)}"
+        ${bl.length && !st.done ? 'disabled' : ''}
+        aria-label="${st.done ? 'Mark not done' : 'Mark done'}: ${esc(s.title)}">&#10003;</button>
+      <div>
+        <span class="step-id">${esc(s.id)} &middot; ${esc(s.source)}</span>
+        <div class="step-t" data-open="${esc(s.id)}">${esc(s.title)}</div>
+        ${st.done && st.doneAt ? `<span class="step-id" style="color:var(--done)">recorded ${esc(String(st.doneAt).slice(0, 10))}</span>` : ''}
+      </div>
+      <div class="flags">
+        ${gates ? '<span class="flag gate">gates commissioning</span>' : ''}
+        ${s.carryBack ? '<span class="flag carry">value to record</span>' : ''}
+        ${bl.length ? `<span class="flag blocked">waits on ${bl.map(esc).join(', ')}</span>` : ''}
+      </div>
+    </div>
+    <div class="step-body" ${st.open ? '' : 'hidden'} data-body="${esc(s.id)}">
+      <dl class="fld"><dt>Where it stands</dt><dd class="mono" style="font-size:13px">${esc(s.state)}</dd></dl>
+      <dl class="fld"><dt>Do</dt><dd>${list(s.actions)}</dd></dl>
+      ${s.inputs && s.inputs.length ? `<dl class="fld"><dt>Bring</dt><dd>${list(s.inputs)}</dd></dl>` : ''}
+      ${s.commands && s.commands.length ? `<dl class="fld"><dt>Commands</dt><dd class="cmds">${s.commands.map(c => `<code>${esc(c)}</code>`).join('')}</dd></dl>` : ''}
+      <dl class="fld"><dt>Done when</dt><dd>${s.closesWhen
+        ? esc(s.closesWhen)
+        : `<span class="absent">not established by the source</span> &mdash; ${esc(s.closureNotEstablished || '')}`}</dd></dl>
+      ${s.carryBack ? `<div class="carry">
+        <b>Carry this back into the repository</b>
+        <p>${esc(s.carryBack)}</p>
+        <textarea data-value="${esc(s.id)}" placeholder="Paste what the tenant returned — GUIDs, run output, the read-back"
+          aria-label="Value to carry back for ${esc(s.id)}">${esc(st.value || '')}</textarea>
+        <div class="row">
+          <button class="btn ghost" type="button" data-save="${esc(s.id)}">Record it</button>
+          <span class="saved" data-saved="${esc(s.id)}" hidden>recorded</span>
+        </div>
+      </div>` : ''}
+    </div>
+  </article>`;
+}
+
+function render() {
+  renderProgress(); renderNext(); renderRail();
+  const t = PLAN.tracks.find(x => x.id === track);
+  el('main').innerHTML = `<div class="track-head">
+      <h2>${esc(t.title)}</h2>
+      <div class="track-meta">
+        <span class="pill who">${esc(t.who)}</span>
+        <span class="pill">${t.steps.length} step${t.steps.length === 1 ? '' : 's'}</span>
+        <span class="pill">${t.steps.filter(s => isDone(s.id)).length} done</span>
+      </div>
+      <p><strong>Access.</strong> ${esc(t.access)}</p>
+      <p>${esc(t.why)}</p>
+    </div>
+    <div class="steps">${t.steps.map(stepHtml).join('')}</div>
+    ${db ? '' : `<div class="offline">Ticks and recorded values are kept for this visit only —
+      shared saving is not available in this view. The steps, their order and what to carry back are
+      all here regardless.</div>`}`;
+}
+
+/* ── Interaction ────────────────────────────────────────────────── */
+
+async function save(id) {
+  const s = get(id);
+  if (!db) return;
+  try { await db.doc('progress/' + id).set({ ...s, id, updatedAt: new Date().toISOString() }); }
+  catch (e) { /* a refused or rate-limited write must not take the page down */ }
+}
+
+document.addEventListener('click', async (e) => {
+  const tick = e.target.closest('[data-tick]');
+  if (tick) {
+    const id = tick.dataset.tick;
+    const s = get(id);
+    const done = !s.done;
+    state.set(id, { ...s, done, doneAt: done ? new Date().toISOString() : null });
+    render();
+    await save(id);
+    return;
+  }
+  const open = e.target.closest('[data-open]');
+  if (open) {
+    const id = open.dataset.open;
+    state.set(id, { ...get(id), open: !get(id).open });
+    render();
+    return;
+  }
+  const go = e.target.closest('[data-goto]');
+  if (go) {
+    const id = go.dataset.goto;
+    const t = PLAN.tracks.find(x => x.steps.some(s => s.id === id));
+    if (t) track = t.id;
+    state.set(id, { ...get(id), open: true });
+    render();
+    document.getElementById('s-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  const tr = e.target.closest('[data-track]');
+  if (tr) { track = tr.dataset.track; render(); return; }
+
+  const sv = e.target.closest('[data-save]');
+  if (sv) {
+    const id = sv.dataset.save;
+    const ta = document.querySelector(`[data-value="${CSS.escape(id)}"]`);
+    state.set(id, { ...get(id), value: ta ? ta.value : '', open: true });
+    await save(id);
+    const flag = document.querySelector(`[data-saved="${CSS.escape(id)}"]`);
+    if (flag) { flag.hidden = false; setTimeout(() => { flag.hidden = true; }, 2400); }
+  }
+});
+
+render();
+
+/* db arrives later, never during this first run. Light it up when it does. */
+(async () => {
+  db = await window.claude?.use?.('db') ?? null;
+  if (!db) return;
+  try {
+    db.collection('progress').onSnapshot((snap) => {
+      for (const d of snap.docs) {
+        const v = d.data() || {};
+        const local = get(d.id);
+        state.set(d.id, { ...local, done: v.done, doneAt: v.doneAt, value: v.value ?? local.value });
+      }
+      render();
+    }, () => { /* terminal listener error: the page keeps working from memory */ });
+  } catch (e) { /* design for absence */ }
+})();
+</script>

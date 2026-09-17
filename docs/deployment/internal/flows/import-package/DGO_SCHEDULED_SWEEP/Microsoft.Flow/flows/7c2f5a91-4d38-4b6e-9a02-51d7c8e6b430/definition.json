@@ -1,0 +1,1584 @@
+{
+ "name": "7c2f5a91-4d38-4b6e-9a02-51d7c8e6b430",
+ "id": "/providers/Microsoft.Flow/flows/7c2f5a91-4d38-4b6e-9a02-51d7c8e6b430",
+ "type": "Microsoft.Flow/flows",
+ "properties": {
+  "apiId": "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+  "displayName": "DGO_SCHEDULED_SWEEP",
+  "definition": {
+   "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+    "$connections": {
+     "defaultValue": {},
+     "type": "Object"
+    },
+    "$authentication": {
+     "defaultValue": {},
+     "type": "SecureObject"
+    }
+   },
+   "triggers": {
+    "Recurrence": {
+     "type": "Recurrence",
+     "recurrence": {
+      "frequency": "Hour",
+      "interval": 1,
+      "timeZone": "W. Central Africa Standard Time"
+     },
+     "metadata": {
+      "operationMetadataId": "a0000000-0000-4000-8000-000000000080"
+     }
+    }
+   },
+   "actions": {
+    "Initialize_variable_varReceivedAtUtc": {
+     "type": "InitializeVariable",
+     "inputs": {
+      "variables": [
+       {
+        "name": "varReceivedAtUtc",
+        "type": "string",
+        "value": "@utcNow()"
+       }
+      ]
+     },
+     "metadata": {
+      "operationMetadataId": "a0000000-0000-4000-8000-000000000081"
+     }
+    },
+    "Initialize_variable_varErrors": {
+     "type": "InitializeVariable",
+     "inputs": {
+      "variables": [
+       {
+        "name": "varErrors",
+        "type": "array",
+        "value": []
+       }
+      ]
+     },
+     "runAfter": {
+      "Initialize_variable_varReceivedAtUtc": [
+       "Succeeded"
+      ]
+     },
+     "metadata": {
+      "operationMetadataId": "a0000000-0000-4000-8000-000000000082"
+     }
+    },
+    "Scope_Ack_Overdue": {
+     "type": "Scope",
+     "metadata": {
+      "operationMetadataId": "a0000000-0000-4000-8000-000000000001"
+     },
+     "actions": {
+      "Get_Ack_Overdue": {
+       "type": "OpenApiConnection",
+       "inputs": {
+        "parameters": {
+         "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+         "table": "ee82725a-c408-45e2-a8e8-facf7a092047",
+         "$filter": "Acknowledgement_x0020_Due_x0020_ ge '@{formatDateTime(addDays(utcNow(),-30),'yyyy-MM-ddTHH:mm:ssZ')}' and Acknowledgement_x0020_Due_x0020_ lt '@{formatDateTime(utcNow(),'yyyy-MM-ddTHH:mm:ssZ')}'",
+         "$top": 500,
+         "$orderby": "Acknowledgement_x0020_Due_x0020_ desc"
+        },
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connection": "shared_sharepointonline",
+         "operationId": "GetItems"
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000002"
+       }
+      },
+      "Filter_Ack_Unacknowledged": {
+       "type": "Query",
+       "inputs": {
+        "from": "@coalesce(outputs('Get_Ack_Overdue')?['body/value'],json('[]'))",
+        "where": "@and(not(equals(coalesce(item()?['Acknowledge_x0020_Task'],false),true)),not(empty(coalesce(item()?['AssignedTo'],item()?['Assigned'],''))))"
+       },
+       "runAfter": {
+        "Get_Ack_Overdue": [
+         "Succeeded"
+        ]
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000003"
+       }
+      },
+      "Foreach_Ack": {
+       "type": "Foreach",
+       "foreach": "@body('Filter_Ack_Unacknowledged')",
+       "actions": {
+        "Compose_Ack_Ref": {
+         "type": "Compose",
+         "inputs": "@string(coalesce(item()?['Reference_ID'],item()?['RefIDD'],item()?['ID']))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000004"
+         }
+        },
+        "Compose_Ack_To": {
+         "type": "Compose",
+         "inputs": "@toLower(trim(string(coalesce(item()?['AssignedTo'],item()?['Assigned'],''))))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000005"
+         },
+         "runAfter": {
+          "Compose_Ack_Ref": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Get_Sent_Ack": {
+         "type": "OpenApiConnection",
+         "inputs": {
+          "parameters": {
+           "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+           "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+           "$filter": "@concat('Title eq ''acknowledgement-overdue:',replace(outputs('Compose_Ack_Ref'),'''',''''''),'''')",
+           "$top": 1
+          },
+          "host": {
+           "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+           "connection": "shared_sharepointonline",
+           "operationId": "GetItems"
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000006"
+         },
+         "runAfter": {
+          "Compose_Ack_To": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Compose_Already_Ack": {
+         "type": "Compose",
+         "inputs": "@greater(length(coalesce(outputs('Get_Sent_Ack')?['body/value'],json('[]'))),0)",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000007"
+         },
+         "runAfter": {
+          "Get_Sent_Ack": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Condition_Ack_Send": {
+         "type": "If",
+         "expression": {
+          "equals": [
+           "@outputs('Compose_Already_Ack')",
+           false
+          ]
+         },
+         "actions": {
+          "Send_Ack_Overdue": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "emailMessage/To": "@outputs('Compose_Ack_To')",
+             "emailMessage/Subject": "@concat('Acknowledgement overdue — ',outputs('Compose_Ack_Ref'))",
+             "emailMessage/Body": "<div style=\"font-family:Arial,sans-serif;padding:20px\"><h2 style=\"color:#008751\">Acknowledgement overdue</h2><p>This task has not been acknowledged and its acknowledgement date has passed.</p><p><b>Reference:</b> @{outputs('Compose_Ack_Ref')}</p><p><b>Task:</b> @{item()?['Title']}</p><p><b>Acknowledgement was due:</b> @{item()?['Acknowledgement_x0020_Due_x0020_']}</p><p>Open the task in DGO Digital Ops and acknowledge it.</p></div>",
+             "emailMessage/Importance": "Normal"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+             "connection": "shared_office365",
+             "operationId": "SendEmailV2"
+            }
+           },
+           "runAfter": null,
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000008"
+           }
+          },
+          "Create_Ack_Receipt": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+             "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+             "item/Title": "@concat('acknowledgement-overdue:',outputs('Compose_Ack_Ref'))",
+             "item/MessageType": "acknowledgement-overdue",
+             "item/RecipientEmail": "@outputs('Compose_Ack_To')",
+             "item/Reference": "@outputs('Compose_Ack_Ref')",
+             "item/SentAtUtc": "@utcNow()",
+             "item/Status": "@if(equals(actions('Send_Ack_Overdue')?['status'],'Succeeded'),'sent','failed')",
+             "item/Attempts": 1,
+             "item/LastError": "@if(equals(actions('Send_Ack_Overdue')?['status'],'Succeeded'),'',string(actions('Send_Ack_Overdue')?['error']))"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+             "connection": "shared_sharepointonline",
+             "operationId": "PostItem"
+            }
+           },
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000009"
+           },
+           "runAfter": {
+            "Send_Ack_Overdue": [
+             "Succeeded",
+             "Failed",
+             "TimedOut",
+             "Skipped"
+            ]
+           }
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000010"
+         },
+         "runAfter": {
+          "Compose_Already_Ack": [
+           "Succeeded"
+          ]
+         }
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000011"
+       },
+       "runAfter": {
+        "Filter_Ack_Unacknowledged": [
+         "Succeeded"
+        ]
+       },
+       "runtimeConfiguration": {
+        "concurrency": {
+         "repetitions": 1
+        }
+       }
+      }
+     },
+     "runAfter": {
+      "Initialize_variable_varErrors": [
+       "Succeeded"
+      ]
+     }
+    },
+    "Scope_Due_Breached": {
+     "type": "Scope",
+     "metadata": {
+      "operationMetadataId": "a0000000-0000-4000-8000-000000000012"
+     },
+     "runAfter": {
+      "Scope_Ack_Overdue": [
+       "Succeeded",
+       "Failed",
+       "TimedOut",
+       "Skipped"
+      ]
+     },
+     "actions": {
+      "Get_Due_Breached": {
+       "type": "OpenApiConnection",
+       "inputs": {
+        "parameters": {
+         "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+         "table": "ee82725a-c408-45e2-a8e8-facf7a092047",
+         "$filter": "DueDate ge '@{formatDateTime(addDays(utcNow(),-30),'yyyy-MM-ddTHH:mm:ssZ')}' and DueDate lt '@{formatDateTime(utcNow(),'yyyy-MM-ddTHH:mm:ssZ')}'",
+         "$top": 500,
+         "$orderby": "DueDate desc"
+        },
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connection": "shared_sharepointonline",
+         "operationId": "GetItems"
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000013"
+       }
+      },
+      "Filter_Due_Open": {
+       "type": "Query",
+       "inputs": {
+        "from": "@coalesce(outputs('Get_Due_Breached')?['body/value'],json('[]'))",
+        "where": "@and(not(equals(toLower(string(coalesce(item()?['Progress']?['Value'],item()?['Progress'],''))),'completed')),not(empty(coalesce(item()?['AssignedTo'],item()?['Assigned'],''))))"
+       },
+       "runAfter": {
+        "Get_Due_Breached": [
+         "Succeeded"
+        ]
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000014"
+       }
+      },
+      "Foreach_Due": {
+       "type": "Foreach",
+       "foreach": "@body('Filter_Due_Open')",
+       "actions": {
+        "Compose_Due_Ref": {
+         "type": "Compose",
+         "inputs": "@string(coalesce(item()?['Reference_ID'],item()?['RefIDD'],item()?['ID']))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000015"
+         }
+        },
+        "Compose_Due_To": {
+         "type": "Compose",
+         "inputs": "@toLower(trim(string(coalesce(item()?['AssignedTo'],item()?['Assigned'],''))))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000016"
+         },
+         "runAfter": {
+          "Compose_Due_Ref": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Get_Sent_Due": {
+         "type": "OpenApiConnection",
+         "inputs": {
+          "parameters": {
+           "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+           "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+           "$filter": "@concat('Title eq ''due-breached:',replace(outputs('Compose_Due_Ref'),'''',''''''),'''')",
+           "$top": 1
+          },
+          "host": {
+           "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+           "connection": "shared_sharepointonline",
+           "operationId": "GetItems"
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000017"
+         },
+         "runAfter": {
+          "Compose_Due_To": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Compose_Already_Due": {
+         "type": "Compose",
+         "inputs": "@greater(length(coalesce(outputs('Get_Sent_Due')?['body/value'],json('[]'))),0)",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000018"
+         },
+         "runAfter": {
+          "Get_Sent_Due": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Condition_Due_Send": {
+         "type": "If",
+         "expression": {
+          "equals": [
+           "@outputs('Compose_Already_Due')",
+           false
+          ]
+         },
+         "actions": {
+          "Send_Due_Breached": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "emailMessage/To": "@outputs('Compose_Due_To')",
+             "emailMessage/Subject": "@concat('Overdue — ',outputs('Compose_Due_Ref'))",
+             "emailMessage/Body": "<div style=\"font-family:Arial,sans-serif;padding:20px\"><h2 style=\"color:#008751\">Task overdue</h2><p>This task has passed its due date and is not recorded as complete.</p><p><b>Reference:</b> @{outputs('Compose_Due_Ref')}</p><p><b>Task:</b> @{item()?['Title']}</p><p><b>Due:</b> @{item()?['DueDate']}</p></div>",
+             "emailMessage/Importance": "Normal"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+             "connection": "shared_office365",
+             "operationId": "SendEmailV2"
+            }
+           },
+           "runAfter": null,
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000019"
+           }
+          },
+          "Create_Due_Receipt": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+             "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+             "item/Title": "@concat('due-breached:',outputs('Compose_Due_Ref'))",
+             "item/MessageType": "due-breached",
+             "item/RecipientEmail": "@outputs('Compose_Due_To')",
+             "item/Reference": "@outputs('Compose_Due_Ref')",
+             "item/SentAtUtc": "@utcNow()",
+             "item/Status": "@if(equals(actions('Send_Due_Breached')?['status'],'Succeeded'),'sent','failed')",
+             "item/Attempts": 1,
+             "item/LastError": "@if(equals(actions('Send_Due_Breached')?['status'],'Succeeded'),'',string(actions('Send_Due_Breached')?['error']))"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+             "connection": "shared_sharepointonline",
+             "operationId": "PostItem"
+            }
+           },
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000020"
+           },
+           "runAfter": {
+            "Send_Due_Breached": [
+             "Succeeded",
+             "Failed",
+             "TimedOut",
+             "Skipped"
+            ]
+           }
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000021"
+         },
+         "runAfter": {
+          "Compose_Already_Due": [
+           "Succeeded"
+          ]
+         }
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000022"
+       },
+       "runAfter": {
+        "Filter_Due_Open": [
+         "Succeeded"
+        ]
+       },
+       "runtimeConfiguration": {
+        "concurrency": {
+         "repetitions": 1
+        }
+       }
+      }
+     }
+    },
+    "Scope_Outbox": {
+     "type": "Scope",
+     "metadata": {
+      "operationMetadataId": "a0000000-0000-4000-8000-000000000023"
+     },
+     "runAfter": {
+      "Scope_Due_Breached": [
+       "Succeeded",
+       "Failed",
+       "TimedOut",
+       "Skipped"
+      ]
+     },
+     "actions": {
+      "Get_Failed_Receipts": {
+       "type": "OpenApiConnection",
+       "inputs": {
+        "parameters": {
+         "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+         "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+         "$filter": "Status eq 'failed' and Attempts lt 3",
+         "$top": 100,
+         "$orderby": "SentAtUtc asc"
+        },
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connection": "shared_sharepointonline",
+         "operationId": "GetItems"
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000024"
+       }
+      },
+      "Foreach_Failed": {
+       "type": "Foreach",
+       "foreach": "@coalesce(outputs('Get_Failed_Receipts')?['body/value'],json('[]'))",
+       "actions": {
+        "Compose_Retry_To": {
+         "type": "Compose",
+         "inputs": "@toLower(trim(string(coalesce(item()?['RecipientEmail'],''))))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000025"
+         }
+        },
+        "Condition_Retry_Addressable": {
+         "type": "If",
+         "expression": {
+          "and": [
+           {
+            "not": {
+             "equals": [
+              "@outputs('Compose_Retry_To')",
+              ""
+             ]
+            }
+           }
+          ]
+         },
+         "actions": {
+          "Send_Retry": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "emailMessage/To": "@outputs('Compose_Retry_To')",
+             "emailMessage/Subject": "@concat('NITDA — ',coalesce(item()?['MessageType'],'notification'),' — ',coalesce(item()?['Reference'],''))",
+             "emailMessage/Body": "<div style=\"font-family:Arial,sans-serif;padding:20px\"><h2 style=\"color:#008751\">NITDA notification</h2><p>This message could not be delivered when it was first sent, and is being resent.</p><p><b>Reference:</b> @{coalesce(item()?['Reference'],'')}</p><p><b>Type:</b> @{coalesce(item()?['MessageType'],'')}</p></div>",
+             "emailMessage/Importance": "Normal"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+             "connection": "shared_office365",
+             "operationId": "SendEmailV2"
+            }
+           },
+           "runAfter": null,
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000026"
+           }
+          },
+          "Patch_Retry_Attempt": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+             "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+             "id": "@item()?['ID']",
+             "item/Title": "@item()?['Title']",
+             "item/Attempts": "@add(int(coalesce(item()?['Attempts'],1)),1)",
+             "item/Status": "@if(equals(actions('Send_Retry')?['status'],'Succeeded'),'sent','failed')",
+             "item/LastError": "@if(equals(actions('Send_Retry')?['status'],'Succeeded'),'',string(actions('Send_Retry')?['error']))"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+             "connection": "shared_sharepointonline",
+             "operationId": "PatchItem"
+            }
+           },
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000027"
+           },
+           "runAfter": {
+            "Send_Retry": [
+             "Succeeded",
+             "Failed",
+             "TimedOut",
+             "Skipped"
+            ]
+           }
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000028"
+         },
+         "runAfter": {
+          "Compose_Retry_To": [
+           "Succeeded"
+          ]
+         }
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000029"
+       },
+       "runAfter": {
+        "Get_Failed_Receipts": [
+         "Succeeded"
+        ]
+       },
+       "runtimeConfiguration": {
+        "concurrency": {
+         "repetitions": 1
+        }
+       }
+      },
+      "Get_Exhausted_Receipts": {
+       "type": "OpenApiConnection",
+       "inputs": {
+        "parameters": {
+         "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+         "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+         "$filter": "Status eq 'failed' and Attempts ge 3",
+         "$top": 100
+        },
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connection": "shared_sharepointonline",
+         "operationId": "GetItems"
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000030"
+       },
+       "runAfter": {
+        "Foreach_Failed": [
+         "Succeeded",
+         "Failed",
+         "TimedOut",
+         "Skipped"
+        ]
+       }
+      },
+      "Compose_Exhausted_Count": {
+       "type": "Compose",
+       "inputs": "@length(coalesce(outputs('Get_Exhausted_Receipts')?['body/value'],json('[]')))",
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000031"
+       },
+       "runAfter": {
+        "Get_Exhausted_Receipts": [
+         "Succeeded"
+        ]
+       }
+      },
+      "Condition_Exhausted_Any": {
+       "type": "If",
+       "expression": {
+        "greater": [
+         "@outputs('Compose_Exhausted_Count')",
+         0
+        ]
+       },
+       "actions": {
+        "Get_Sent_Exhausted": {
+         "type": "OpenApiConnection",
+         "inputs": {
+          "parameters": {
+           "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+           "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+           "$filter": "@concat('Title eq ''outbox-failure-alert:',formatDateTime(utcNow(),'yyyy-MM-dd'),'''')",
+           "$top": 1
+          },
+          "host": {
+           "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+           "connection": "shared_sharepointonline",
+           "operationId": "GetItems"
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000032"
+         }
+        },
+        "Compose_Already_Exhausted": {
+         "type": "Compose",
+         "inputs": "@greater(length(coalesce(outputs('Get_Sent_Exhausted')?['body/value'],json('[]'))),0)",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000033"
+         },
+         "runAfter": {
+          "Get_Sent_Exhausted": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Condition_Exhausted_Send": {
+         "type": "If",
+         "expression": {
+          "equals": [
+           "@outputs('Compose_Already_Exhausted')",
+           false
+          ]
+         },
+         "actions": {
+          "Send_Outbox_Alert": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "emailMessage/To": "dgsRegistry@nitda.gov.ng",
+             "emailMessage/Subject": "@concat('[ACTION REQUIRED] ',string(outputs('Compose_Exhausted_Count')),' undelivered notification(s)')",
+             "emailMessage/Body": "<div style=\"font-family:Arial,sans-serif;padding:20px\"><h2 style=\"color:#008751\">Undelivered notifications</h2><p>@{outputs('Compose_Exhausted_Count')} message(s) in Portal Outbox Receipts have failed three times and will not be retried.</p><p>Open the list and review rows where Status is failed and Attempts is 3 or more.</p></div>",
+             "emailMessage/Importance": "Normal"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+             "connection": "shared_office365",
+             "operationId": "SendEmailV2"
+            }
+           },
+           "runAfter": null,
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000034"
+           }
+          },
+          "Create_Outbox_Alert_Receipt": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+             "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+             "item/Title": "@concat('outbox-failure-alert:',formatDateTime(utcNow(),'yyyy-MM-dd'))",
+             "item/MessageType": "outbox-failure-alert",
+             "item/RecipientEmail": "dgsRegistry@nitda.gov.ng",
+             "item/Reference": "@string(outputs('Compose_Exhausted_Count'))",
+             "item/SentAtUtc": "@utcNow()",
+             "item/Status": "@if(equals(actions('Send_Outbox_Alert')?['status'],'Succeeded'),'sent','failed')",
+             "item/Attempts": 1,
+             "item/LastError": "@if(equals(actions('Send_Outbox_Alert')?['status'],'Succeeded'),'',string(actions('Send_Outbox_Alert')?['error']))"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+             "connection": "shared_sharepointonline",
+             "operationId": "PostItem"
+            }
+           },
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000035"
+           },
+           "runAfter": {
+            "Send_Outbox_Alert": [
+             "Succeeded",
+             "Failed",
+             "TimedOut",
+             "Skipped"
+            ]
+           }
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000036"
+         },
+         "runAfter": {
+          "Compose_Already_Exhausted": [
+           "Succeeded"
+          ]
+         }
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000037"
+       },
+       "runAfter": {
+        "Compose_Exhausted_Count": [
+         "Succeeded"
+        ]
+       }
+      }
+     }
+    },
+    "Scope_Status": {
+     "type": "Scope",
+     "metadata": {
+      "operationMetadataId": "a0000000-0000-4000-8000-000000000038"
+     },
+     "runAfter": {
+      "Scope_Outbox": [
+       "Succeeded",
+       "Failed",
+       "TimedOut",
+       "Skipped"
+      ]
+     },
+     "actions": {
+      "Get_Status_Approved": {
+       "type": "OpenApiConnection",
+       "inputs": {
+        "parameters": {
+         "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+         "table": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+         "$filter": "Status eq 'approved'",
+         "$top": 100,
+         "$orderby": "Modified desc"
+        },
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connection": "shared_sharepointonline",
+         "operationId": "GetItems"
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000039"
+       }
+      },
+      "Foreach_Status_Approved": {
+       "type": "Foreach",
+       "foreach": "@coalesce(outputs('Get_Status_Approved')?['body/value'],json('[]'))",
+       "actions": {
+        "Compose_Approved_Ref": {
+         "type": "Compose",
+         "inputs": "@string(coalesce(item()?['ReferenceId'],item()?['Title'],item()?['ID']))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000040"
+         }
+        },
+        "Compose_Approved_To": {
+         "type": "Compose",
+         "inputs": "@toLower(trim(string(coalesce(item()?['SenderEmail'],''))))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000041"
+         },
+         "runAfter": {
+          "Compose_Approved_Ref": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Get_Sent_Approved": {
+         "type": "OpenApiConnection",
+         "inputs": {
+          "parameters": {
+           "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+           "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+           "$filter": "@concat('Title eq ''decision-outcome:',replace(outputs('Compose_Approved_Ref'),'''',''''''),'''')",
+           "$top": 1
+          },
+          "host": {
+           "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+           "connection": "shared_sharepointonline",
+           "operationId": "GetItems"
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000042"
+         },
+         "runAfter": {
+          "Compose_Approved_To": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Compose_Already_Approved": {
+         "type": "Compose",
+         "inputs": "@greater(length(coalesce(outputs('Get_Sent_Approved')?['body/value'],json('[]'))),0)",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000043"
+         },
+         "runAfter": {
+          "Get_Sent_Approved": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Condition_Approved_Send": {
+         "type": "If",
+         "expression": {
+          "and": [
+           {
+            "equals": [
+             "@outputs('Compose_Already_Approved')",
+             false
+            ]
+           },
+           {
+            "not": {
+             "equals": [
+              "@outputs('Compose_Approved_To')",
+              ""
+             ]
+            }
+           }
+          ]
+         },
+         "actions": {
+          "Send_Approved": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "emailMessage/To": "@outputs('Compose_Approved_To')",
+             "emailMessage/Subject": "@concat('Decision issued — ',outputs('Compose_Approved_Ref'))",
+             "emailMessage/Body": "<div style=\"font-family:Arial,sans-serif;padding:20px\"><h2 style=\"color:#008751\">Decision issued</h2><p>A decision has been issued on your submission.</p><p><b>Tracking ID:</b> @{outputs('Compose_Approved_Ref')}</p><p><b>Outcome:</b> Approved.</p><p>Open the tracking page with this ID and the email address you used to see the full record.</p></div>",
+             "emailMessage/Importance": "Normal"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+             "connection": "shared_office365",
+             "operationId": "SendEmailV2"
+            }
+           },
+           "runAfter": null,
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000044"
+           }
+          },
+          "Create_Approved_Receipt": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+             "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+             "item/Title": "@concat('decision-outcome:',outputs('Compose_Approved_Ref'))",
+             "item/MessageType": "decision-outcome",
+             "item/RecipientEmail": "@outputs('Compose_Approved_To')",
+             "item/Reference": "@outputs('Compose_Approved_Ref')",
+             "item/SentAtUtc": "@utcNow()",
+             "item/Status": "@if(equals(actions('Send_Approved')?['status'],'Succeeded'),'sent','failed')",
+             "item/Attempts": 1,
+             "item/LastError": "@if(equals(actions('Send_Approved')?['status'],'Succeeded'),'',string(actions('Send_Approved')?['error']))"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+             "connection": "shared_sharepointonline",
+             "operationId": "PostItem"
+            }
+           },
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000045"
+           },
+           "runAfter": {
+            "Send_Approved": [
+             "Succeeded",
+             "Failed",
+             "TimedOut",
+             "Skipped"
+            ]
+           }
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000046"
+         },
+         "runAfter": {
+          "Compose_Already_Approved": [
+           "Succeeded"
+          ]
+         }
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000047"
+       },
+       "runAfter": {
+        "Get_Status_Approved": [
+         "Succeeded"
+        ]
+       },
+       "runtimeConfiguration": {
+        "concurrency": {
+         "repetitions": 1
+        }
+       }
+      },
+      "Get_Status_Declined": {
+       "type": "OpenApiConnection",
+       "inputs": {
+        "parameters": {
+         "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+         "table": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+         "$filter": "Status eq 'declined'",
+         "$top": 100,
+         "$orderby": "Modified desc"
+        },
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connection": "shared_sharepointonline",
+         "operationId": "GetItems"
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000048"
+       }
+      },
+      "Foreach_Status_Declined": {
+       "type": "Foreach",
+       "foreach": "@coalesce(outputs('Get_Status_Declined')?['body/value'],json('[]'))",
+       "actions": {
+        "Compose_Declined_Ref": {
+         "type": "Compose",
+         "inputs": "@string(coalesce(item()?['ReferenceId'],item()?['Title'],item()?['ID']))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000049"
+         }
+        },
+        "Compose_Declined_To": {
+         "type": "Compose",
+         "inputs": "@toLower(trim(string(coalesce(item()?['SenderEmail'],''))))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000050"
+         },
+         "runAfter": {
+          "Compose_Declined_Ref": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Get_Sent_Declined": {
+         "type": "OpenApiConnection",
+         "inputs": {
+          "parameters": {
+           "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+           "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+           "$filter": "@concat('Title eq ''decision-outcome:',replace(outputs('Compose_Declined_Ref'),'''',''''''),'''')",
+           "$top": 1
+          },
+          "host": {
+           "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+           "connection": "shared_sharepointonline",
+           "operationId": "GetItems"
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000051"
+         },
+         "runAfter": {
+          "Compose_Declined_To": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Compose_Already_Declined": {
+         "type": "Compose",
+         "inputs": "@greater(length(coalesce(outputs('Get_Sent_Declined')?['body/value'],json('[]'))),0)",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000052"
+         },
+         "runAfter": {
+          "Get_Sent_Declined": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Condition_Declined_Send": {
+         "type": "If",
+         "expression": {
+          "and": [
+           {
+            "equals": [
+             "@outputs('Compose_Already_Declined')",
+             false
+            ]
+           },
+           {
+            "not": {
+             "equals": [
+              "@outputs('Compose_Declined_To')",
+              ""
+             ]
+            }
+           }
+          ]
+         },
+         "actions": {
+          "Send_Declined": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "emailMessage/To": "@outputs('Compose_Declined_To')",
+             "emailMessage/Subject": "@concat('Decision issued — ',outputs('Compose_Declined_Ref'))",
+             "emailMessage/Body": "<div style=\"font-family:Arial,sans-serif;padding:20px\"><h2 style=\"color:#008751\">Decision issued</h2><p>A decision has been issued on your submission.</p><p><b>Tracking ID:</b> @{outputs('Compose_Declined_Ref')}</p><p><b>Outcome:</b> Not approved on this submission.</p><p>The reasons are recorded on your tracking page.</p></div>",
+             "emailMessage/Importance": "Normal"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+             "connection": "shared_office365",
+             "operationId": "SendEmailV2"
+            }
+           },
+           "runAfter": null,
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000053"
+           }
+          },
+          "Create_Declined_Receipt": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+             "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+             "item/Title": "@concat('decision-outcome:',outputs('Compose_Declined_Ref'))",
+             "item/MessageType": "decision-outcome",
+             "item/RecipientEmail": "@outputs('Compose_Declined_To')",
+             "item/Reference": "@outputs('Compose_Declined_Ref')",
+             "item/SentAtUtc": "@utcNow()",
+             "item/Status": "@if(equals(actions('Send_Declined')?['status'],'Succeeded'),'sent','failed')",
+             "item/Attempts": 1,
+             "item/LastError": "@if(equals(actions('Send_Declined')?['status'],'Succeeded'),'',string(actions('Send_Declined')?['error']))"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+             "connection": "shared_sharepointonline",
+             "operationId": "PostItem"
+            }
+           },
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000054"
+           },
+           "runAfter": {
+            "Send_Declined": [
+             "Succeeded",
+             "Failed",
+             "TimedOut",
+             "Skipped"
+            ]
+           }
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000055"
+         },
+         "runAfter": {
+          "Compose_Already_Declined": [
+           "Succeeded"
+          ]
+         }
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000056"
+       },
+       "runAfter": {
+        "Get_Status_Declined": [
+         "Succeeded"
+        ]
+       },
+       "runtimeConfiguration": {
+        "concurrency": {
+         "repetitions": 1
+        }
+       }
+      },
+      "Get_Status_ActionRequired": {
+       "type": "OpenApiConnection",
+       "inputs": {
+        "parameters": {
+         "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+         "table": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+         "$filter": "Status eq 'action-required'",
+         "$top": 100,
+         "$orderby": "Modified desc"
+        },
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connection": "shared_sharepointonline",
+         "operationId": "GetItems"
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000057"
+       }
+      },
+      "Foreach_Status_ActionRequired": {
+       "type": "Foreach",
+       "foreach": "@coalesce(outputs('Get_Status_ActionRequired')?['body/value'],json('[]'))",
+       "actions": {
+        "Compose_ActionRequired_Ref": {
+         "type": "Compose",
+         "inputs": "@string(coalesce(item()?['ReferenceId'],item()?['Title'],item()?['ID']))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000058"
+         }
+        },
+        "Compose_ActionRequired_To": {
+         "type": "Compose",
+         "inputs": "@toLower(trim(string(coalesce(item()?['SenderEmail'],''))))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000059"
+         },
+         "runAfter": {
+          "Compose_ActionRequired_Ref": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Get_Sent_ActionRequired": {
+         "type": "OpenApiConnection",
+         "inputs": {
+          "parameters": {
+           "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+           "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+           "$filter": "@concat('Title eq ''action-required:',replace(outputs('Compose_ActionRequired_Ref'),'''',''''''),'''')",
+           "$top": 1
+          },
+          "host": {
+           "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+           "connection": "shared_sharepointonline",
+           "operationId": "GetItems"
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000060"
+         },
+         "runAfter": {
+          "Compose_ActionRequired_To": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Compose_Already_ActionRequired": {
+         "type": "Compose",
+         "inputs": "@greater(length(coalesce(outputs('Get_Sent_ActionRequired')?['body/value'],json('[]'))),0)",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000061"
+         },
+         "runAfter": {
+          "Get_Sent_ActionRequired": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Condition_ActionRequired_Send": {
+         "type": "If",
+         "expression": {
+          "and": [
+           {
+            "equals": [
+             "@outputs('Compose_Already_ActionRequired')",
+             false
+            ]
+           },
+           {
+            "not": {
+             "equals": [
+              "@outputs('Compose_ActionRequired_To')",
+              ""
+             ]
+            }
+           }
+          ]
+         },
+         "actions": {
+          "Send_ActionRequired": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "emailMessage/To": "@outputs('Compose_ActionRequired_To')",
+             "emailMessage/Subject": "@concat('Action required — ',outputs('Compose_ActionRequired_Ref'))",
+             "emailMessage/Body": "<div style=\"font-family:Arial,sans-serif;padding:20px\"><h2 style=\"color:#008751\">Action required</h2><p>Something is needed from you before your submission can continue.</p><p><b>Tracking ID:</b> @{outputs('Compose_ActionRequired_Ref')}</p><p>Open the tracking page with this ID and the email address you used, and respond there.</p></div>",
+             "emailMessage/Importance": "Normal"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+             "connection": "shared_office365",
+             "operationId": "SendEmailV2"
+            }
+           },
+           "runAfter": null,
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000062"
+           }
+          },
+          "Create_ActionRequired_Receipt": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+             "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+             "item/Title": "@concat('action-required:',outputs('Compose_ActionRequired_Ref'))",
+             "item/MessageType": "action-required",
+             "item/RecipientEmail": "@outputs('Compose_ActionRequired_To')",
+             "item/Reference": "@outputs('Compose_ActionRequired_Ref')",
+             "item/SentAtUtc": "@utcNow()",
+             "item/Status": "@if(equals(actions('Send_ActionRequired')?['status'],'Succeeded'),'sent','failed')",
+             "item/Attempts": 1,
+             "item/LastError": "@if(equals(actions('Send_ActionRequired')?['status'],'Succeeded'),'',string(actions('Send_ActionRequired')?['error']))"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+             "connection": "shared_sharepointonline",
+             "operationId": "PostItem"
+            }
+           },
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000063"
+           },
+           "runAfter": {
+            "Send_ActionRequired": [
+             "Succeeded",
+             "Failed",
+             "TimedOut",
+             "Skipped"
+            ]
+           }
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000064"
+         },
+         "runAfter": {
+          "Compose_Already_ActionRequired": [
+           "Succeeded"
+          ]
+         }
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000065"
+       },
+       "runAfter": {
+        "Get_Status_ActionRequired": [
+         "Succeeded"
+        ]
+       },
+       "runtimeConfiguration": {
+        "concurrency": {
+         "repetitions": 1
+        }
+       }
+      }
+     }
+    },
+    "Scope_Support": {
+     "type": "Scope",
+     "metadata": {
+      "operationMetadataId": "a0000000-0000-4000-8000-000000000066"
+     },
+     "runAfter": {
+      "Scope_Status": [
+       "Succeeded",
+       "Failed",
+       "TimedOut",
+       "Skipped"
+      ]
+     },
+     "actions": {
+      "Get_Support_Closed": {
+       "type": "OpenApiConnection",
+       "inputs": {
+        "parameters": {
+         "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+         "table": "b984645b-8e3a-457f-a305-b95650fd3f23",
+         "$filter": "Status eq 'closed'",
+         "$top": 100,
+         "$orderby": "Modified desc"
+        },
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connection": "shared_sharepointonline",
+         "operationId": "GetItems"
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000067"
+       }
+      },
+      "Foreach_Support": {
+       "type": "Foreach",
+       "foreach": "@coalesce(outputs('Get_Support_Closed')?['body/value'],json('[]'))",
+       "actions": {
+        "Compose_Support_Ref": {
+         "type": "Compose",
+         "inputs": "@string(coalesce(item()?['Title'],item()?['ID']))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000068"
+         }
+        },
+        "Compose_Support_To": {
+         "type": "Compose",
+         "inputs": "@toLower(trim(string(coalesce(item()?['Email'],''))))",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000069"
+         },
+         "runAfter": {
+          "Compose_Support_Ref": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Get_Sent_Support": {
+         "type": "OpenApiConnection",
+         "inputs": {
+          "parameters": {
+           "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+           "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+           "$filter": "@concat('Title eq ''support-reply:',replace(outputs('Compose_Support_Ref'),'''',''''''),'''')",
+           "$top": 1
+          },
+          "host": {
+           "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+           "connection": "shared_sharepointonline",
+           "operationId": "GetItems"
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000070"
+         },
+         "runAfter": {
+          "Compose_Support_To": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Compose_Already_Support": {
+         "type": "Compose",
+         "inputs": "@greater(length(coalesce(outputs('Get_Sent_Support')?['body/value'],json('[]'))),0)",
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000071"
+         },
+         "runAfter": {
+          "Get_Sent_Support": [
+           "Succeeded"
+          ]
+         }
+        },
+        "Condition_Support_Send": {
+         "type": "If",
+         "expression": {
+          "and": [
+           {
+            "equals": [
+             "@outputs('Compose_Already_Support')",
+             false
+            ]
+           },
+           {
+            "not": {
+             "equals": [
+              "@outputs('Compose_Support_To')",
+              ""
+             ]
+            }
+           }
+          ]
+         },
+         "actions": {
+          "Send_Support_Reply": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "emailMessage/To": "@outputs('Compose_Support_To')",
+             "emailMessage/Subject": "@concat('NITDA support case ',outputs('Compose_Support_Ref'),' — closed')",
+             "emailMessage/Body": "<div style=\"font-family:Arial,sans-serif;padding:20px\"><h2 style=\"color:#008751\">Support case closed</h2><p>Your support case has been closed.</p><p><b>Case:</b> @{outputs('Compose_Support_Ref')}</p><p>@{coalesce(item()?['Message'],'')}</p><p>Reply to this address if the matter is not resolved.</p></div>",
+             "emailMessage/Importance": "Normal"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+             "connection": "shared_office365",
+             "operationId": "SendEmailV2"
+            }
+           },
+           "runAfter": null,
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000072"
+           }
+          },
+          "Create_Support_Reply_Receipt": {
+           "type": "OpenApiConnection",
+           "inputs": {
+            "parameters": {
+             "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+             "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+             "item/Title": "@concat('support-reply:',outputs('Compose_Support_Ref'))",
+             "item/MessageType": "support-reply",
+             "item/RecipientEmail": "@outputs('Compose_Support_To')",
+             "item/Reference": "@outputs('Compose_Support_Ref')",
+             "item/SentAtUtc": "@utcNow()",
+             "item/Status": "@if(equals(actions('Send_Support_Reply')?['status'],'Succeeded'),'sent','failed')",
+             "item/Attempts": 1,
+             "item/LastError": "@if(equals(actions('Send_Support_Reply')?['status'],'Succeeded'),'',string(actions('Send_Support_Reply')?['error']))"
+            },
+            "host": {
+             "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+             "connection": "shared_sharepointonline",
+             "operationId": "PostItem"
+            }
+           },
+           "metadata": {
+            "operationMetadataId": "a0000000-0000-4000-8000-000000000073"
+           },
+           "runAfter": {
+            "Send_Support_Reply": [
+             "Succeeded",
+             "Failed",
+             "TimedOut",
+             "Skipped"
+            ]
+           }
+          }
+         },
+         "metadata": {
+          "operationMetadataId": "a0000000-0000-4000-8000-000000000074"
+         },
+         "runAfter": {
+          "Compose_Already_Support": [
+           "Succeeded"
+          ]
+         }
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000075"
+       },
+       "runAfter": {
+        "Get_Support_Closed": [
+         "Succeeded"
+        ]
+       },
+       "runtimeConfiguration": {
+        "concurrency": {
+         "repetitions": 1
+        }
+       }
+      }
+     }
+    },
+    "Scope_Flow_Data_Capture": {
+     "type": "Scope",
+     "metadata": {
+      "operationMetadataId": "a0000000-0000-4000-8000-000000000076"
+     },
+     "runAfter": {
+      "Scope_Support": [
+       "Succeeded",
+       "Failed",
+       "TimedOut",
+       "Skipped"
+      ]
+     },
+     "actions": {
+      "Compose_Flow_Run_Record": {
+       "type": "Compose",
+       "inputs": {
+        "flow": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+        "run": "@workflow()?['run']?['name']",
+        "startedAtUtc": "@variables('varReceivedAtUtc')",
+        "completedAtUtc": "@utcNow()",
+        "scopes": {
+         "ackOverdue": "@result('Scope_Ack_Overdue')[0]?['status']",
+         "dueBreached": "@result('Scope_Due_Breached')[0]?['status']",
+         "outbox": "@result('Scope_Outbox')[0]?['status']",
+         "status": "@result('Scope_Status')[0]?['status']",
+         "support": "@result('Scope_Support')[0]?['status']"
+        },
+        "errors": "@variables('varErrors')"
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000077"
+       }
+      },
+      "Create_Sweep_Telemetry": {
+       "type": "OpenApiConnection",
+       "inputs": {
+        "parameters": {
+         "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+         "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+         "item/Title": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+         "item/Flow": "@coalesce(workflow()?['tags']?['flowDisplayName'],workflow()?['name'])",
+         "item/RunId": "@workflow()?['run']?['name']",
+         "item/StartedAtUtc": "@variables('varReceivedAtUtc')",
+         "item/CompletedAtUtc": "@utcNow()",
+         "item/Outcome": "@if(equals(length(variables('varErrors')),0),'Succeeded','Failed')",
+         "item/DurationMs": "@div(sub(ticks(utcNow()),ticks(variables('varReceivedAtUtc'))),10000)",
+         "item/ErrorMessage": "@string(variables('varErrors'))"
+        },
+        "host": {
+         "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+         "connection": "shared_sharepointonline",
+         "operationId": "PostItem"
+        }
+       },
+       "metadata": {
+        "operationMetadataId": "a0000000-0000-4000-8000-000000000078"
+       },
+       "runAfter": {
+        "Compose_Flow_Run_Record": [
+         "Succeeded"
+        ]
+       }
+      }
+     }
+    }
+   }
+  },
+  "connectionReferences": {
+   "shared_sharepointonline": {
+    "connectionName": "3f1943c5955a4cb8b301e8f22f2b590d",
+    "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+   },
+   "shared_office365": {
+    "connectionName": "c0b9e7a5b0854c39a435fd8ce92f48ad",
+    "id": "/providers/Microsoft.PowerApps/apis/shared_office365"
+   }
+  },
+  "flowFailureAlertSubscribed": false,
+  "isManaged": false
+ }
+}

@@ -1,0 +1,58 @@
+{
+ "capturedAt": "2026-08-27",
+ "source": "flow run records, docs/deployment/sharepoint/evidence/2026-08-27-endpoint-runs",
+ "note": "Workflow ids only. A trigger URL is a bearer credential and is never recorded here. Ids marked null could not be read from telemetry precisely because those flows redact the x-ms-igw-* headers correctly; read them from the flow's trigger URL by hand, ids only.",
+ "endpoints": [
+  {
+   "key": "STATUS",
+   "flow": "CG_Status_Check_Endpoint",
+   "internalName": "badb65d8-f472-407e-8975-c29d77b855d7",
+   "workflowId": "cf1e66eb8ac2460794b7f683d9aa8ac0"
+  },
+  {
+   "key": "VERIFY",
+   "flow": "CG_Verification_Endpoint",
+   "internalName": "86897b2f-9770-4efa-8486-2642f24bb947",
+   "workflowId": "ee627334d2e34ba7ac1b899bdb3ff2d0",
+   "note": "Reuses the Portal_Verify workflow — a rename in place. This is why its varData was declared String while the newer flows declare Object."
+  },
+  {
+   "key": "VERIFY_CONFIRM",
+   "flow": "CG_Verification_Confirmation_Endpoint",
+   "internalName": "5e13db77-c1e1-4ed4-b109-cb5d9d247b49",
+   "workflowId": "2569134db3514e838594319ea8e2a4a9"
+  },
+  {
+   "key": "WRITEBACK",
+   "flow": "CG_Writeback_Endpoint",
+   "internalName": "21d4bfd3-f595-46fa-81bb-c29dabc12e7a",
+   "workflowId": "91292a0347d443619316b3d0118462f2"
+  },
+  {
+   "key": "SUBMISSION",
+   "flow": "CG_Submission_Endpoint",
+   "internalName": "de9ef13b-ae4c-42b0-9afa-20e71a180759",
+   "workflowId": null
+  },
+  {
+   "key": "SUPPORT",
+   "flow": "CG_Support_Endpoint",
+   "internalName": "1b2c2e53-6c07-46a3-80b2-c43be1ef69db",
+   "workflowId": null
+  },
+  {
+   "key": "UPLOAD",
+   "flow": "CG_Upload_Endpoint",
+   "internalName": "df82e331-b800-4a8d-996e-d2b2ca846c77",
+   "workflowId": null,
+   "correctedUtc": "2026-09-03",
+   "correction": "This recorded internalName df7ddff1-9275-4f23-acf6-e169525f4e2f with the note 'Reuses the ECM_DOCS_INTAKE workflow id.' That was wrong, and it was the single fact behind open item 37. It came from one export file, CG_Upload_Endpoint__df7ddff1-...__full_definition.json, which carried CG_Upload_Endpoint's DEFINITION stamped with ECM_DOCS_INTAKE's workflow id. A legacy export package taken from the tenant on 2026-09-03 states the flow's own resource id: df82e331-b800-4a8d-996e-d2b2ca846c77. The two definitions share 8 of 9 top-level actions; ECM_DOCS_INTAKE's shares none. They are two flows, and the bridge was never overwritten."
+  }
+ ],
+ "changelog": [
+  {
+   "utc": "2026-09-03",
+   "what": "UPLOAD internalName corrected from df7ddff1 to df82e331; five CG_* endpoints re-exported from the tenant."
+  }
+ ]
+}

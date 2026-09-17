@@ -1,0 +1,18 @@
+{
+  "schema": "nitda-production-authorisation/v1",
+  "status": "DRAFT",
+  "approvedCommit": null,
+  "approvedPackages": [],
+  "approvedFlowIds": [],
+  "senderIdentity": null,
+  "criticalRowsClosed": 0,
+  "acceptedResidualRisks": [],
+  "acceptanceEvidence": [],
+  "rollbackEvidence": null,
+  "deploymentWindowUtc": null,
+  "deploymentOperator": null,
+  "businessApprover": null,
+  "technicalApprover": null,
+  "securityPrivacyApprover": null,
+  "approvedAtUtc": null
+}

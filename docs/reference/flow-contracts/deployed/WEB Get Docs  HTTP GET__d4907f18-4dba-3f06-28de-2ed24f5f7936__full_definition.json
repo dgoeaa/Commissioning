@@ -1,0 +1,239 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:14Z",
+    "workflow_identity":  {
+                              "internal_name":  "d4907f18-4dba-3f06-28de-2ed24f5f7936",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "WEB Get Docs  HTTP GET",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              },
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "Http",
+                                                       "inputs":  {
+                                                                      "method":  "GET",
+                                                                      "triggerAuthenticationType":  "All"
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Compose_Trigger_Body":  {
+                                                                    "runAfter":  {
+
+                                                                                 },
+                                                                    "metadata":  {
+                                                                                     "operationMetadataId":  "92326c9d-0018-4458-83f5-27aa1724d2cf"
+                                                                                 },
+                                                                    "type":  "Compose",
+                                                                    "inputs":  "@triggerBody()"
+                                                                },
+                                       "Scope_Response":  {
+                                                              "actions":  {
+                                                                              "Compose_ItemsCount":  {
+                                                                                                         "metadata":  {
+                                                                                                                          "operationMetadataId":  "109f4502-4d32-4d55-82e3-134bb2fbefda"
+                                                                                                                      },
+                                                                                                         "type":  "Compose",
+                                                                                                         "inputs":  "@length(body(\u0027Select\u0027))"
+                                                                                                     },
+                                                                              "Compose_Response":  {
+                                                                                                       "runAfter":  {
+                                                                                                                        "Compose_ItemsCount":  [
+                                                                                                                                                   "Succeeded"
+                                                                                                                                               ]
+                                                                                                                    },
+                                                                                                       "metadata":  {
+                                                                                                                        "operationMetadataId":  "9deb35e7-add2-40c3-a670-186460cd88f1"
+                                                                                                                    },
+                                                                                                       "type":  "Compose",
+                                                                                                       "inputs":  {
+                                                                                                                      "tasks":  "@body(\u0027Select\u0027)"
+                                                                                                                  }
+                                                                                                   },
+                                                                              "Send_an_email_(V2)":  {
+                                                                                                         "runAfter":  {
+                                                                                                                          "Compose_Response":  [
+                                                                                                                                                   "Succeeded",
+                                                                                                                                                   "TimedOut",
+                                                                                                                                                   "Failed",
+                                                                                                                                                   "Skipped"
+                                                                                                                                               ]
+                                                                                                                      },
+                                                                                                         "type":  "OpenApiConnection",
+                                                                                                         "inputs":  {
+                                                                                                                        "parameters":  {
+                                                                                                                                           "emailMessage/To":  "dgsRegistry@nitda.gov.ng",
+                                                                                                                                           "emailMessage/Subject":  "WEB Get Docs  HTTP GET Response Data",
+                                                                                                                                           "emailMessage/Body":  "\u003cp class=\"editor-paragraph\"\u003eWEB Get Docs  HTTP GET\u003c/p\u003e",
+                                                                                                                                           "emailMessage/Attachments":  [
+                                                                                                                                                                            {
+                                                                                                                                                                                "Name":  "WEB Get Docs  HTTP GET Response.txt",
+                                                                                                                                                                                "ContentBytes":  "@outputs(\u0027Compose_Response\u0027)"
+                                                                                                                                                                            },
+                                                                                                                                                                            {
+                                                                                                                                                                                "Name":  "WEB Get Docs  HTTP GET select.txt",
+                                                                                                                                                                                "ContentBytes":  "@body(\u0027Select\u0027)"
+                                                                                                                                                                            }
+                                                                                                                                                                        ],
+                                                                                                                                           "emailMessage/Importance":  "Normal"
+                                                                                                                                       },
+                                                                                                                        "host":  {
+                                                                                                                                     "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                                                                     "connectionName":  "shared_office365-1",
+                                                                                                                                     "operationId":  "SendEmailV2"
+                                                                                                                                 },
+                                                                                                                        "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                                                                    }
+                                                                                                     },
+                                                                              "Response":  {
+                                                                                               "runAfter":  {
+                                                                                                                "Compose_Response":  [
+                                                                                                                                         "Succeeded",
+                                                                                                                                         "TimedOut",
+                                                                                                                                         "Skipped",
+                                                                                                                                         "Failed"
+                                                                                                                                     ]
+                                                                                                            },
+                                                                                               "metadata":  {
+                                                                                                                "operationMetadataId":  "a0963e9b-4249-4f1d-ba1a-cd927695829e"
+                                                                                                            },
+                                                                                               "type":  "Response",
+                                                                                               "kind":  "Http",
+                                                                                               "inputs":  {
+                                                                                                              "statusCode":  200,
+                                                                                                              "headers":  {
+                                                                                                                              "Access-Control-Allow-Origin":  "*",
+                                                                                                                              "Access-Control-Allow-Methods":  "GET, POST, OPTIONS",
+                                                                                                                              "Access-Control-Allow-Headers":  "Content-Type",
+                                                                                                                              "Content-Type":  "application/json"
+                                                                                                                          },
+                                                                                                              "body":  "@outputs(\u0027Compose_Response\u0027)"
+                                                                                                          }
+                                                                                           }
+                                                                          },
+                                                              "runAfter":  {
+                                                                               "Scope_Get_Docs_Activities":  [
+                                                                                                                 "Succeeded",
+                                                                                                                 "Failed",
+                                                                                                                 "Skipped",
+                                                                                                                 "TimedOut"
+                                                                                                             ]
+                                                                           },
+                                                              "metadata":  {
+                                                                               "operationMetadataId":  "dd9809ca-7b13-41b9-87f4-c889d934066e"
+                                                                           },
+                                                              "type":  "Scope"
+                                                          },
+                                       "Scope_Get_Docs_Activities":  {
+                                                                         "actions":  {
+                                                                                         "Compose_ODataQuery":  {
+                                                                                                                    "metadata":  {
+                                                                                                                                     "operationMetadataId":  "f31363e3-d49b-48d1-941f-5159eb69eb0b"
+                                                                                                                                 },
+                                                                                                                    "type":  "Compose",
+                                                                                                                    "inputs":  "@concat(\r\n\u0027/_api/web/lists/getbytitle(\u0027\u0027\u0027, \u0027DGO DIGITAL OPS\u0027, \u0027\u0027\u0027)/items?\u0027,\r\n\u0027$select=ID,Title,Created,Category0,AssignmentStatus,Status,Routed_x0020_To,AssignedTo,CC_x0027_dTo,Modified,Assigned,AttachmentLink,Description\u0027,\r\n\u0027\u0026$orderby=Created desc\u0027,\r\n\u0027\u0026$top=\u0027,\r\nstring(coalesce(triggerOutputs()?[\u0027queries\u0027]?[\u0027top\u0027], 50)),\r\nif(empty(triggerOutputs()?[\u0027queries\u0027]?[\u0027status\u0027]), \u0027\u0027, concat(\u0027\u0026$filter=Status eq \u0027\u0027\u0027, triggerOutputs()?[\u0027queries\u0027]?[\u0027status\u0027], \u0027\u0027\u0027\u0027))\r\n)"
+                                                                                                                },
+                                                                                         "Send_an_HTTP_request_to_SharePoint":  {
+                                                                                                                                    "runAfter":  {
+                                                                                                                                                     "Compose_ODataQuery_V2":  [
+                                                                                                                                                                                   "Succeeded"
+                                                                                                                                                                               ]
+                                                                                                                                                 },
+                                                                                                                                    "metadata":  {
+                                                                                                                                                     "operationMetadataId":  "7deda896-5baa-4e5a-b784-7edf0aaa0c54"
+                                                                                                                                                 },
+                                                                                                                                    "type":  "OpenApiConnection",
+                                                                                                                                    "inputs":  {
+                                                                                                                                                   "parameters":  {
+                                                                                                                                                                      "dataset":  "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                                                                                                                                                                      "parameters/method":  "GET",
+                                                                                                                                                                      "parameters/uri":  "@outputs(\u0027Compose_ODataQuery\u0027)",
+                                                                                                                                                                      "parameters/headers":  {
+                                                                                                                                                                                                 "Accept":  "application/json;odata=nometadata"
+                                                                                                                                                                                             }
+                                                                                                                                                                  },
+                                                                                                                                                   "host":  {
+                                                                                                                                                                "apiId":  "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                                                                                                                                "connectionName":  "shared_sharepointonline",
+                                                                                                                                                                "operationId":  "HttpRequest"
+                                                                                                                                                            },
+                                                                                                                                                   "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                                                                                               }
+                                                                                                                                },
+                                                                                         "Select":  {
+                                                                                                        "runAfter":  {
+                                                                                                                         "Send_an_HTTP_request_to_SharePoint":  [
+                                                                                                                                                                    "Succeeded"
+                                                                                                                                                                ]
+                                                                                                                     },
+                                                                                                        "metadata":  {
+                                                                                                                         "operationMetadataId":  "87164d06-74a6-4b92-910d-fd72a3bb2d40"
+                                                                                                                     },
+                                                                                                        "type":  "Select",
+                                                                                                        "inputs":  {
+                                                                                                                       "from":  "@body(\u0027Send_an_HTTP_request_to_SharePoint\u0027)?[\u0027value\u0027]",
+                                                                                                                       "select":  {
+                                                                                                                                      "ID":  "@item()?[\u0027ID\u0027]",
+                                                                                                                                      "Title":  "@coalesce(item()?[\u0027Title\u0027], \u0027\u0027)",
+                                                                                                                                      "Created":  "@item()?[\u0027Created\u0027]",
+                                                                                                                                      "AssignedTo":  "@coalesce(item()?[\u0027AssignedTo\u0027], \u0027\u0027)",
+                                                                                                                                      "Category":  "@coalesce(item()?[\u0027Category0\u0027], \u0027\u0027)",
+                                                                                                                                      "AssignmentStatus":  "@coalesce(item()?[\u0027AssignmentStatus\u0027], \u0027\u0027)",
+                                                                                                                                      "Status":  "@coalesce(item()?[\u0027Status\u0027], \u0027\u0027)",
+                                                                                                                                      "Routed_x0020_To":  "@coalesce(item()?[\u0027Routed_x0020_To\u0027], \u0027\u0027)",
+                                                                                                                                      "Description":  "@coalesce(item()?[\u0027Description\u0027], \u0027\u0027)",
+                                                                                                                                      "CC_x0027_dTo":  "@coalesce(item()?[\u0027CC_x0027_dTo\u0027], \u0027\u0027)",
+                                                                                                                                      "Assigned":  "@coalesce(item()?[\u0027Assigned\u0027], \u0027\u0027)",
+                                                                                                                                      "AttachmentLink":  "@coalesce(item()?[\u0027AttachmentLink\u0027], \u0027\u0027)"
+                                                                                                                                  }
+                                                                                                                   }
+                                                                                                    },
+                                                                                         "Compose_ODataQuery_V2":  {
+                                                                                                                       "runAfter":  {
+                                                                                                                                        "Compose_ODataQuery":  [
+                                                                                                                                                                   "Succeeded"
+                                                                                                                                                               ]
+                                                                                                                                    },
+                                                                                                                       "metadata":  {
+                                                                                                                                        "operationMetadataId":  "e5484165-1b4f-4bd8-89dc-896c0ce25709"
+                                                                                                                                    },
+                                                                                                                       "type":  "Compose",
+                                                                                                                       "inputs":  "_api/web/lists/getbytitle(\u0027DGO DIGITAL OPS\u0027)/items?$select=ID,Title,Created,Category0,AssignmentStatus,Status,Routed_x0020_To,RefIDD,CC_x0027_dTo,Modified,Assigned,AttachmentLink\u0026$orderby=Created desc\u0026$top=3000"
+                                                                                                                   }
+                                                                                     },
+                                                                         "runAfter":  {
+                                                                                          "Compose_Trigger_Body":  [
+                                                                                                                       "Succeeded"
+                                                                                                                   ]
+                                                                                      },
+                                                                         "metadata":  {
+                                                                                          "operationMetadataId":  "0efb398b-9a7f-4791-9f4d-b1337759b01c"
+                                                                                      },
+                                                                         "type":  "Scope"
+                                                                     }
+                                   }
+                   }
+}

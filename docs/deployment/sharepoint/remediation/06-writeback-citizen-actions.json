@@ -1,0 +1,338 @@
+{
+  "remediationId": "06-writeback-citizen-actions",
+  "endpoint": "WRITEBACK",
+  "closes": "C6. INT-007 has no flow at all. A verified citizen can respond, add a note or withdraw; only a withdrawal changes registry status. The client half is built - PF.intake.writeback() in document-portal/js/core.js, called from track.js - and waits on this.",
+  "note": "No `visit` key, deliberately. The other artifacts patch a deployed flow; this one is built from nothing, so there is no existing body to keep, no placements to insert into and no per-flow standard conformance to measure against a flow that does not exist. Build it to the house standard from the start instead: Scope_Global, Scope_Flow_Data_Capture, the response envelope and the redaction composes, exactly as flow-standard.json defines them.",
+  "appliesTo": [
+    {
+      "flow": "Portal_ECM_DOCS_WRITEBACK",
+      "internalName": "(new - no id until it is created)"
+    }
+  ],
+  "controlFlow": {
+    "specifiedBy": "B2_CONTROL_FLOW_PROPOSAL.md section 5, approved with amendments 2026-08-21",
+    "order": [
+      "1. Rate-limit gate. Over the D8 window returns 429 through the envelope.",
+      "2. Read the proof. Do NOT consume it yet. Missing, expired, consumed, or wrong Purpose -> 401.",
+      "3. Read and normalise referenceId; read action and body.",
+      "4. Look up Portal Registry by ReferenceId. No row, or SenderEmail does not match the proof's Email -> 404, byte-identical either way.",
+      "5. Validate action is respond|note|withdraw. Anything else -> 400, never a 200.",
+      "6. Validate body length: respond >= 10, note >= 5, withdraw optional. Too short -> 400.",
+      "7. ONLY NOW consume the proof, with If-Match. A 412 means another request won the race -> 401.",
+      "8. Create the Portal Status Timeline row.",
+      "9. If action is withdraw, patch Portal Registry Status to withdrawn.",
+      "10. Create the Portal Audit Events row.",
+      "11. Return { ok: true }."
+    ],
+    "whyThisOrder": "Steps 2 to 6 are all correctable by the citizen. Consuming the proof before them - which is what the deployed STATUS flow does today - burns a valid single-use proof on a mistyped reference or a too-short response, and forces a fresh email round trip to fix a client-side mistake. Directive A.",
+    "ownershipDenial": "Steps 4's two failure cases return the same status, envelope, error code and message. A caller must not be able to tell 'no such reference' from 'not yours' - that is INT-006, and it is the same denial STATUS uses.",
+    "emailComesFromTheProof": "Step 4 compares against the Email on the proof row, never against an email in the request body. WRITEBACK has no unverified path; a body-supplied address would make the proof decorative. Directive E.",
+    "notIdempotent": "Deliberate, and recorded rather than silently omitted. Replay protection needs a persisted operation id, and no provisioned column on any list this endpoint writes holds one. The exposure is a duplicate timeline row if a citizen's client retries after an uncertain result. Accepted for the pilot: the proof is single-use, so the SECOND attempt fails at step 7 rather than duplicating - a retry can only duplicate if it reuses a proof that was never consumed, which means the first attempt did not reach step 7 and wrote nothing. Revisit if a durable client-side retry is ever added."
+  },
+  "composeFirst": [
+    {
+      "name": "Compose_Bucket_Writeback_Source",
+      "inputs": "@concat('WRITEBACK_IP:', coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown'))"
+    },
+    {
+      "name": "Compose_Writeback_Reference",
+      "inputs": "@toUpper(trim(coalesce(triggerBody()?['referenceId'],'')))"
+    },
+    {
+      "name": "Compose_Writeback_Action",
+      "inputs": "@toLower(trim(coalesce(triggerBody()?['action'],'')))"
+    },
+    {
+      "name": "Compose_Writeback_Body",
+      "inputs": "@trim(coalesce(triggerBody()?['body'],''))"
+    },
+    {
+      "name": "Compose_Writeback_Label",
+      "inputs": "@if(equals(outputs('Compose_Writeback_Action'),'withdraw'),'Withdrawn at the request of the submitter.',if(equals(outputs('Compose_Writeback_Action'),'note'),'Note added by the requester.','Requester responded to the request for information.'))",
+      "why": "The same three labels document-portal/js/track.js writes on its device-only path, character for character, so the citizen sees one wording regardless of whether the record came from the registry or the browser."
+    }
+  ],
+  "actions": [
+    {
+      "name": "Get_Rate_Limit_Writeback",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "GetItems",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetItems"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "$filter": "Title eq '@{outputs('Compose_Bucket_Writeback_Source')}'",
+          "$top": 1
+        }
+      },
+      "why": "Step 1. Same fixed-window counter every other endpoint uses, per D8."
+    },
+    {
+      "name": "Update_Rate_Limit_Writeback",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "id": "@first(outputs('Get_Rate_Limit_Writeback')?['body/value'])?['ID']",
+          "item/RequestCount": "@add(coalesce(first(outputs('Get_Rate_Limit_Writeback')?['body/value'])?['RequestCount'],0),1)",
+          "item/UpdatedAtUtc": "@utcNow()"
+        }
+      },
+      "why": "Run only when the bucket exists and its window is current. Reset WindowStartUtc in place on rollover - never create a second row for one bucket, per D8."
+    },
+    {
+      "name": "Create_Rate_Limit_Writeback",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "item/Title": "@outputs('Compose_Bucket_Writeback_Source')",
+          "item/WindowStartUtc": "@utcNow()",
+          "item/UpdatedAtUtc": "@utcNow()",
+          "item/RequestCount": 1
+        }
+      },
+      "why": "Run only when no row exists for the bucket at all."
+    },
+    {
+      "name": "Get_Verification_Proof",
+      "type": "OpenApiConnection",
+      "list": "Portal Verification Proofs",
+      "operation": "GetItems",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetItems"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+          "$filter": "Title eq '@{coalesce(triggerBody()?['verification'],'')}' and Consumed eq 0 and Purpose eq 'portal-verification'",
+          "$top": 1
+        }
+      },
+      "why": "Step 2. Reads only - the proof is NOT consumed here. An empty result covers missing, already consumed and wrong purpose alike; the expiry is checked against ExpiresAtUtc in the guard that follows."
+    },
+    {
+      "name": "Get_Submission_By_Reference",
+      "type": "OpenApiConnection",
+      "list": "Portal Registry",
+      "operation": "GetItems",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetItems"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+          "table": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+          "$filter": "ReferenceId eq '@{outputs('Compose_Writeback_Reference')}' and SenderEmail eq '@{toLower(trim(coalesce(first(outputs('Get_Verification_Proof')?['body/value'])?['Email'],'')))}'",
+          "$top": 1
+        }
+      },
+      "why": "Step 4. The email comes from the PROOF ROW, never from the request body - that is what makes the proof load-bearing rather than decorative. Filters ReferenceId, which is indexed and enforceUnique, rather than Title, which is neither. An empty result means either the reference is unknown or it is not this caller's, and both answer the same 404."
+    },
+    {
+      "name": "Consume_Verification_Proof",
+      "type": "OpenApiConnection",
+      "list": "Portal Verification Proofs",
+      "operation": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+          "id": "@first(outputs('Get_Verification_Proof')?['body/value'])?['ID']",
+          "item/Consumed": true
+        }
+      },
+      "why": "Step 7, and it must be step 7 - after every correctable check has passed. See concurrency below: this action is the one that ships as a conditional If-Match write rather than a plain patch.",
+      "concurrency": {
+        "mechanism": "If-Match ETag, via Send an HTTP request to SharePoint",
+        "whyNotAPlainPatch": "A plain patch is read-then-write. Two WRITEBACK calls presenting the same proof can both read Consumed eq 0 and both succeed, which spends one proof twice. The proof is the only authentication this endpoint has, so that is the one race worth closing.",
+        "replaceWith": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+            "connectionName": "shared_sharepointonline",
+            "operationId": "HttpRequest"
+          },
+          "parameters": {
+            "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+            "parameters/method": "POST",
+            "parameters/uri": "_api/web/lists(guid'f5c9698e-4b6c-4ec7-97ee-dc540efab8a9')/items(@{first(outputs('Get_Verification_Proof')?['body/value'])?['ID']})",
+            "parameters/headers": {
+              "If-Match": "@{first(outputs('Get_Verification_Proof')?['body/value'])?['@odata.etag']}",
+              "X-HTTP-Method": "MERGE",
+              "Content-Type": "application/json;odata=verbose",
+              "Accept": "application/json;odata=nometadata"
+            },
+            "parameters/body": "{\"__metadata\":{\"type\":\"SP.Data.Portal_x0020_Verification_x0020_ProofsListItem\"},\"Consumed\":true}"
+          }
+        },
+        "onPreconditionFailed": "412 means another request consumed it first. Stop and answer 401 - the same response as any other invalid proof, so a race is indistinguishable from a replay.",
+        "whyBothFormsAreCarried": "The PatchItem form above is the canonical operation and is what keeps the wiring register honest: this genuinely is an update to Portal Verification Proofs, and tests/remediation.test.mjs counts coverage from inputs.parameters.table plus operation, neither of which an HttpRequest action has. The replaceWith block is what actually gets built. Stated, not assumed - B2 section 11.2.",
+        "precedent": "38 uses of operationId HttpRequest across the deployed estate, on this same connector."
+      }
+    },
+    {
+      "name": "Create_Timeline_Event",
+      "type": "OpenApiConnection",
+      "list": "Portal Status Timeline",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+          "table": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+          "item/Title": "@outputs('Compose_Writeback_Reference')",
+          "item/SubmissionRef": "@outputs('Compose_Writeback_Reference')",
+          "item/AtUtc": "@utcNow()",
+          "item/Status": "@if(equals(outputs('Compose_Writeback_Action'),'withdraw'),'withdrawn',first(outputs('Get_Submission_By_Reference')?['body/value'])?['Status'])",
+          "item/Label": "@outputs('Compose_Writeback_Label')",
+          "item/Actor": "Submitter",
+          "item/Note": "@outputs('Compose_Writeback_Body')"
+        }
+      },
+      "why": "Step 8. Actor is Submitter, not Registry - this is the citizen half of the circle whose staff half is ECM_DOCS_INTAKE's C7 write-back. Status carries the record's existing value unless this is a withdrawal, because only a withdrawal transitions it."
+    },
+    {
+      "name": "Update_Registry_Status_On_Withdraw",
+      "type": "OpenApiConnection",
+      "list": "Portal Registry",
+      "operation": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+          "table": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+          "id": "@first(outputs('Get_Submission_By_Reference')?['body/value'])?['ID']",
+          "item/Status": "withdrawn",
+          "item/StatusLabel": "Withdrawn by the submitter",
+          "item/UpdatedAtUtc": "@utcNow()"
+        }
+      },
+      "why": "Step 9, and ONLY when action is withdraw. respond and note append to the timeline and change nothing on the registry row - PORTAL_DATA_CONTRACT.md permits a status transition on withdraw alone. Moving respond to a review status is a contract amendment, not a choice to make here."
+    },
+    {
+      "name": "Create_Audit_Event",
+      "type": "OpenApiConnection",
+      "list": "Portal Audit Events",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "f59026cc-9fd7-4322-b681-73c599b852c6",
+          "item/Title": "@concat('WRITEBACK ',outputs('Compose_Writeback_Action'),' ',outputs('Compose_Writeback_Reference'))",
+          "item/Flow": "Portal_ECM_DOCS_WRITEBACK",
+          "item/EventType": "@concat('citizen-',outputs('Compose_Writeback_Action'))",
+          "item/AtUtc": "@utcNow()",
+          "item/Reference": "@outputs('Compose_Writeback_Reference')",
+          "item/SourceIp": "@coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown')",
+          "item/Detail": "@concat('action=',outputs('Compose_Writeback_Action'),', bodyLength=',string(length(outputs('Compose_Writeback_Body'))))"
+        }
+      },
+      "why": "Step 10, unconditional, per D13. Detail carries the action and the body's LENGTH - never the body itself. Last of the business writes so that a failure here leaves a complete citizen-visible outcome rather than a half-applied one."
+    },
+    {
+      "name": "Create_Flow_Telemetry",
+      "type": "OpenApiConnection",
+      "list": "Portal Flow Telemetry",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+          "item/Title": "Portal_ECM_DOCS_WRITEBACK",
+          "item/Flow": "Portal_ECM_DOCS_WRITEBACK",
+          "item/RunId": "@workflow()?['run']?['name']",
+          "item/StartedAtUtc": "@variables('varReceivedAtUtc')",
+          "item/CompletedAtUtc": "@utcNow()",
+          "item/Outcome": "@if(greaterOrEquals(variables('varStatusCode'),400),'Failed','Succeeded')",
+          "item/DurationMs": "@variables('varDurationMs')",
+          "item/ErrorMessage": "@string(variables('varErrors'))"
+        }
+      },
+      "why": "Inside Scope_Flow_Data_Capture, never on the request path. One row per run, per the house standard and D2's revision."
+    }
+  ],
+  "partialFailure": {
+    "approach": "Ordered writes, audit last, telemetry records the failure. No operation-state machine.",
+    "why": "Three business writes, at most. A full recoverable-operation design - operation ids, recorded state, recovery handlers, terminal states - is distributed-transaction machinery for a flow that appends two rows and patches one. It is not free: it needs columns nothing has, and every one of those moving parts is itself a thing that can be wrong.",
+    "order": "Timeline first, then registry, then audit. A timeline row with no registry transition shows the citizen their withdrawal was received and is the recoverable direction. The reverse - a withdrawn record with nothing on the timeline - is the one that looks like data loss to the person who did it.",
+    "ifAWriteFails": "Do not return ok:true. Set the failure status code, let it survive to the response per D8's finalize rule, and let Scope_Flow_Data_Capture record it. The citizen sees the failure and retries; the retry mints a fresh proof, so it cannot half-apply on top of the first attempt."
+  },
+  "responseProjection": {
+    "why": "The client reads only these. PF.intake.writeback() in document-portal/js/core.js returns { ok, queued } and treats anything else as a failure.",
+    "fields": [
+      "ok",
+      "queued"
+    ],
+    "statusCodes": {
+      "200": "accepted",
+      "400": "unrecognised action, or a body below the minimum for its action",
+      "401": "proof missing, expired, already consumed, or lost the If-Match race",
+      "404": "byte-identical denial - reference unknown, or the proof does not own it",
+      "429": "rate limited"
+    }
+  },
+  "endpointKey": {
+    "what": "WRITEBACK has to be provisioned as a seventh endpoint key and its URL published to the portal.",
+    "clientIsReady": "document-portal/config.example.js already declares the empty WRITEBACK slot, and PF.intake.writebackAvailable() keeps the UI dormant until a URL is set. Setting it is the only client-side step.",
+    "rotation": "A signed trigger URL is a bearer credential delivered to every visitor's browser. It belongs on the same rotation schedule as the other six - see OPEN_ITEMS item 22."
+  },
+  "verification": [
+    "npm run wiring   # WRITEBACK moves from 0/10 to 10/10 and the estate reaches 59/59",
+    "npm run triggers # stays at 0 unreconciled - this artifact reads referenceId, verification, action and body, which is what the client sends",
+    "Respond to an action-required request as a verified citizen: a Portal Status Timeline row appears with Actor Submitter and the registry Status is unchanged",
+    "Withdraw one: the timeline row appears AND Portal Registry Status becomes withdrawn",
+    "Present the same proof twice: the second call answers 401 and writes nothing",
+    "Send action=delete: 400, and no row anywhere",
+    "Send a 4-character note body: 400, and the proof is still unconsumed"
+  ]
+}

@@ -1,0 +1,125 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:28Z",
+    "workflow_identity":  {
+                              "internal_name":  "81cacabd-66c8-438e-b162-68e2ccb6754f",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "GetDocsPaginatedData",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           },
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+                                                                        "operationMetadataId":  "37390ab6-ff37-412b-9e97-5d128b36e85b"
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "PowerAppV2",
+                                                       "inputs":  {
+                                                                      "schema":  {
+                                                                                     "type":  "object",
+                                                                                     "properties":  {
+                                                                                                        "number":  {
+                                                                                                                       "description":  "Please enter SkipCount",
+                                                                                                                       "title":  "varSkipCount",
+                                                                                                                       "type":  "number",
+                                                                                                                       "x-ms-content-hint":  "NUMBER",
+                                                                                                                       "x-ms-dynamically-added":  true
+                                                                                                                   },
+                                                                                                        "number_1":  {
+                                                                                                                         "description":  "Please enter Page Size",
+                                                                                                                         "title":  "varPageSize",
+                                                                                                                         "type":  "number",
+                                                                                                                         "x-ms-content-hint":  "NUMBER",
+                                                                                                                         "x-ms-dynamically-added":  true
+                                                                                                                     }
+                                                                                                    },
+                                                                                     "required":  [
+                                                                                                      "number",
+                                                                                                      "number_1"
+                                                                                                  ]
+                                                                                 }
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Get_items":  {
+                                                         "runAfter":  {
+
+                                                                      },
+                                                         "metadata":  {
+                                                                          "operationMetadataId":  "0335d865-b87e-4417-a304-d8c353997cdf"
+                                                                      },
+                                                         "type":  "OpenApiConnection",
+                                                         "inputs":  {
+                                                                        "host":  {
+                                                                                     "apiId":  "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                                                     "connectionName":  "shared_sharepointonline",
+                                                                                     "operationId":  "GetItems"
+                                                                                 },
+                                                                        "parameters":  {
+                                                                                           "dataset":  "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                                                                                           "table":  "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+                                                                                           "$filter":  "ID lt @{triggerBody()[\u0027number\u0027]}",
+                                                                                           "$orderby":  "ID desc",
+                                                                                           "$top":  "@triggerBody()?[\u0027number_1\u0027]",
+                                                                                           "view":  "d486128d-ed61-48f9-9507-7bb1a33cbba1"
+                                                                                       },
+                                                                        "authentication":  {
+                                                                                               "value":  "@json(decodeBase64(triggerOutputs().headers[\u0027X-MS-APIM-Tokens\u0027]))[\u0027$ConnectionKey\u0027]",
+                                                                                               "type":  "Raw"
+                                                                                           }
+                                                                    }
+                                                     },
+                                       "Respond_to_a_Power_App_or_flow":  {
+                                                                              "runAfter":  {
+                                                                                               "Get_items":  [
+                                                                                                                 "Succeeded"
+                                                                                                             ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "21dcc6d7-a2ad-43dd-99f5-50f9dafed1c2"
+                                                                                           },
+                                                                              "type":  "Response",
+                                                                              "kind":  "PowerApp",
+                                                                              "inputs":  {
+                                                                                             "statusCode":  200,
+                                                                                             "body":  {
+                                                                                                          "data":  "@{outputs(\u0027Get_items\u0027)?[\u0027body/value\u0027]}"
+                                                                                                      },
+                                                                                             "schema":  {
+                                                                                                            "type":  "object",
+                                                                                                            "properties":  {
+                                                                                                                               "data":  {
+                                                                                                                                            "title":  "Data",
+                                                                                                                                            "x-ms-dynamically-added":  true,
+                                                                                                                                            "type":  "string"
+                                                                                                                                        }
+                                                                                                                           }
+                                                                                                        }
+                                                                                         }
+                                                                          }
+                                   },
+                       "outputs":  {
+
+                                   }
+                   }
+}

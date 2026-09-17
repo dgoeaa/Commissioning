@@ -1,0 +1,272 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "metadata": {},
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "triggerAuthenticationType": "Tenant"
+        }
+      }
+    },
+    "actions": {
+      "Compose_Mail_Recipient": {
+        "type": "Compose",
+        "inputs": "@trim(join(array(coalesce(triggerBody()?['payload']?['email']?['to'],triggerBody()?['payload']?['to'],triggerBody()?['to'],triggerBody()?['payload']?['email']?['recipientEmail'],triggerBody()?['payload']?['recipientEmail'],triggerBody()?['recipientEmail'],triggerBody()?['userEmail'],'')),';'))",
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000001"
+        }
+      },
+      "Compose_Mail_Cc": {
+        "type": "Compose",
+        "inputs": "@trim(join(array(coalesce(triggerBody()?['payload']?['email']?['cc'],triggerBody()?['payload']?['cc'],triggerBody()?['cc'],'')),';'))",
+        "metadata": {
+          "operationMetadataId": "b1000000-0000-4000-8000-000000000002"
+        }
+      },
+      "Compose_Trigger_Body": {
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "92326c9d-0018-4458-83f5-27aa1724d2cf"
+        },
+        "type": "Compose",
+        "inputs": "@triggerBody()"
+      },
+      "Response": {
+        "runAfter": {
+          "Compose_Response": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "a0963e9b-4249-4f1d-ba1a-cd927695829e"
+        },
+        "type": "Response",
+        "kind": "Http",
+        "inputs": {
+          "statusCode": 200,
+          "headers": {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Content-Type": "application/json"
+          },
+          "body": "@outputs('Compose_Response')"
+        }
+      },
+      "Compose_Response": {
+        "runAfter": {
+          "Condition_Check_for_Attachments": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "9deb35e7-add2-40c3-a670-186460cd88f1"
+        },
+        "type": "Compose",
+        "inputs": {
+          "status": "success",
+          "message": "Email sent successfully",
+          "itemID": "",
+          "to": "",
+          "cc": "",
+          "bcc": "",
+          "subject": "",
+          "importance": "",
+          "iAttachmentsCount": ""
+        }
+      },
+      "Initialize_variable": {
+        "runAfter": {
+          "Compose_Trigger_Body": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "varEmailAttachments",
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "Condition_Check_for_Attachments": {
+        "actions": {
+          "Send_an_email_(V2)_2": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "@outputs('Compose_Mail_Recipient')",
+                "emailMessage/Subject": "@outputs('Compose._Acknowledgement')",
+                "emailMessage/Body": "<p class=\"editor-paragraph\">@{outputs('Compose_Response_to_HTML')}</p>",
+                "emailMessage/Cc": "@outputs('Compose_Mail_Cc')"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "connectionName": "shared_office365-1",
+                "operationId": "SendEmailV2"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          }
+        },
+        "runAfter": {
+          "Terminate": [
+            "Succeeded"
+          ]
+        },
+        "else": {
+          "actions": {
+            "Apply_to_each": {
+              "foreach": "@triggerBody()",
+              "actions": {
+                "Compose_Attachments": {
+                  "type": "Compose",
+                  "inputs": {
+                    "fileName": "Sendemailflow.txt",
+                    "ContentBytes": "@outputs('Compose_Response_to_HTML')"
+                  }
+                },
+                "Append_to_array_variable_Attachments": {
+                  "runAfter": {
+                    "Compose_Attachments": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "AppendToArrayVariable",
+                  "inputs": {
+                    "name": "varEmailAttachments",
+                    "value": "@outputs('Compose_Attachments')"
+                  }
+                }
+              },
+              "type": "Foreach"
+            },
+            "Send_an_email_(V2)_1": {
+              "runAfter": {
+                "Apply_to_each": [
+                  "Succeeded"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "emailMessage/To": "@outputs('Compose_Mail_Recipient')",
+                  "emailMessage/Subject": "@outputs('Compose._Acknowledgement')",
+                  "emailMessage/Body": "@outputs('Compose_Response_to_HTML')",
+                  "emailMessage/Attachments": "@variables('varEmailAttachments')",
+                  "emailMessage/Cc": "@outputs('Compose_Mail_Cc')"
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                  "connectionName": "shared_office365-1",
+                  "operationId": "SendEmailV2"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          }
+        },
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@empty(triggerBody()?['attachments'])",
+                false
+              ]
+            }
+          ]
+        },
+        "type": "If"
+      },
+      "Compose._Acknowledgement": {
+        "runAfter": {
+          "Initialize_variable": [
+            "Succeeded"
+          ]
+        },
+        "type": "Compose",
+        "inputs": "Xxx"
+      },
+      "Compose_Response_to_HTML": {
+        "runAfter": {
+          "Compose._Acknowledgement": [
+            "Succeeded"
+          ]
+        },
+        "type": "Compose",
+        "inputs": {
+          "message": "Success"
+        }
+      },
+      "Send_an_email_(V2)": {
+        "runAfter": {
+          "Compose_Response_to_HTML": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "emailMessage/To": "@outputs('Compose_Mail_Recipient')",
+            "emailMessage/Subject": "Acknowledgement - ",
+            "emailMessage/Body": "@outputs('Compose._Acknowledgement')",
+            "emailMessage/Importance": "Normal",
+            "emailMessage/Cc": "@outputs('Compose_Mail_Cc')"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+            "connectionName": "shared_office365",
+            "operationId": "SendEmailV2"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      },
+      "Response_1": {
+        "runAfter": {
+          "Send_an_email_(V2)": [
+            "Succeeded"
+          ]
+        },
+        "type": "Response",
+        "kind": "Http",
+        "inputs": {
+          "statusCode": 200,
+          "headers": {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Content-Type": "application/json"
+          },
+          "body": "@outputs('Compose_Response_to_HTML')"
+        }
+      },
+      "Terminate": {
+        "runAfter": {
+          "Response_1": [
+            "Succeeded"
+          ]
+        },
+        "type": "Terminate",
+        "inputs": {
+          "runStatus": "Succeeded"
+        }
+      }
+    }
+  }
+}

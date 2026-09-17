@@ -1,0 +1,561 @@
+<title>Commissioning Matrix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;600&display=swap">
+<style>
+/* ── Tokens ───────────────────────────────────────────────────────────
+   Complete light palette on bare :root, so the un-stamped (system) state
+   resolves. Dark redefines only these, twice: once behind the media query
+   guarded against an explicit light choice, once behind the dark stamp. */
+:root{
+  --ground:#F6F7F4;
+  --surface:#FFFFFF;
+  --surface-2:#EFF2EC;
+  --ink:#131A16;
+  --ink-soft:#5B6862;
+  --ink-faint:#8B9891;
+  --rule:#D9DED6;
+  --rule-soft:#E8ECE5;
+  --accent:#1B5E48;
+  --accent-soft:#E3EFE9;
+  --blocked:#9E3320;
+  --blocked-soft:#F7E6E1;
+  --waiting:#8A6516;
+  --waiting-soft:#F6EEDC;
+  --free:#2C6B8C;
+  --free-soft:#E3EEF4;
+  --shadow:0 1px 2px rgba(19,26,22,.06), 0 8px 24px -14px rgba(19,26,22,.22);
+  --focus:#1B5E48;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D1210;
+    --surface:#151C18;
+    --surface-2:#1B241F;
+    --ink:#E4EAE5;
+    --ink-soft:#9FADA6;
+    --ink-faint:#6E7C76;
+    --rule:#28322C;
+    --rule-soft:#1F2823;
+    --accent:#63B294;
+    --accent-soft:#162C24;
+    --blocked:#E08163;
+    --blocked-soft:#2E1B15;
+    --waiting:#D3A94F;
+    --waiting-soft:#2B2313;
+    --free:#7BB6D3;
+    --free-soft:#132430;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.8);
+    --focus:#63B294;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D1210;
+  --surface:#151C18;
+  --surface-2:#1B241F;
+  --ink:#E4EAE5;
+  --ink-soft:#9FADA6;
+  --ink-faint:#6E7C76;
+  --rule:#28322C;
+  --rule-soft:#1F2823;
+  --accent:#63B294;
+  --accent-soft:#162C24;
+  --blocked:#E08163;
+  --blocked-soft:#2E1B15;
+  --waiting:#D3A94F;
+  --waiting-soft:#2B2313;
+  --free:#7BB6D3;
+  --free-soft:#132430;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.8);
+  --focus:#63B294;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font:400 15px/1.55 "IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1140px;margin:0 auto;padding-inline:20px;padding-block:0}
+h1,h2,h3{font-family:"Newsreader",Georgia,"Times New Roman",serif;font-weight:500;text-wrap:balance;margin:0}
+code,.mono,.id,.num{font-family:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace}
+.num{font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* ── Masthead ─────────────────────────────────────────────────────── */
+.mast{border-bottom:1px solid var(--rule);background:var(--surface)}
+.mast .wrap{padding-block:28px 0}
+.eyebrow{
+  font:500 11px/1 "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);display:flex;gap:10px;flex-wrap:wrap;align-items:baseline;
+}
+h1{font-size:clamp(30px,5.4vw,46px);line-height:1.08;letter-spacing:-.012em;margin-top:12px}
+.standfirst{
+  max-width:62ch;color:var(--ink-soft);font-size:16px;margin-top:12px;
+}
+.standfirst strong{color:var(--ink);font-weight:600}
+
+/* The headline counts: a single rule-separated row, not big-number cards.
+   These are context for the matrix, not the point of the page. */
+.tally{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:0;margin-top:26px;border-top:1px solid var(--rule);
+}
+.tally div{
+  padding:14px 18px 16px 0;border-right:1px solid var(--rule-soft);
+}
+.tally div:last-child{border-right:0}
+.tally b{display:block;font:500 27px/1 "IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.tally span{display:block;font-size:12.5px;color:var(--ink-soft);margin-top:5px;line-height:1.35}
+.tally .warn b{color:var(--blocked)}
+
+/* ── Sections ─────────────────────────────────────────────────────── */
+section{padding-block:44px}
+section + section{border-top:1px solid var(--rule-soft)}
+.sec-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.sec-head h2{font-size:24px;letter-spacing:-.01em}
+.sec-head .tag{
+  font:500 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-faint);
+}
+.lede{max-width:66ch;color:var(--ink-soft);font-size:14.5px;margin:0 0 22px}
+.lede code{font-size:.92em;background:var(--surface-2);padding:1px 5px;border-radius:3px}
+
+/* ── Topology ladder ──────────────────────────────────────────────── */
+.ladder{display:flex;flex-direction:column;gap:2px}
+.rung{display:grid;grid-template-columns:118px 1fr;gap:16px;align-items:start;padding:12px 0;border-top:1px dashed var(--rule)}
+.rung:first-child{border-top:0}
+.rung-label{
+  font:500 11px/1.3 "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-faint);padding-top:6px;
+}
+.rung-label em{display:block;font-style:normal;color:var(--accent);font-size:15px;letter-spacing:0;margin-bottom:3px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+/* Chip modifiers are namespaced: a bare `.f` here would inherit the filter pill's
+   border-radius:99px from the cascade and quietly turn these squares into ovals. */
+.chip{
+  font:500 12.5px/1 "IBM Plex Mono",monospace;
+  padding:6px 9px;border-radius:3px;border:1px solid var(--rule);
+  background:var(--surface);color:var(--ink);cursor:pointer;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip--gates{border-left:3px solid var(--blocked)}
+.chip--cond{border-left:3px solid var(--waiting)}
+.chip--clear{border-left:3px solid var(--free)}
+.chip .fan{opacity:.55}
+.legend{font:400 12.5px/1.5 "IBM Plex Sans",sans-serif;color:var(--ink-faint);margin:0 0 16px}
+.legend b{font-family:"IBM Plex Mono",monospace;font-weight:500;color:var(--ink-soft)}
+.condition-note{
+  margin-top:20px;padding:14px 16px;border-left:3px solid var(--waiting);
+  background:var(--waiting-soft);color:var(--ink);font-size:14px;border-radius:0 4px 4px 0;
+}
+.condition-note p{margin:0 0 8px}
+.condition-note p:last-child{margin-bottom:0}
+
+/* ── Vocabulary legend ────────────────────────────────────────────── */
+.vocab{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2px 36px}
+.vocab .row{padding:12px 0;border-top:1px solid var(--rule-soft)}
+.vocab dt{font:500 11.5px/1.4 "IBM Plex Mono",monospace;display:flex;gap:8px;align-items:baseline}
+.vocab dt .n{color:var(--ink-faint)}
+.vocab dd{margin:5px 0 0;font-size:13.5px;color:var(--ink-soft);line-height:1.5;max-width:46ch}
+
+/* ── Controls ─────────────────────────────────────────────────────── */
+.controls{
+  position:sticky;top:env(safe-area-inset-top, 0px);z-index:20;
+  background:var(--ground);border-bottom:1px solid var(--rule);
+  padding-block:12px;margin-bottom:0;
+}
+.control-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.control-row + .control-row{margin-top:9px}
+.control-row > .gl{
+  font:500 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-faint);min-width:74px;
+}
+.f{
+  font:450 12.5px/1 "IBM Plex Sans",sans-serif;padding:7px 11px;border-radius:99px;
+  border:1px solid var(--rule);background:var(--surface);color:var(--ink-soft);cursor:pointer;
+}
+.f:hover{border-color:var(--accent);color:var(--accent)}
+.f[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+:root[data-theme="dark"] .f[aria-pressed="true"],
+html:not([data-theme="light"]) .f[aria-pressed="true"]{color:#0D1210}
+.f .n{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;opacity:.72;margin-left:5px}
+#q{
+  flex:1 1 200px;min-width:0;font:400 13.5px/1 "IBM Plex Sans",sans-serif;
+  padding:8px 12px;border:1px solid var(--rule);border-radius:99px;
+  background:var(--surface);color:var(--ink);
+}
+#q::placeholder{color:var(--ink-faint)}
+.count{font:500 12px/1 "IBM Plex Mono",monospace;color:var(--ink-faint);white-space:nowrap}
+
+/* ── Matrix ───────────────────────────────────────────────────────── */
+.items{display:flex;flex-direction:column;gap:0}
+details.item{border-bottom:1px solid var(--rule-soft);background:var(--ground)}
+details.item[open]{background:var(--surface);box-shadow:var(--shadow);border-bottom-color:transparent;margin-block:6px;border-radius:5px}
+summary{
+  list-style:none;cursor:pointer;display:grid;
+  grid-template-columns:86px 1fr auto;gap:14px;align-items:baseline;
+  padding:13px 14px;
+}
+summary::-webkit-details-marker{display:none}
+summary:hover .t{color:var(--accent)}
+.id{font:500 12.5px/1.5 "IBM Plex Mono",monospace;color:var(--ink)}
+.t{font-size:14.5px;line-height:1.42;color:var(--ink)}
+.t .sub{display:block;color:var(--ink-faint);font-size:12px;margin-top:3px;font-family:"IBM Plex Mono",monospace}
+.pills{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.pill{
+  font:500 10.5px/1 "IBM Plex Mono",monospace;letter-spacing:.04em;
+  padding:5px 8px;border-radius:3px;white-space:nowrap;
+}
+.pill.seq{background:var(--blocked-soft);color:var(--blocked)}
+.pill.ind{background:var(--free-soft);color:var(--free)}
+.pill.par{background:var(--surface-2);color:var(--ink-soft)}
+.pill.gate{background:var(--accent);color:var(--surface)}
+:root[data-theme="dark"] .pill.gate,
+html:not([data-theme="light"]) .pill.gate{color:#0D1210}
+.pill.nocrit{background:var(--waiting-soft);color:var(--waiting)}
+
+.body{padding:2px 14px 20px;display:grid;gap:0}
+.dim{display:grid;grid-template-columns:168px 1fr;gap:16px;padding:12px 0;border-top:1px solid var(--rule-soft)}
+.dim > dt{
+  font:500 10.5px/1.5 "IBM Plex Mono",monospace;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-faint);
+}
+.dim > dd{margin:0;font-size:14px;line-height:1.55;max-width:74ch}
+.dim ol,.dim ul{margin:0;padding-left:20px}
+.dim li{margin-bottom:5px}
+.dim li:last-child{margin-bottom:0}
+.absent{color:var(--waiting);font-style:italic}
+.absent + .why-absent{display:block;margin-top:6px;color:var(--ink-soft);font-size:13px;font-style:normal}
+.basis{color:var(--ink-soft);font-size:13.5px;margin-top:6px}
+.xref{display:inline-block;font:500 12px/1 "IBM Plex Mono",monospace;padding:4px 7px;border-radius:3px;background:var(--surface-2);color:var(--ink);margin:0 4px 4px 0;border:0;cursor:pointer}
+.xref:hover{color:var(--accent)}
+.empty{padding:40px 14px;color:var(--ink-faint);font-size:14px;text-align:center}
+
+/* ── Closing law ──────────────────────────────────────────────────── */
+.law{background:var(--surface);border-top:1px solid var(--rule)}
+.law .wrap{padding-block:34px 48px}
+.law blockquote{
+  margin:0 0 20px;font-family:"Newsreader",Georgia,serif;font-size:clamp(19px,3.2vw,25px);
+  line-height:1.32;letter-spacing:-.008em;max-width:24ch;border-left:3px solid var(--accent);padding-left:18px;
+}
+.cmds{overflow-x:auto}
+.cmds table{border-collapse:collapse;font-size:13.5px;min-width:520px}
+.cmds td{padding:7px 18px 7px 0;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+.cmds td:first-child{white-space:nowrap;font-family:"IBM Plex Mono",monospace;font-weight:500;color:var(--accent)}
+.cmds td:last-child{color:var(--ink-soft)}
+.foot{margin-top:24px;font-size:12.5px;color:var(--ink-faint);max-width:70ch;line-height:1.55}
+
+@media (max-width:640px){
+  .rung{grid-template-columns:1fr;gap:6px}
+  .rung-label{padding-top:0}
+  summary{grid-template-columns:1fr;gap:7px}
+  .pills{justify-content:flex-start}
+  .dim{grid-template-columns:1fr;gap:5px}
+  .tally div{border-right:0;border-bottom:1px solid var(--rule-soft);padding-right:0}
+  .control-row > .gl{min-width:0;width:100%}
+}
+</style>
+
+<header class="mast">
+  <div class="wrap">
+    <p class="eyebrow"><span>DGO / Commissioning</span><span>·</span><span>Generated 2026-09-15</span><span>·</span><span>npm run master</span></p>
+    <h1>Every open item, and what would close it</h1>
+    <p class="standfirst">
+      <strong>87 items are outstanding</strong> across the five registers this estate keeps. Each one below
+      carries what it is, why it is, where it stands today, the actions and inputs its source states,
+      what would decisively close it, and whether it can run now or must wait. Every field is quoted
+      from its source or marked <em>not established</em> — nothing here was written to fill a gap.
+    </p>
+    <div class="tally" id="tally"></div>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+  <section>
+    <div class="sec-head"><h2>What must go first</h2><span class="tag">Execution topology</span></div>
+    <p class="lede">
+      Ordering is derived only from relations the sources themselves state — a dependency naming another
+      item, or a sentence constraining sequence. Items are laid out in levels: nothing on a level waits on
+      anything to its right, and everything on a level waits on something to its left. Click any item to
+      open its full record.
+    </p>
+    <p class="legend"><b>&rarr;n</b> counts the open items waiting on that one. A red edge means
+      something is waiting on it; a blue edge means nothing is.</p>
+    <div class="ladder" id="ladder"></div>
+    <div class="condition-note" id="conditionNote"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>The vocabulary these registers use</h2><span class="tag">Status</span></div>
+    <p class="lede">
+      The readiness register distinguishes an action taken from an outcome observed, and the distinction
+      is load-bearing: half the open items are applied and unverified rather than undone.
+    </p>
+    <div class="vocab" id="vocab"></div>
+  </section>
+
+  <section id="matrix">
+    <div class="sec-head"><h2>The matrix</h2><span class="tag">87 open items</span></div>
+    <p class="lede">
+      Filter by any lens. Every row opens to the six dimensions in full.
+    </p>
+    <div class="controls">
+      <div class="control-row">
+        <label for="q" class="gl">Search</label>
+        <input id="q" type="search" placeholder="id, title, owner, evidence…" autocomplete="off">
+        <span class="count" id="count"></span>
+      </div>
+      <div class="control-row" id="fTopology"><span class="gl">Topology</span></div>
+      <div class="control-row" id="fSource"><span class="gl">Source</span></div>
+      <div class="control-row" id="fActor"><span class="gl">Actor</span></div>
+      <div class="control-row" id="fFlag"><span class="gl">Lens</span></div>
+    </div>
+    <div class="items" id="items"></div>
+  </section>
+
+</div>
+</main>
+
+<footer class="law">
+  <div class="wrap">
+    <blockquote>Where a document and a command disagree, the command governs.</blockquote>
+    <div class="cmds">
+      <table>
+        <tbody>
+          <tr><td>npm run master</td><td>regenerates the register this page is built from</td></tr>
+          <tr><td>npm run outstanding</td><td>the total: 87 open across five sources</td></tr>
+          <tr><td>npm run closed</td><td>the 29 already discharged, with their evidence</td></tr>
+          <tr><td>npm run readiness</td><td>the register of record's own tally</td></tr>
+          <tr><td>npm run commission</td><td>what a commissioning run reports today</td></tr>
+          <tr><td>npm run test:master</td><td>fails if this page's source has drifted from the registers</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="foot">
+      This page is a rendering of <code>docs/deployment/MASTER_REGISTER.json</code> and closes nothing.
+      Status lives in the five sources; an item leaves this list when its source says it has closed.
+      It does not prioritise — one agency decision can gate ten provisioning steps, and the twenty-nine
+      flow-truth findings are all against a single package outside the commissioning path.
+    </p>
+  </div>
+</footer>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const REG = JSON.parse(document.getElementById('data').textContent);
+const ITEMS = REG.items;
+const byId = new Map(ITEMS.map(i => [i.id, i]));
+
+/* Which categories of the readiness register gate commissioning is a judgement the
+   generated register states openly; it is carried here rather than recomputed. */
+const GATING = new Set(REG.gatingCommissioning || []);
+
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const el = (h) => { const t = document.createElement('template'); t.innerHTML = h.trim(); return t.content.firstElementChild; };
+
+/* ── Tally ─────────────────────────────────────────────────────────── */
+const t = REG.totals;
+document.getElementById('tally').innerHTML = [
+  [t.open, 'open items across five registers'],
+  [t.closed, 'discharged, with evidence on record'],
+  [GATING.size, 'standing between here and a commissioned endpoint surface'],
+  [t.byTopology['SEQUENCE-DEPENDENT'], 'cannot start until something else finishes'],
+  [t.open - t.statingAClosureCriterion, 'have no stated closure criterion', true],
+].map(([n, label, warn]) =>
+  `<div class="${warn ? 'warn' : ''}"><b class="num">${n}</b><span>${esc(label)}</span></div>`).join('');
+
+/* ── Ladder ────────────────────────────────────────────────────────── */
+/* Level = longest chain of open predecessors behind an item. Everything on a level
+   is free of everything to its right, and waits on something to its left. */
+const level = new Map();
+function levelOf(id, seen = new Set()) {
+  if (level.has(id)) return level.get(id);
+  if (seen.has(id)) return 0;                    // a cycle is not an order; treat as a root
+  seen.add(id);
+  const item = byId.get(id);
+  const preds = (item?.blockedBy || []).filter(p => byId.has(p));
+  const n = preds.length ? Math.max(...preds.map(p => levelOf(p, seen))) + 1 : 0;
+  level.set(id, n);
+  return n;
+}
+const graphed = ITEMS.filter(i => i.blockedBy.length || i.blocking.length);
+graphed.forEach(i => levelOf(i.id));
+const maxLevel = Math.max(0, ...graphed.map(i => level.get(i.id)));
+
+const ORDINAL = [
+  'nothing open ahead of it',
+  'one item deep — waits on a Level 0',
+  'two items deep — waits on a Level 1',
+  'three items deep',
+  'four items deep',
+];
+document.getElementById('ladder').innerHTML = Array.from({ length: maxLevel + 1 }, (_, L) => {
+  const here = graphed.filter(i => level.get(i.id) === L).sort((a, b) => a.id < b.id ? -1 : 1);
+  if (!here.length) return '';
+  return `<div class="rung">
+    <div class="rung-label"><em>Level ${L}</em>${esc(ORDINAL[L] || 'deeper still')} · ${here.length} item${here.length === 1 ? '' : 's'}</div>
+    <div class="chips">${here.map(i =>
+      `<button class="chip ${i.blocking.length ? 'chip--gates' : 'chip--clear'}" data-goto="${i.id}" title="${esc(i.title)}">${esc(i.id)}${
+        i.blocking.length ? ` <span class="fan">&rarr;${i.blocking.length}</span>` : ''}</button>`).join('')}</div>
+  </div>`;
+}).join('');
+
+const conditional = ITEMS.filter(i => i.topology === 'SEQUENCE-DEPENDENT' && !i.blockedBy.length && !i.blocking.length);
+document.getElementById('conditionNote').innerHTML =
+  `<p><strong>${conditional.length} further items are order-constrained against a condition rather than another item.</strong>
+   Their source writes a sentence like <em>“must not proceed until this is settled”</em> — a judgement someone has to
+   make, not a row a command can read. They are held as sequence-dependent because the sentence stands.</p>
+   <p class="chips">${conditional.map(i =>
+     `<button class="chip chip--cond" data-goto="${i.id}" title="${esc(i.title)}">${esc(i.id)}</button>`).join('')}</p>`;
+
+/* ── Vocabulary ────────────────────────────────────────────────────── */
+const VOCAB = {
+  BLOCKED: 'Cannot proceed here. The work needs tenant credentials, a live session, or a decision nobody in this repository can take.',
+  APPLIED_UNVERIFIED: 'The action was taken and the outcome has not been observed. The distinction the register refuses to collapse.',
+  SPECIFIED_NOT_APPLIED: 'Fully specified in the repository, never applied to the tenant.',
+  DECISION_REQUIRED: 'Technically settled. Waiting on someone with the authority to choose.',
+  EVIDENCE_INCOMPLETE: 'Partly proven. What is missing is named, not hand-waved.',
+  READY: 'Nothing blocks it. It has simply not been done.',
+  OPEN: 'A finding in a record or a register with no status convention — counted open because its own preamble says so.',
+};
+document.getElementById('vocab').innerHTML = Object.entries(VOCAB).map(([k, v]) => {
+  const n = ITEMS.filter(i => (i.status || '') === k).length;
+  return `<div class="row"><dt>${esc(k)}<span class="n num">${n}</span></dt><dd>${esc(v)}</dd></div>`;
+}).join('');
+
+/* ── Filters ───────────────────────────────────────────────────────── */
+const state = { topology: null, source: null, actor: null, flag: null, q: '' };
+
+const TOPO_LABEL = {
+  'SEQUENCE-DEPENDENT': 'Sequence-dependent',
+  INDEPENDENT: 'Independent',
+  'PARALLEL-EXECUTION-NEUTRAL': 'Parallel-neutral',
+};
+const FLAGS = {
+  gating: ['Gates commissioning', i => GATING.has(i.id)],
+  nocrit: ['No closure criterion', i => !i.triggerEstablished],
+  noowner: ['No owner named', i => !i.owner],
+  noaction: ['No action stated', i => !i.actions.length],
+};
+
+function buildFilters(hostId, key, entries) {
+  const host = document.getElementById(hostId);
+  entries.forEach(([value, label, n]) => {
+    const b = el(`<button class="f" type="button" aria-pressed="false" data-k="${key}" data-v="${esc(value)}">${esc(label)}<span class="n">${n}</span></button>`);
+    host.appendChild(b);
+  });
+}
+const tallyBy = (fn) => ITEMS.reduce((m, i) => { const k = fn(i); m[k] = (m[k] || 0) + 1; return m; }, {});
+
+const topoCounts = tallyBy(i => i.topology);
+buildFilters('fTopology', 'topology', Object.keys(TOPO_LABEL).map(k => [k, TOPO_LABEL[k], topoCounts[k] || 0]));
+
+const srcCounts = tallyBy(i => i.source);
+const SRC_LABEL = {
+  readiness: 'Readiness register', governance: 'Governance estate',
+  'pending-work': 'Notification pending work', 'notification-audit': 'Notification assessment',
+  'flow-truth-review': 'Flow-truth review',
+};
+buildFilters('fSource', 'source', Object.keys(srcCounts).map(k => [k, SRC_LABEL[k] || k, srcCounts[k]]));
+
+const actorCounts = tallyBy(i => i.actor);
+buildFilters('fActor', 'actor', Object.entries(actorCounts).sort((a, b) => b[1] - a[1]).map(([k, n]) => [k, k, n]));
+
+buildFilters('fFlag', 'flag', Object.entries(FLAGS).map(([k, [label, fn]]) => [k, label, ITEMS.filter(fn).length]));
+
+document.addEventListener('click', (e) => {
+  const f = e.target.closest('.f');
+  if (f) {
+    const { k, v } = f.dataset;
+    state[k] = state[k] === v ? null : v;
+    document.querySelectorAll(`.f[data-k="${k}"]`).forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.v === state[k])));
+    render();
+    return;
+  }
+  const go = e.target.closest('[data-goto]');
+  if (go) {
+    const id = go.dataset.goto;
+    for (const k of ['topology', 'source', 'actor', 'flag']) state[k] = null;
+    document.querySelectorAll('.f').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    document.getElementById('q').value = state.q = '';
+    render();
+    const node = document.getElementById('i-' + id);
+    if (node) { node.open = true; node.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  }
+});
+document.getElementById('q').addEventListener('input', (e) => { state.q = e.target.value.toLowerCase(); render(); });
+
+/* ── Rows ──────────────────────────────────────────────────────────── */
+const TOPO_PILL = { 'SEQUENCE-DEPENDENT': 'seq', INDEPENDENT: 'ind', 'PARALLEL-EXECUTION-NEUTRAL': 'par' };
+
+function list(arr) {
+  if (!arr.length) return '';
+  const numbered = arr.every(x => /^\s*\d+[.)]\s/.test(x));
+  return numbered
+    ? `<ol>${arr.map(x => `<li>${esc(x.replace(/^\s*\d+[.)]\s*/, ''))}</li>`).join('')}</ol>`
+    : `<ul>${arr.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+}
+const xrefs = (ids) => ids.map(id => `<button class="xref" data-goto="${esc(id)}">${esc(id)}</button>`).join('');
+
+function row(i) {
+  const gates = GATING.has(i.id);
+  return `<details class="item" id="i-${esc(i.id)}">
+    <summary>
+      <span class="id">${esc(i.id)}</span>
+      <span class="t">${esc(i.title)}<span class="sub">${esc(SRC_LABEL[i.source] || i.source)} · ${esc(i.actor)}</span></span>
+      <span class="pills">
+        ${gates ? '<span class="pill gate">gates commissioning</span>' : ''}
+        ${!i.triggerEstablished ? '<span class="pill nocrit">no closure criterion</span>' : ''}
+        <span class="pill ${TOPO_PILL[i.topology]}">${esc(TOPO_LABEL[i.topology])}</span>
+      </span>
+    </summary>
+    <dl class="body">
+      <div class="dim"><dt>What it is</dt><dd>${esc(i.what || '—')}</dd></div>
+      <div class="dim"><dt>Why it is</dt><dd>${esc(i.why || '—')}</dd></div>
+      <div class="dim"><dt>Current state</dt><dd><span class="mono">${esc(i.state)}</span></dd></div>
+      <div class="dim"><dt>Actions &amp; steps</dt><dd>${
+        i.actions.length ? list(i.actions) : '<span class="absent">not established by the source</span>'}</dd></div>
+      ${i.inputs.length ? `<div class="dim"><dt>Inputs required</dt><dd>${list(i.inputs)}</dd></div>` : ''}
+      <div class="dim"><dt>Closes decisively when</dt><dd>${
+        i.triggerEstablished
+          ? esc(i.trigger)
+          : `<span class="absent">not established by the source</span><span class="why-absent">${esc(i.wouldEstablish || '')}</span>`}</dd></div>
+      ${i.validation ? `<div class="dim"><dt>Checked by</dt><dd class="mono" style="font-size:13px">${esc(i.validation)}</dd></div>` : ''}
+      <div class="dim"><dt>Execution topology</dt><dd>
+        <strong>${esc(TOPO_LABEL[i.topology])}</strong>
+        <div class="basis">${esc(i.basis)}.</div>
+        ${i.blockedBy.length ? `<div class="basis">Waits on: ${xrefs(i.blockedBy)}</div>` : ''}
+        ${i.blocking.length ? `<div class="basis">Waited on by: ${xrefs(i.blocking)}</div>` : ''}
+        ${i.releasedBy.length && !i.blockedBy.length ? `<div class="basis">Released by ${xrefs(i.releasedBy)} — now closed.</div>` : ''}
+      </dd></div>
+      <div class="dim"><dt>Who can act</dt><dd>${i.owner ? esc(i.owner) : '<span class="absent">not stated in the source</span>'}</dd></div>
+    </dl>
+  </details>`;
+}
+
+function render() {
+  const hit = ITEMS.filter(i => {
+    if (state.topology && i.topology !== state.topology) return false;
+    if (state.source && i.source !== state.source) return false;
+    if (state.actor && i.actor !== state.actor) return false;
+    if (state.flag && !FLAGS[state.flag][1](i)) return false;
+    if (state.q) {
+      const hay = [i.id, i.title, i.what, i.why, i.owner, i.trigger, i.state, (i.actions || []).join(' ')]
+        .join(' ').toLowerCase();
+      if (!hay.includes(state.q)) return false;
+    }
+    return true;
+  });
+  document.getElementById('count').textContent = `${hit.length} of ${ITEMS.length}`;
+  document.getElementById('items').innerHTML =
+    hit.length ? hit.map(row).join('') : '<p class="empty">No item matches those filters.</p>';
+}
+render();
+</script>

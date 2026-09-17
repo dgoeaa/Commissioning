@@ -1,0 +1,178 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:08:41Z",
+    "workflow_identity":  {
+                              "internal_name":  "b56ce201-87bf-4c49-9d7d-7a5503cdcf3e",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "ECM_EDM_ARCHIVE",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              },
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "Http",
+                                                       "inputs":  {
+                                                                      "triggerAuthenticationType":  "Tenant"
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Scope_ARCHIVE_UPLOAD_Complete_No_Trigger":  {
+                                                                                        "actions":  {
+                                                                                                        "Condition_FileName_Present":  {
+                                                                                                                                           "actions":  {
+                                                                                                                                                           "Create_file":  {
+                                                                                                                                                                               "metadata":  {
+                                                                                                                                                                                                "operationMetadataId":  "0675168a-8b66-4d29-b8a6-57bb7994abb0"
+                                                                                                                                                                                            },
+                                                                                                                                                                               "type":  "OpenApiConnection",
+                                                                                                                                                                               "inputs":  {
+                                                                                                                                                                                              "parameters":  {
+                                                                                                                                                                                                                 "dataset":  "https://nitdanigeria.sharepoint.com/sites/DIGITALDOCUMENTCENTRE",
+                                                                                                                                                                                                                 "folderPath":  "/DocTrak_Documents",
+                                                                                                                                                                                                                 "name":  "@triggerBody()?[\u0027fileName\u0027]",
+                                                                                                                                                                                                                 "body":  "@triggerBody()?[\u0027fileContent\u0027]"
+                                                                                                                                                                                                             },
+                                                                                                                                                                                              "host":  {
+                                                                                                                                                                                                           "apiId":  "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                                                                                                                                                                           "connectionName":  "shared_sharepointonline",
+                                                                                                                                                                                                           "operationId":  "CreateFile"
+                                                                                                                                                                                                       },
+                                                                                                                                                                                              "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                                                                                                                                          },
+                                                                                                                                                                               "runtimeConfiguration":  {
+                                                                                                                                                                                                            "contentTransfer":  {
+                                                                                                                                                                                                                                    "transferMode":  "Chunked"
+                                                                                                                                                                                                                                }
+                                                                                                                                                                                                        }
+                                                                                                                                                                           },
+                                                                                                                                                           "Update_file_properties":  {
+                                                                                                                                                                                          "runAfter":  {
+                                                                                                                                                                                                           "Create_file":  [
+                                                                                                                                                                                                                               "Succeeded"
+                                                                                                                                                                                                                           ]
+                                                                                                                                                                                                       },
+                                                                                                                                                                                          "metadata":  {
+                                                                                                                                                                                                           "operationMetadataId":  "96de34cf-3f83-42c7-a5d8-ae4b4b46e579"
+                                                                                                                                                                                                       },
+                                                                                                                                                                                          "type":  "OpenApiConnection",
+                                                                                                                                                                                          "inputs":  {
+                                                                                                                                                                                                         "parameters":  {
+                                                                                                                                                                                                                            "dataset":  "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                                                                                                                                                                                                            "table":  "f553959f-d55b-4591-aa87-d61fb6f9eda9",
+                                                                                                                                                                                                                            "id":  "@outputs(\u0027Create_file\u0027)?[\u0027body/ItemId\u0027]"
+                                                                                                                                                                                                                        },
+                                                                                                                                                                                                         "host":  {
+                                                                                                                                                                                                                      "apiId":  "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                                                                                                                                                                                      "connectionName":  "shared_sharepointonline",
+                                                                                                                                                                                                                      "operationId":  "PatchFileItem"
+                                                                                                                                                                                                                  },
+                                                                                                                                                                                                         "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                                                                                                                                                     }
+                                                                                                                                                                                      },
+                                                                                                                                                           "Response_Archive_Success":  {
+                                                                                                                                                                                            "runAfter":  {
+                                                                                                                                                                                                             "Update_file_properties":  [
+                                                                                                                                                                                                                                            "Succeeded"
+                                                                                                                                                                                                                                        ]
+                                                                                                                                                                                                         },
+                                                                                                                                                                                            "metadata":  {
+                                                                                                                                                                                                             "operationMetadataId":  "9a1c246e-0e25-4d69-b856-aaed59ead371"
+                                                                                                                                                                                                         },
+                                                                                                                                                                                            "type":  "Response",
+                                                                                                                                                                                            "kind":  "Http",
+                                                                                                                                                                                            "inputs":  {
+                                                                                                                                                                                                           "statusCode":  200,
+                                                                                                                                                                                                           "headers":  {
+                                                                                                                                                                                                                           "Access-Control-Allow-Origin":  "https://your-host",
+                                                                                                                                                                                                                           "Access-Control-Allow-Methods":  "POST, OPTIONS",
+                                                                                                                                                                                                                           "Access-Control-Allow-Headers":  "Content-Type, X-DGO-Trigger, X-Correlation-ID",
+                                                                                                                                                                                                                           "Content-Type":  "application/json"
+                                                                                                                                                                                                                       },
+                                                                                                                                                                                                           "body":  {
+                                                                                                                                                                                                                        "status":  "Success",
+                                                                                                                                                                                                                        "message":  "Document archived successfully",
+                                                                                                                                                                                                                        "docId":  "@outputs(\u0027Update_file_properties\u0027)?[\u0027body/ID\u0027]"
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                       }
+                                                                                                                                                                                        }
+                                                                                                                                                       },
+                                                                                                                                           "else":  {
+                                                                                                                                                        "actions":  {
+                                                                                                                                                                        "Response_Archive_Bad_Request":  {
+                                                                                                                                                                                                             "metadata":  {
+                                                                                                                                                                                                                              "operationMetadataId":  "97c5790d-86da-455a-9a88-932b0dd5ccbc"
+                                                                                                                                                                                                                          },
+                                                                                                                                                                                                             "type":  "Response",
+                                                                                                                                                                                                             "kind":  "Http",
+                                                                                                                                                                                                             "inputs":  {
+                                                                                                                                                                                                                            "statusCode":  400,
+                                                                                                                                                                                                                            "headers":  {
+                                                                                                                                                                                                                                            "Access-Control-Allow-Origin":  "https://your-host",
+                                                                                                                                                                                                                                            "Access-Control-Allow-Methods":  "POST, OPTIONS",
+                                                                                                                                                                                                                                            "Access-Control-Allow-Headers":  "Content-Type, X-DGO-Trigger, X-Correlation-ID",
+                                                                                                                                                                                                                                            "Content-Type":  "application/json"
+                                                                                                                                                                                                                                        },
+                                                                                                                                                                                                                            "body":  {
+                                                                                                                                                                                                                                         "status":  "Error",
+                                                                                                                                                                                                                                         "message":  "Upload not successful",
+                                                                                                                                                                                                                                         "docId":  0
+                                                                                                                                                                                                                                     }
+                                                                                                                                                                                                                        }
+                                                                                                                                                                                                         }
+                                                                                                                                                                    }
+                                                                                                                                                    },
+                                                                                                                                           "expression":  {
+                                                                                                                                                              "and":  [
+                                                                                                                                                                          {
+                                                                                                                                                                              "not":  {
+                                                                                                                                                                                          "equals":  [
+                                                                                                                                                                                                         "@empty(triggerBody()?[\u0027fileName\u0027])",
+                                                                                                                                                                                                         true
+                                                                                                                                                                                                     ]
+                                                                                                                                                                                      }
+                                                                                                                                                                          }
+                                                                                                                                                                      ]
+                                                                                                                                                          },
+                                                                                                                                           "metadata":  {
+                                                                                                                                                            "operationMetadataId":  "50f2450f-95e3-427b-baab-fbf7b22786cc"
+                                                                                                                                                        },
+                                                                                                                                           "type":  "If"
+                                                                                                                                       }
+                                                                                                    },
+                                                                                        "runAfter":  {
+
+                                                                                                     },
+                                                                                        "metadata":  {
+                                                                                                         "operationMetadataId":  "3da2fcd3-6fe8-4933-aad4-5703b6ffb925"
+                                                                                                     },
+                                                                                        "type":  "Scope"
+                                                                                    }
+                                   },
+                       "outputs":  {
+
+                                   }
+                   }
+}

@@ -1,0 +1,213 @@
+{
+  "generatedFrom": "docs/deployment/PRODUCTION_READINESS_REGISTER.json",
+  "registerVersion": "1.2.5",
+  "totals": {
+    "registerItems": 48,
+    "closed": 26,
+    "open": 22,
+    "securityAuthority": 0,
+    "agencyDecision": 4,
+    "tenantExecution": 18
+  },
+  "rule": "Every open item carries a named accountable party and a stated closing condition. None is closable from this repository; each requires the authority named. P-17 requires one risk-acceptance record per row that is still open at authorisation.",
+  "items": [
+    {
+      "id": "ITEM-2",
+      "status": "BLOCKED",
+      "title": "The tenant write path has never been executed",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator",
+      "closes": "One flow carries a change that was applied from outside the Power Automate designer, and a fresh export of that flow contains it. The dry run is the mandatory first pass and is not on its own sufficient: it reads and reports, and this item exists to prove that a WRITE reaches the tenant.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "G-04",
+      "status": "BLOCKED",
+      "title": "No server-side enforcement is running anywhere",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "Power Automate (implementation); agency (posture decision)",
+      "closes": "A flow called directly with a forged or absent identity refuses the action.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-23",
+      "status": "APPLIED_UNVERIFIED",
+      "title": "Five index targets unset on hot-path lists",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator",
+      "closes": "The provisioner's index pass reports 5 already indexed. A single assignment against a known reference returns 200; a flag write against a known reference returns 200.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-30",
+      "status": "APPLIED_UNVERIFIED",
+      "title": "Portal Flow Telemetry.RunRecordJson is not provisioned, so no run record is retained",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator + author",
+      "closes": "A telemetry row carries a run record.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-12",
+      "status": "APPLIED_UNVERIFIED",
+      "title": "A submission reports delivered while its attachments are never sent",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator",
+      "closes": "A submission with an attachment produces a row in Portal Attachments.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-11",
+      "status": "APPLIED_UNVERIFIED",
+      "title": "An unknown reference is answered 200 and rendered as found",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator",
+      "closes": "An unknown reference returns 404, a wrong-email pairing returns a materially identical 404, and track.js shows the denial.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-6",
+      "status": "APPLIED_UNVERIFIED",
+      "title": "Visit 4 — ECM_DOCS_INTAKE write-back",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator",
+      "closes": "Circle C7 closes: a citizen's status can change.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-25",
+      "status": "EVIDENCE_INCOMPLETE",
+      "title": "15 of 19 DYNAMIC_ACTIONS operations answer 501",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator + author",
+      "closes": "npm run designerpaste builds the writes and no operation answers 501.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-9",
+      "status": "BLOCKED",
+      "title": "39 of 77 flows have no stated purpose",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "someone who knows the estate",
+      "closes": "The catalogue reports 0 with no stated purpose.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "MANUAL-2",
+      "status": "READY",
+      "title": "Test records must be cleared before real correspondence arrives",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator",
+      "closes": "No test row remains, and the sequence counter's starting value is recorded.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "MANUAL-3",
+      "status": "BLOCKED",
+      "title": "The browser suite must run against the deployed build",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator",
+      "closes": "All ten spec files pass against the deployed hostname.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-37",
+      "status": "DECISION_REQUIRED",
+      "title": "The sanctioned crossing does not exist in the live flow — restore it, or amend D1 and D6",
+      "authority": "AGENCY_DECISION",
+      "accountable": "agency",
+      "closes": "The agency records one of two things: that D1 and D6 stand as written, given the crossing measures present — which closes this item with no work — or that the crossing should sit somewhere other than where it does, which makes it a change request rather than a restoration.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-40",
+      "status": "EVIDENCE_INCOMPLETE",
+      "title": "Four endpoint triggers answer every verb and five carry no request schema",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator",
+      "closes": "Every endpoint trigger is recorded as method POST with a request schema, read from an export taken after the change. Currently answeringEveryVerb: 4 and withNoRequestSchema: 5 against a target of 0 and 0; unread is already 0.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-41",
+      "status": "DECISION_REQUIRED",
+      "title": "Content approval is still ON for Global Tracking Queue — 12,079 of 15,936 rows are invisible to readers",
+      "authority": "AGENCY_DECISION",
+      "accountable": "agency",
+      "closes": "A recorded decision, and if it is to be off, a read-back confirming EnableModeration is false.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-43",
+      "status": "READY",
+      "title": "The portal still calls the defective OTP flow — the new one is deployed but not in service",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator",
+      "closes": "The deployed configuration resolves OTP_VERIFY to the flow the tenant register names (b372d45e4b2a47d88b8e8b032da67fcd, serving OTP_GENERATE and OTP_VERIFY), the OTP tests pass against it, and no configuration resolves OTP_VERIFY to a flow absent from the register. Re-based: the register contains neither c5e314c7-68b5-4bdc-8935-0954ef6a256d nor the defective 3e201620-f1e8-4c17-a90a-4d95b94a24c2, so the original criteria cannot be evaluated.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-44",
+      "status": "APPLIED_UNVERIFIED",
+      "title": "The client spoke a protocol neither OTP flow reads — reconciled on the client side",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator (the live proof); the direction is settled",
+      "closes": "One request from the platform reaches a matched Switch case, and one code issued through the platform verifies through the platform. Until both are observed against the tenant, this is unresolved regardless of what the code reads like.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-48",
+      "status": "SPECIFIED_NOT_APPLIED",
+      "title": "The portal promises citizens four emails the estate does not send",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "Platform technical owner for the sends; the agency for any decision to withdraw a promise instead.",
+      "closes": "npm run notifications -- --check derives PROVISIONED for RN-001 and RN-005, and either PROVISIONED for RN-003 and RN-004 or the portal copy no longer makes the promise, which the verifier's portal-promise checks will detect and fail on until the matrix is updated.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-50",
+      "status": "SPECIFIED_NOT_APPLIED",
+      "title": "Verification codes, correspondence, reports and assignment notices go to a fixed mailbox",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "Platform technical owner",
+      "closes": "npm run notifications -- --check derives PROVISIONED for RN-006, RN-016, RN-021, RN-024 and RN-037, and the fixed-recipient census shows no verification, correspondence, report or assignment send hard-coding an address.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-51",
+      "status": "SPECIFIED_NOT_APPLIED",
+      "title": "Officers are never told of assignments, approvals, escalations, delegations or reminders",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "Platform technical owner, with the correspondence lifecycle process owner for the copy-to decision",
+      "closes": "npm run notifications -- --check derives PROVISIONED for RN-009, RN-011, RN-012, RN-015, RN-017, RN-018, RN-019, RN-034, RN-036 and RN-038, and no runtime action reports a notification as queued that has no carrier.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-52",
+      "status": "DECISION_REQUIRED",
+      "title": "Read endpoints and AI flows email record payloads to a shared mailbox",
+      "authority": "AGENCY_DECISION",
+      "accountable": "The agency for SN-001, alongside MANUAL-4; the platform technical owner for SN-002 to SN-004.",
+      "closes": "Each of the four surplus patterns carries a recorded decision, and any send decided against is gone from the exported estate.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-56",
+      "status": "APPLIED_UNVERIFIED",
+      "title": "The OTP allow-list row is set — applied by the operator, not verified here",
+      "authority": "TENANT_EXECUTION",
+      "accountable": "operator",
+      "closes": "A live OTP verify call from the portal returns Access-Control-Allow-Origin equal to the portal's origin.",
+      "riskAcceptanceRequired": true
+    },
+    {
+      "id": "ITEM-57",
+      "status": "DECISION_REQUIRED",
+      "title": "The archived design system is unreconciled against the live one, and nobody has said which is authoritative",
+      "authority": "AGENCY_DECISION",
+      "accountable": "the agency, with whoever owns the platform's visual design",
+      "closes": "The archived design system carries an explicit statement of its standing relative to document-portal/ds/, decided rather than inferred.",
+      "riskAcceptanceRequired": true
+    }
+  ]
+}

@@ -1,0 +1,539 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "method": "POST",
+          "schema": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "title": "Portal Support Case Request",
+            "description": "A helpdesk case raised from the NITDA Intelligent Portal support page.",
+            "properties": {
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The submitter's full name."
+              },
+              "email": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "email",
+                "description": "Reply address for the case."
+              },
+              "topic": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The closest support topic label."
+              },
+              "aboutReference": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "An optional tracking ID the case concerns."
+              },
+              "message": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The case description."
+              }
+            },
+            "required": [],
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "actions": {
+      "Scope_Support_Main": {
+        "type": "Scope",
+        "actions": {
+          "Compose_Source_Ip": {
+            "type": "Compose",
+            "inputs": "@trim(first(split(coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'], triggerOutputs()?['headers']?['X-Azure-ClientIP'], 'unknown'), ',')))",
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "ec4fb4ac-6a94-425a-a112-3164887e7727"
+            }
+          },
+          "Compose_Name": {
+            "type": "Compose",
+            "inputs": "@trim(coalesce(triggerBody()?['name'], ''))",
+            "runAfter": {
+              "Compose_Source_Ip": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "802b4d24-8f18-4849-a6b3-3ed2db9beae5"
+            }
+          },
+          "Compose_Email": {
+            "type": "Compose",
+            "inputs": "@toLower(trim(coalesce(triggerBody()?['email'], '')))",
+            "runAfter": {
+              "Compose_Name": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "4bd0a785-6f02-483b-bd8c-d606343df2aa"
+            }
+          },
+          "Compose_Topic": {
+            "type": "Compose",
+            "inputs": "@trim(coalesce(triggerBody()?['topic'], ''))",
+            "runAfter": {
+              "Compose_Email": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "040d114f-556e-4c81-a925-c5e6901f4473"
+            }
+          },
+          "Compose_About_Reference": {
+            "type": "Compose",
+            "inputs": "@toUpper(trim(coalesce(triggerBody()?['aboutReference'], '')))",
+            "runAfter": {
+              "Compose_Topic": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "9c30090c-4cf6-4107-b4cd-6858fc4680b7"
+            }
+          },
+          "Compose_Message": {
+            "type": "Compose",
+            "inputs": "@trim(coalesce(triggerBody()?['message'], ''))",
+            "runAfter": {
+              "Compose_About_Reference": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "800da314-39bc-40f6-bbd5-48e1de6318b5"
+            }
+          },
+          "Condition_Validate_Request": {
+            "type": "If",
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@and(greater(length(outputs('Compose_Name')), 1), and(contains(outputs('Compose_Email'), '@'), equals(indexOf(outputs('Compose_Email'), '@'), lastIndexOf(outputs('Compose_Email'), '@')), greater(indexOf(outputs('Compose_Email'), '@'), 0), less(indexOf(outputs('Compose_Email'), '@'), sub(length(outputs('Compose_Email')), 3)), contains(substring(outputs('Compose_Email'), add(indexOf(outputs('Compose_Email'), '@'), 1)), '.'), not(contains(outputs('Compose_Email'), ' '))), greater(length(outputs('Compose_Topic')), 0), greater(length(outputs('Compose_Message')), 19), less(length(outputs('Compose_Message')), 4000))",
+                    true
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Get_Rate_Limit_Support": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                    "table": "NITDA_Portal_RateLimits",
+                    "$filter": "Title eq '@{replace(concat('SUPPORT:', outputs('Compose_Source_Ip')), '''', '''''')}'",
+                    "$top": 1
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                    "operationId": "GetItems",
+                    "connectionName": "shared_sharepointonline"
+                  }
+                },
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "56985810-5500-4d49-8999-a0af5587f4ed"
+                }
+              },
+              "Compose_RL_Support_Exists": {
+                "type": "Compose",
+                "inputs": "@greater(length(outputs('Get_Rate_Limit_Support')?['body/value']), 0)",
+                "runAfter": {
+                  "Get_Rate_Limit_Support": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "884b2111-7765-4cfc-8e19-d54e45ef3100"
+                }
+              },
+              "Compose_RL_Support_Window_Expired": {
+                "type": "Compose",
+                "inputs": "@if(outputs('Compose_RL_Support_Exists'), greater(sub(ticks(utcNow()), ticks(first(outputs('Get_Rate_Limit_Support')?['body/value']?['WindowStartUtc']))), 6000000000), true)",
+                "runAfter": {
+                  "Compose_RL_Support_Exists": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "bd860f88-120f-4dc4-8e30-0b4890f09228"
+                }
+              },
+              "Compose_RL_Support_Effective_Count": {
+                "type": "Compose",
+                "inputs": "@if(outputs('Compose_RL_Support_Window_Expired'), 0, if(outputs('Compose_RL_Support_Exists'), first(outputs('Get_Rate_Limit_Support')?['body/value']?['RequestCount']), 0))",
+                "runAfter": {
+                  "Compose_RL_Support_Window_Expired": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "289b2823-f5cb-4a02-8f50-f8399ca63878"
+                }
+              },
+              "Compose_RL_Support_New_Count": {
+                "type": "Compose",
+                "inputs": "@add(outputs('Compose_RL_Support_Effective_Count'), 1)",
+                "runAfter": {
+                  "Compose_RL_Support_Effective_Count": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "75afdd1f-fb57-459c-b286-f6186351b6bd"
+                }
+              },
+              "Condition_RL_Support_Allowed": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "equals": [
+                        "@less(outputs('Compose_RL_Support_Effective_Count'), 5)",
+                        true
+                      ]
+                    }
+                  ]
+                },
+                "actions": {
+                  "Condition_RL_Support_Bucket_Exists": {
+                    "type": "If",
+                    "expression": {
+                      "and": [
+                        {
+                          "equals": [
+                            "@outputs('Compose_RL_Support_Exists')",
+                            true
+                          ]
+                        }
+                      ]
+                    },
+                    "actions": {
+                      "Update_Rate_Limit_Support": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                            "table": "NITDA_Portal_RateLimits",
+                            "id": "@first(outputs('Get_Rate_Limit_Support')?['body/value']?['ID'])",
+                            "item/RequestCount": "@outputs('Compose_RL_Support_New_Count')",
+                            "item/WindowStartUtc": "@if(outputs('Compose_RL_Support_Window_Expired'), utcNow(), first(outputs('Get_Rate_Limit_Support')?['body/value']?['WindowStartUtc']))",
+                            "item/UpdatedAtUtc": "@utcNow()"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                            "operationId": "PatchItem",
+                            "connectionName": "shared_sharepointonline"
+                          }
+                        },
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "3f4fe8a3-1598-41a2-926f-7f459e87a407"
+                        }
+                      }
+                    },
+                    "else": {
+                      "actions": {
+                        "Create_Rate_Limit_Support": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "parameters": {
+                              "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                              "table": "NITDA_Portal_RateLimits",
+                              "item/Title": "@concat('SUPPORT:', outputs('Compose_Source_Ip'))",
+                              "item/WindowStartUtc": "@utcNow()",
+                              "item/RequestCount": 1,
+                              "item/UpdatedAtUtc": "@utcNow()"
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                              "operationId": "PostItem",
+                              "connectionName": "shared_sharepointonline"
+                            }
+                          },
+                          "runAfter": {},
+                          "metadata": {
+                            "operationMetadataId": "6500d283-2d03-43fd-94df-545d6ef11a6f"
+                          }
+                        }
+                      }
+                    },
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "d21228d0-53bb-4938-abf2-d9695d805682"
+                    }
+                  },
+                  "Compose_Case_Ref": {
+                    "type": "Compose",
+                    "inputs": "@concat('NITDA-S-', toUpper(substring(replace(guid(), '-', ''), 0, 6)))",
+                    "runAfter": {
+                      "Condition_RL_Support_Bucket_Exists": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "f4601091-6c89-499f-866e-5908956fee66"
+                    }
+                  },
+                  "Create_Support_Case": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                        "table": "NITDA_Portal_SupportCases",
+                        "item/Title": "@outputs('Compose_Case_Ref')",
+                        "item/Name": "@outputs('Compose_Name')",
+                        "item/Email": "@outputs('Compose_Email')",
+                        "item/Topic": "@outputs('Compose_Topic')",
+                        "item/AboutReference": "@outputs('Compose_About_Reference')",
+                        "item/Message": "@outputs('Compose_Message')",
+                        "item/Status": "open",
+                        "item/SubmittedAtUtc": "@utcNow()",
+                        "item/SourceIp": "@outputs('Compose_Source_Ip')"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                        "operationId": "PostItem",
+                        "connectionName": "shared_sharepointonline"
+                      }
+                    },
+                    "runAfter": {
+                      "Compose_Case_Ref": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "dda831fc-e17b-4b7b-a9ec-b8ce4e82b54b"
+                    }
+                  },
+                  "Response_Support_Created": {
+                    "type": "Response",
+                    "kind": "Http",
+                    "inputs": {
+                      "statusCode": 200,
+                      "headers": {
+                        "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Methods": "POST, OPTIONS",
+                        "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID"
+                      },
+                      "body": {
+                        "caseRef": "@outputs('Compose_Case_Ref')"
+                      }
+                    },
+                    "runAfter": {
+                      "Create_Support_Case": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "f193db2c-b9b2-4e7a-bb3b-acfec0cc7170"
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Response_Support_Rate_Limited": {
+                      "type": "Response",
+                      "kind": "Http",
+                      "inputs": {
+                        "statusCode": 429,
+                        "headers": {
+                          "Content-Type": "application/json",
+                          "Access-Control-Allow-Origin": "*",
+                          "Access-Control-Allow-Methods": "POST, OPTIONS",
+                          "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID"
+                        },
+                        "body": {
+                          "delivered": false,
+                          "reason": "too-many-requests"
+                        }
+                      },
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "c79453c7-866d-4000-a1f5-9e45cf660551"
+                      }
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Compose_RL_Support_New_Count": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "89a8d8ac-de5f-40f2-998b-952be1a88edf"
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Response_Support_Invalid_Request": {
+                  "type": "Response",
+                  "kind": "Http",
+                  "inputs": {
+                    "statusCode": 400,
+                    "headers": {
+                      "Content-Type": "application/json",
+                      "Access-Control-Allow-Origin": "*",
+                      "Access-Control-Allow-Methods": "POST, OPTIONS",
+                      "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID"
+                    },
+                    "body": {
+                      "delivered": false,
+                      "reason": "invalid-request"
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "571481d3-9b01-4364-ad58-e16783099848"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Compose_Message": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "eab50afd-4630-4c0a-9f14-7b4db5625ed9"
+            }
+          }
+        },
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "6f8cc0df-4f55-433d-b1e0-d9e0a4e87cc4"
+        }
+      },
+      "Scope_Support_Catch": {
+        "type": "Scope",
+        "actions": {
+          "Response_Support_Processing_Failed": {
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+              "statusCode": 500,
+              "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, X-Correlation-ID"
+              },
+              "body": {
+                "delivered": false,
+                "reason": "support-processing-failed"
+              }
+            },
+            "runAfter": {},
+            "metadata": {
+              "operationMetadataId": "0fbd3ec0-fa97-4efb-b74f-e0460f4a7ceb"
+            }
+          }
+        },
+        "runAfter": {
+          "Scope_Support_Main": [
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "5d6f3f7c-fb34-43bf-bbe0-95b6344d317e"
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "connectionReferences": {
+    "shared_sharepointonline": {
+      "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+      "tier": "NotSpecified"
+    }
+  },
+  "allConnectionData": {
+    "Get_Rate_Limit_Support": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+        },
+        "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Update_Rate_Limit_Support": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+        },
+        "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Rate_Limit_Support": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+        },
+        "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+      },
+      "referenceKey": "shared_sharepointonline"
+    },
+    "Create_Support_Case": {
+      "connectionReference": {
+        "api": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+        },
+        "connection": {
+          "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline/connections/4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+        },
+        "connectionName": "4b7f2a9e6c1d4f3e9a8b5c2d7e1f6a3b"
+      },
+      "referenceKey": "shared_sharepointonline"
+    }
+  },
+  "staticResults": {}
+}
