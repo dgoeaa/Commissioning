@@ -7,13 +7,15 @@ business-rules catalogue and a gaps register.
 
 This page reconciles its seven integration contracts against the flow-side work in this
 repository. It exists because the two are halves of one thing and were produced separately —
-and because the specification's own `GAP-002` is exactly what this repository now answers.
+and because what the specification asked for on the server side is exactly what this
+repository now answers.
 
-> **GAP-002 · Critical · Open** — *"Server-side flow implementations and tests. Client contract
-> cannot prove server validation, authorization, rate limits, audit or recovery."*
+> *"Server-side flow implementations and tests. Client contract cannot prove server
+> validation, authorization, rate limits, audit or recovery."*
 
 The flow definitions, `npm run wiring`, the build standard and D8's rate limits are that
-evidence. GAP-002 is closable against this repository; the rest of this page is what it takes.
+evidence. That requirement is answerable against this repository; the rest of this page is
+what it takes.
 
 ---
 

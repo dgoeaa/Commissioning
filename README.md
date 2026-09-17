@@ -75,7 +75,7 @@ All are zero-build: no bundler, no transpilation, no server-side rendering. They
 
 ## Run it
 
-### Option A — in the browser, nothing installed (recommended)
+### Option A — in the browser, nothing installed
 
 On GitHub: **Code → Codespaces → Create codespace on main**.
 

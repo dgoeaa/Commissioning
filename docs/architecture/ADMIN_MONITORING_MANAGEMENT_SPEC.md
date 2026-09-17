@@ -498,7 +498,7 @@ irrelevant. So:
   bridge, no `postMessage` shim, no injected script. Those are the mechanisms of a cross-site
   attack, and building one into an administrative tool builds a vulnerability with a legitimate
   name. Cross-origin visibility comes from the backend or it does not come.
-- **AMM-R-035.** Therefore: **same-origin deployment is the recommended topology, and telemetry
+- **AMM-R-035.** Therefore: **same-origin deployment is the required topology, and telemetry
   (§9) is what makes any other topology honest.** Both are stated at §6.4 and in the deployment
   procedure, because an administrator who deploys the console to a separate host and finds half the
   screens saying "not visible from here" has been failed by the documentation, not the tool.

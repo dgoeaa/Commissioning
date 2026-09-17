@@ -365,16 +365,19 @@ Each step is independently deployable and leaves the platform working.
 
 ---
 
-## 6. Open decisions — mine to recommend, yours to make
+## 6. Open decisions
 
-| # | Decision | Options | Recommendation |
-|---|---|---|---|
-| **D1** | Correspondence category vocabulary for external submitters | (a) reuse root's `categories` reference data · (b) a simplified public-facing subset mapped to it | **(b)** — a submitter should not choose from an internal taxonomy, but every value must map to one |
-| **D2** | `newack/` | (a) retire · (b) adopt and wire | **(a) retire** — orphaned, unowned, untested, and it holds a live credential. If acknowledgement is needed, the root platform already implements it |
-| **D3** | Portal SLA display | (a) keep per-service SLAs · (b) show a registry acknowledgement target only | **(b)** — per-service SLAs belong to a service desk. A correspondence channel acknowledges receipt and reports status |
-| ~~**D4**~~ | ~~Anonymous or verified submission~~ — **DECIDED (b) AND DONE**: `/intake/verify` + `/intake/verify-confirm`, single-use address-bound proofs, checked before the reference is minted. Off by default; `DGO_REQUIRE_VERIFICATION` turns it on | — | — |
-| **D5** | `ECM_DOCS_DEV.zip` | (a) keep and scan · (b) move out of the repository | **(b)** — it is 87% of repository bytes and holds 9 credentials found nowhere else. It is a reference archive, not source |
-| ~~**D6**~~ | ~~`ECM_ActivityHub_Portal/`~~ — **DECIDED (b) AND DONE**: briefs, meetings and projects ported to root modules; the tree is deleted. Closes F-023 and F-024 by deletion and halves F-025 | — | — |
+Named, not weighed. Each is the agency's to make; this document does not carry options or a
+preference for any of them.
+
+| # | Decision | Standing |
+|---|---|---|
+| **D1** | Correspondence category vocabulary for external submitters | Open |
+| **D2** | `newack/` — its disposition | Open. It is orphaned, unowned, untested, and holds a live credential |
+| **D3** | Portal SLA display | Open |
+| ~~**D4**~~ | ~~Anonymous or verified submission~~ | **DECIDED AND DONE**: `/intake/verify` + `/intake/verify-confirm`, single-use address-bound proofs, checked before the reference is minted. Off by default; `DGO_REQUIRE_VERIFICATION` turns it on |
+| **D5** | The reference archive's disposition | **SETTLED** — see [`../cutover/ARCHIVE_DISPOSITION.md`](../cutover/ARCHIVE_DISPOSITION.md) |
+| ~~**D6**~~ | ~~The Activity Hub shell~~ | **DECIDED AND DONE**: briefs, meetings and projects ported to root modules; the tree is deleted. Closes F-023 and F-024 by deletion and halves F-025 |
 
 ---
 

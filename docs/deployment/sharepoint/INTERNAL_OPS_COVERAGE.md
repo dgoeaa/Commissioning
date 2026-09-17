@@ -165,7 +165,7 @@ for each key, and the 32-hex string after `/workflows/` in it *is* the id. That 
 git-ignored and never leaves the operator's machine, which is why the mapping is not stored
 here.
 
-### Exporting them all at once (recommended)
+### Exporting them all at once
 
 [`scripts/export-power-automate-flows.ps1`](../../../scripts/export-power-automate-flows.ps1)
 does the whole set in one command.
