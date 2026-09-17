@@ -187,19 +187,17 @@ for (const file of files) {
   }
 }
 
-/* ARCHIVED MATERIAL IS SCANNED, NOT EXEMPTED, AND ITS BREAKAGE IS PINNED.
-   docs/archive/ holds faithful copies of repositories being retired. Their internal links
-   reflect the state they were retired in, and repairing one would falsify the record — the
-   point of an archive is that it is what it was. But adding it to EXCLUDED would make it, in
-   that guard's own words, "a place broken references can hide", and a later import could bring
-   in arbitrary breakage unnoticed.
-   So it is scanned like everything else, and its broken count is pinned instead. The 16 in
-   dgo-ops are real and predate this repository: runtime/styles/index.css imports
-   dgo-design-system/..., a directory that never existed in DGO_OPS — the files are under
-   design-system/. Verified against the source repository before this pin was written.
-   A new archive import that carries breakage raises this number and fails here. */
+/* ARCHIVED MATERIAL IS SCANNED, NOT EXEMPTED, AND ITS BREAKAGE IS PINNED AT ZERO.
+   docs/archive/ held faithful copies of repositories being retired, whose internal links
+   reflected the state they were retired in — repairing one would have falsified the record, so
+   the tree was scanned like everything else and its breakage pinned at the 16 it arrived with.
+   That tree is no longer carried, so the honest pin is now zero.
+   The guard stays rather than being deleted, because the reason for it has not changed: adding
+   an archive to EXCLUDED would make it, in that guard's own words, "a place broken references
+   can hide". If archived material is ever imported again it will be scanned on arrival, and any
+   breakage it brings raises this number and fails here rather than passing unnoticed. */
 const ARCHIVE = 'docs/archive/';
-const ARCHIVE_KNOWN_BROKEN = 16;
+const ARCHIVE_KNOWN_BROKEN = 0;
 const liveBroken = broken.filter(b => !b.file.startsWith(ARCHIVE));
 const archiveBroken = broken.filter(b => b.file.startsWith(ARCHIVE));
 

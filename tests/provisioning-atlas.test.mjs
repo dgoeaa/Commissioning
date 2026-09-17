@@ -211,26 +211,19 @@ const atlas = payload ? JSON.parse(payload.replace(/<\\\//g, '</')) : { scopes: 
 }
 
 /* ------------------------------------------------------------------ *
- * 5 · the harvest is left alone
+ * 5 · the harvest is gone and the atlas stands alone
  * ------------------------------------------------------------------ */
 
 {
-  /* The replacement exists so the record does not have to be rewritten. If a later change ever
-     edits the harvest instead, this fails — and so does the reason the atlas was written. */
-  ok(existsSync(join(ROOT, HARVEST)), 'the harvest is still on disk, unedited');
-
-  let head = '';
-  try {
-    head = execFileSync('git', ['log', '-1', '--format=%H', '--', HARVEST], { cwd: ROOT, encoding: 'utf8' }).trim();
-  } catch { head = ''; }
-  let touchedHere = '';
-  try {
-    touchedHere = execFileSync('git', ['status', '--porcelain', '--', HARVEST], { cwd: ROOT, encoding: 'utf8' }).trim();
-  } catch { touchedHere = ''; }
-  ok(touchedHere === '', 'the harvest has no uncommitted edit', touchedHere);
-
-  ok(html.includes('foundational'),
-    'the atlas says which document it supersedes and why that one is not edited');
+  /* The atlas was written to supersede a harvested visualisation WITHOUT rewriting it, and this
+     section used to assert that the harvested file was still on disk and unedited. The harvest
+     corpus has since been removed from the estate, so the atlas is not a replacement standing
+     beside an original any more — it is the only copy. The assertion is inverted rather than
+     deleted: if the harvest is ever restored there are two documents describing one thing again,
+     and the reader has no way to tell which is current. */
+  ok(!existsSync(join(ROOT, HARVEST)),
+    'the superseded harvest is not carried beside the atlas',
+    `${HARVEST} is back on disk — the atlas is meant to be the only copy`);
 }
 
 /* ------------------------------------------------------------------ *

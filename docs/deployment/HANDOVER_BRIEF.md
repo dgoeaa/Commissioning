@@ -29,7 +29,7 @@ The history is shallow on purpose: deep enough for the readiness gate to reach t
 register is compiled against, and no deeper. `git log` will not show you the whole story, and is
 not meant to.
 
-4 kinds of thing are in there, and telling them apart matters more than anything else on this
+3 kinds of thing are in there, and telling them apart matters more than anything else on this
 page:
 
 | Kind | What it means for you | Where it lives |
@@ -37,7 +37,6 @@ page:
 | **Specification** | Binding. Change the code to match, or change this and say why | `docs/architecture/`, `docs/reference/flow-contracts/` |
 | **Procedure** | Binding while you are doing it | `docs/deployment/`, `docs/cutover/` |
 | **Record** | Historical. Never edit to make it agree with the present | `docs/audits/`, `docs/forensic/`, `docs/handoff/` |
-| **Harvest** | Untrusted. Prefer the contract over the sample | `docs/reference/foundational/` |
 
 Put plainly:
 
@@ -65,17 +64,14 @@ you should not ask for a shortcut around it.
 
 ---
 
-## 3. Something in here looks like a credential. It is not.
+## 3. Nothing in here is a credential
 
-You will find **43 signature-shaped strings across 28 files** under
-`docs/reference/foundational/`, which holds 262 files in all. They look exactly like live
-Power Automate credentials because that is what they once were.
+This estate used to carry a harvest corpus holding signature-shaped strings — dead ones, from
+triggers that were rotated long ago, kept as the record of what had been built. That corpus is no
+longer carried, and `npm run test:secrets` holds the count at its baseline, which may only shrink.
 
-They are dead. The estate was re-issued and every one of those triggers was rotated; the current
-endpoints point at different workflows. They are kept as the record of what was built.
-
-So: **do not try to use them, and do not report them as a leak.** Both are wasted effort. What is
-worth taking from them is the rule they illustrate: deleting a file does not revoke a credential.
+The rule it illustrated is worth keeping even though the files are gone: **deleting a file does not
+revoke a credential.** Rotation does, and nothing else.
 Only re-issuing the trigger does.
 
 If you find a signature anywhere *outside* that directory, that is different, and it is a real
@@ -125,10 +121,9 @@ In order, highest first:
 3. **The generated documents**, which are those registers rendered for reading.
 4. **Everything else**, which is context.
 
-Three documents in this export brief a reader who no longer exists and carry a banner saying
-**DO NOT COMMISSION FROM THIS DOCUMENT**: `AGENT_HANDOVER.md`, `COMMISSIONING_AGENT_BRIEF.md` and
-`AGENT_COMMISSIONING_DIRECTIVE.md`. They are kept because deleting a superseded document loses the
-record that it existed. Do not work from them.
+No document in this export briefs an engagement. Three once did, and they are deleted rather
+than banner-marked, so there is nothing to read past: the commissioning path is the one named
+above, and the tenant work is in the governance runbook.
 
 ---
 

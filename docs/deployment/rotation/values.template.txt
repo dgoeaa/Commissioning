@@ -7,12 +7,11 @@
 # both config.local.js files are written and verified. Every URL below carries a sig= token;
 # a file of them is a file of live keys to the estate.
 #
-# 1 keys need a NEW url — their flow's token is disclosed and must be rotated first.
-# 24 keys are unaffected by the rotation, but still need their url to be configured at all.
+# 0 keys need a NEW url — their flow's token is disclosed and must be rotated first.
+# 25 keys are unaffected by the rotation, but still need their url to be configured at all.
 # 0 keys have no workflow id recorded, so whether rotation changes them is UNKNOWN.
 
 # ---- must be re-captured after rotating the flow -------------------------------------
-EMAIL_RELATED_TASK=
 
 # ---- flow not among the disclosed set; url unchanged by rotation ----------------------
 FETCH_ACTIVITIES=
@@ -26,6 +25,7 @@ BULK_ASSIGNMENT=
 BULK_ASSIGNMENT_DIRECT=
 DYNAMIC_ACTIONS=
 EMAIL=
+EMAIL_RELATED_TASK=
 AI_EMAIL_ANALYSIS=
 AI_DOC_ANALYSIS=
 AI_CHAT=

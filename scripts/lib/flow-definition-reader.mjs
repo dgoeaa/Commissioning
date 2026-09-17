@@ -20,7 +20,13 @@ const SKIP_DIRS = new Set(['node_modules', '.git', 'test-results', 'playwright-r
  * the next one too without this file being edited. */
 
 function walk(dir, out = []) {
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+  /* A SOURCE DIRECTORY THAT IS NOT THERE CONTRIBUTES NOTHING, AND IS NOT AN ERROR.
+     Several callers enumerate optional corpora — captures that may or may not be carried in a
+     given checkout. Before this, an absent one threw ENOENT out of the generator and took the
+     whole build with it, which made deleting a corpus impossible without editing every caller. */
+  let entries;
+  try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return out; }
+  for (const entry of entries) {
     if (SKIP_DIRS.has(entry.name)) continue;
     const p = join(dir, entry.name);
     if (entry.isDirectory()) walk(p, out);

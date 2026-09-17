@@ -23,3 +23,4 @@ master                # docs/deployment/MASTER_REGISTER.{md,json}
 external              # docs/deployment/EXTERNAL_EXECUTION.{md,json}
 closed                # docs/deployment/CLOSED.md
 outstanding           # docs/deployment/OUTSTANDING.md
+process:discover      # docs/reference/process-inventory.json

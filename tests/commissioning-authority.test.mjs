@@ -159,34 +159,26 @@ check('a document that disclaims itself says so where a reader cannot miss it', 
     `${rel} disclaims itself without naming where to go instead`);
 });
 
-check('the three agent-engagement documents stay retired', () => {
-  /* These three briefed, directed and handed over to an independent commissioning agent. No such
-     agent was engaged; the audit and the remediation were carried out against this baseline, and
-     what remains is tenant-side execution, not a scope for an engagement.
+check('no agent-engagement brief is reintroduced', () => {
+  /* Three documents briefed, directed and handed over to an independent commissioning agent.
+     No such agent was engaged: the audit and the remediation were carried out against this
+     baseline, and what remains is tenant-side execution, not a scope for an engagement.
 
-     They are kept as history — they record how the estate was measured — which is exactly why
-     they need a guard. A live-reading engagement brief is how a second, divergent commissioning
-     effort starts, and the reader who opens one has no way to tell from inside it that the work
-     is done. */
-  const RETIRED = [
+     They used to be kept as history behind a retirement banner. They are now DELETED, and this
+     check is the same guard in its stronger form. A live-reading engagement brief is how a
+     second, divergent commissioning effort starts, and a reader who opens one cannot tell from
+     inside it that the work is done. The banner depended on someone reading it; absence does
+     not. */
+  const GONE = [
     'docs/deployment/AGENT_HANDOVER.md',
     'docs/deployment/AGENT_COMMISSIONING_DIRECTIVE.md',
     'docs/deployment/COMMISSIONING_AGENT_BRIEF.md',
   ];
-  const bare = [];
-  for (const rel of RETIRED) {
-    const head = fs.readFileSync(path.join(ROOT, rel), 'utf8').split('\n').slice(0, HEAD_LINES).join('\n');
-    const missing = [];
-    if (!/^> ## RETIRED/m.test(head)) missing.push('a RETIRED banner');
-    if (!/DO NOT COMMISSION FROM THIS DOCUMENT/i.test(head)) missing.push('the do-not-commission line');
-    if (!/DO NOT ENGAGE AN AGENT FROM IT/i.test(head)) missing.push('the do-not-engage line');
-    if (!head.includes('GOVERNANCE-TENANT-RUNBOOK.md')) missing.push('a pointer to the governance runbook');
-    if (!head.includes('CLEAR-THE-LAST-BLOCKER')) missing.push('a pointer to the commissioning authority');
-    if (missing.length) bare.push(`${rel} — missing ${missing.join(', ')}`);
-  }
-  assert(bare.length === 0,
-    `${bare.length} agent-engagement document(s) read as live:\n      ${bare.join('\n      ')}\n`
-    + '      Each must open with the retirement banner and name where the work now lives.');
+  const back = GONE.filter((rel) => fs.existsSync(path.join(ROOT, rel)));
+  assert(back.length === 0,
+    `${back.length} agent-engagement document(s) have been restored:\n      ${back.join('\n      ')}\n`
+    + `      The engagement they scope did not happen and is not going to. The commissioning path\n`
+    + `      is ${AUTHORITY}; the tenant work is in the governance runbook.`);
 });
 
 check('the authority states the estate\'s actual size', () => {

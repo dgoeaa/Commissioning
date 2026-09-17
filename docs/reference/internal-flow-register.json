@@ -324,38 +324,7 @@
       "workflowIdCandidateSource": "claude/fetchall-flow-error-1h94u5 @ 5d922be — operator's tenant name-to-workflow-id map, 2026-09-04"
     }
   ],
-  "unattributedDefinitions": [
-    {
-      "definition": "docs/reference/foundational/flows/definitions/Fetch_Tasks_POST__08584199631580572304667585520CU253__full_definition.json",
-      "describedAs": "Fetch_Tasks POST — returns {\"tasks\": [...]}",
-      "candidateWorkflowId": "37642ba3597f4cf58288cc71b5e6b519",
-      "why": "No contract key is named GET_TASKS. Task rows reach the client under the FETCH_ALL response alias \"tasks\", so this flow is either the FETCH_ALL physical flow or a predecessor of it. Nothing in the corpus settles which, so it is swept for its list footprint but claimed as coverage for no key. The definition declares its own workflow id 37642ba3597f4cf58288cc71b5e6b519, which matches the labelled URL register — so the flow is identified; what is not settled is which contract key, if any, it serves."
-    },
-    {
-      "definition": "docs/reference/foundational/flows/definitions/Fetch_Tasks_POST__08584199631700378132855087091CU174__full_definition.json",
-      "describedAs": "Fetch_Tasks POST — second captured run of the same flow",
-      "candidateWorkflowId": "37642ba3597f4cf58288cc71b5e6b519",
-      "why": "Same flow as the CU253 capture, different run. Swept so that a difference between the two captures would show as a difference in footprint. The definition declares its own workflow id 37642ba3597f4cf58288cc71b5e6b519, which matches the labelled URL register — so the flow is identified; what is not settled is which contract key, if any, it serves."
-    },
-    {
-      "definition": "docs/reference/foundational/flows/definitions/Fetch_Emails_POST__08584199631612442806937288301CU192__full_definition.json",
-      "describedAs": "Fetch_Emails POST — returns {\"emails\": [...], \"nextBatchAvailable\": true}",
-      "candidateWorkflowId": "3931e2ff995242b6b2c920c8b2209797",
-      "why": "Email rows reach the client under the FETCH_ALL response alias \"emails\". As with Fetch_Tasks, no contract key names this flow directly. The definition declares its own workflow id 3931e2ff995242b6b2c920c8b2209797, which matches the labelled URL register — so the flow is identified; what is not settled is which contract key, if any, it serves."
-    },
-    {
-      "definition": "docs/reference/foundational/flows/run-records/deployed_create_task__08584160987852269791356030937CU197/definition.json",
-      "describedAs": "Deployed - Create Task",
-      "candidateWorkflowId": "6b3bad3005b44bf6bced0f8074d3f2ed",
-      "why": "\"Create task\" describes what SINGLE_ASSIGNMENT, BULK_ASSIGNMENT and EMAIL_RELATED_TASK all do. The name alone does not pick one, and guessing would put a wrong attribution into the gate. The definition declares its own workflow id 6b3bad3005b44bf6bced0f8074d3f2ed, which matches the labelled URL register — so the flow is identified; what is not settled is which contract key, if any, it serves."
-    },
-    {
-      "definition": "docs/reference/foundational/flows/run-records/dgso_incoming_ai_processing_provisioning_report_2026-08-04_1/definition_raw.json",
-      "describedAs": "dgso_incoming_ai_processing — Gemini text extraction over incoming documents",
-      "candidateWorkflowId": null,
-      "why": "An AI flow, but the contract declares three (AI_DOC_ANALYSIS, AI_EMAIL_ANALYSIS, AI_CHAT) and this definition names none of them. It is also a scheduled/triggered internal flow rather than one of the browser-invoked contract endpoints, so it may serve no contract key at all."
-    }
-  ],
+  "unattributedDefinitions": [],
   "physicalFlows": [
     {
       "physicalFlow": "AI_CHAT",

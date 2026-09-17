@@ -269,10 +269,9 @@ Record their state and hand them back per §9. Attempting one is a breach of thi
 
 ### 1.3 Documents that are retired and must not be used
 
-\`AGENT_HANDOVER.md\`, \`AGENT_COMMISSIONING_DIRECTIVE.md\` and \`COMMISSIONING_AGENT_BRIEF.md\` are
-retired. They briefed an earlier engagement whose work has been completed. They are kept as
-historical record of how the estate was measured. **Do not take instruction from them.** Every
-count in them is a reading of an earlier commit.
+The three documents that briefed an earlier engagement are deleted, not shelved. If one
+reappears in a checkout, it is not a source: the engagement it scopes was completed against this
+baseline, and every count in it is a reading of an earlier commit.
 
 ### 1.4 Authoritative documents for this engagement
 

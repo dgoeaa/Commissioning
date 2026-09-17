@@ -4,14 +4,13 @@ Everything this repository writes down, other than the four markdown files at it
 root ([`README.md`](../README.md), [`CONTRIBUTING.md`](../CONTRIBUTING.md),
 [`PLATFORM_DOCUMENTATION.md`](../PLATFORM_DOCUMENTATION.md), `LICENSE`).
 
-Four kinds of document live here, and they are not interchangeable.
+Three kinds of document live here, and they are not interchangeable.
 
 | | Kind | Read it as | Where |
 |---|---|---|---|
 | **Specification** | What the system must do | Binding. Change the code to match, or change this and say why | `architecture/`, `reference/flow-contracts/` |
 | **Procedure** | What you must do | Binding while you are doing it | `deployment/`, `cutover/` |
 | **Record** | What was true on a date | Historical. Never edit to make it agree with the present | `audits/`, `forensic/`, `handoff/` |
-| **Harvest** | Raw material, kept for evidence | Untrusted. Prefer the contract over the sample | `reference/foundational/` |
 
 ## Specifications
 
@@ -19,7 +18,7 @@ Four kinds of document live here, and they are not interchangeable.
 - [`architecture/AUTHENTICATION_CONTRACT.md`](./architecture/AUTHENTICATION_CONTRACT.md) — the activation spec, and the seven server-side obligations that belong to the Power Automate flows. This is the open half of **G-04**
 - [`architecture/AUTH_RBAC_GUIDE.md`](./architecture/AUTH_RBAC_GUIDE.md) — the consolidated auth/RBAC guide for both apps: what's configured where, the role/permission/route matrix, identity resolution in both postures, the document-portal's separate (role-free) verification model, and the combined enablement runbook
 - [`architecture/ADMIN_MONITORING_MANAGEMENT_SPEC.md`](./architecture/ADMIN_MONITORING_MANAGEMENT_SPEC.md) — **the DGO Control Console.** Requirements and specification for a *standalone* administrative, monitoring and management application — a platform of the system in its own right, able to administer any one of the estate's platforms or all of them together: the internal runtime, the document portal, the flow and data estate, and the release toolchain. Sixteen components with their features, functions and **126 executable actions**; a target model with four deployment topologies; 14 dashboards; 48 metrics given as formulas; 43 alert rules with escalation chains; a telemetry data model; and eight backend obligations. States the boundary with the in-runtime Admin Suite rather than competing with it, and measures the present rather than describing it — monitoring that is device-local, 54 monitoring records carrying no threshold or alerting, and 16 of 39 notification obligations provisioned
-- [`reference/README.md`](./reference/README.md) — how `flow-contracts/` (contract of record) relates to `foundational/` (raw harvest). Read this before citing a file from either
+- [`reference/README.md`](./reference/README.md) — what `flow-contracts/` is and how to cite it
 - [`reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md`](./reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md) — every internal-platform endpoint's request/response wire shape, traced to the exact client call site, including every operation variant `DYNAMIC_ACTIONS` and `SUBSIDIARY_ACTIONS` carry and where the two disagree on which field is the discriminator
 - [`reference/flow-contracts/DOCUMENT_PORTAL_FLOWS.md`](./reference/flow-contracts/DOCUMENT_PORTAL_FLOWS.md) — the sole reference for all six `document-portal/` flows: trigger schema, exact request payload, every response variant, and every branch the client code takes on each — including which returned fields (`SUPPORT`'s `caseRef`, `SUBMISSION`'s `verification` retry path) the shipping UI never actually reads. Two companion forms of the identical content: [`DOCUMENT_PORTAL_FLOWS.json`](./reference/flow-contracts/DOCUMENT_PORTAL_FLOWS.json) (machine-readable) and [`DOCUMENT_PORTAL_FLOWS.html`](./reference/flow-contracts/DOCUMENT_PORTAL_FLOWS.html) (browsable, printable)
 - [`reference/provisioning/`](./reference/provisioning/README.md) — the provisioned state: what every flow and endpoint on both platforms is **actually configured with**, read out of the packages and printed as they carry it. Connections, trigger method and authentication posture, full request schema, every response status code, header and body, every variable and its initial value, error-handling edges, and the configured inputs of all 4,187 actions, verbatim. Start at [`ENDPOINT_REGISTER.md`](./reference/provisioning/ENDPOINT_REGISTER.md) for the endpoints. Generated — `npm run provisioning` — and held to the packages by `tests/provisioning-reference.test.mjs`
@@ -46,9 +45,8 @@ Four kinds of document live here, and they are not interchangeable.
 - [`reference/flow-contracts/ALIGNMENT_REPORT.json`](./reference/flow-contracts/ALIGNMENT_REPORT.json) — machine-readable verdict, per endpoint, on whether the 2026-08-08 live-tenant probe transcripts agree with `INTERNAL_PLATFORM_FLOWS.md`. A record of that probe run, not a contract — re-probing supersedes it, it does not get hand-edited to match a later run
 - [`reference/flow-contracts/flow-alignment-console.html`](./reference/flow-contracts/flow-alignment-console.html) — the same data, browsable: filter by app/verdict, search, and compare the documented contract against the live response side by side. Self-contained, no build step
 
-## Harvest
+## Policy
 
-- [`reference/foundational/`](./reference/foundational/) — the estate as harvested: flow definitions, trigger schemas, list and canvas exports, one response sample per flow as a shape exemplar. The multi-megabyte run records were removed; [`reference/foundational/flows/run-records/README.md`](./reference/foundational/flows/run-records/README.md) records what went and why
 - [`policies/universal-filename-policy/`](./policies/universal-filename-policy/) — the policy deliverables. The policy itself is enforced by `tests/filename-policy.test.mjs`
 
 ## Two constraints on anything you add here

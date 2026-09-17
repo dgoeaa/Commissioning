@@ -138,7 +138,7 @@ those two mistakes impossible.
 **If you are holding a copy of the rotation worksheet, check its header before trusting it.** It
 states how many keys the disclosure affected, and that count is generated from the rotation
 register. A copy taken before the rotation was addressed reads `12 / 9 / 4`; the current file
-reads `1 keys need a NEW url`, `24 keys are unaffected`,
+reads `0 keys need a NEW url`, `25 keys are unaffected`,
 `0 keys have no workflow id recorded`. If yours says anything else it is stale — regenerate it, or use
 `npm run values:template` and ignore it.
 

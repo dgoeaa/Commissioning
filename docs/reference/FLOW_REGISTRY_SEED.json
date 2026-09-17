@@ -5462,7 +5462,7 @@
       "exists": true,
       "resolvedVia": "guid",
       "addressedByTitleOnly": false,
-      "touchedBy": 23
+      "touchedBy": 22
     },
     {
       "listTitle": "Portal Flow Telemetry",
@@ -5495,16 +5495,6 @@
       "touchedBy": 16
     },
     {
-      "listTitle": "Organizaitonal_Departments_Information",
-      "listGuid": "8aab9c4e-001f-4e32-862c-8a50e750f04e",
-      "site": "NITDADGO-EAAACTIVITYTRACKING",
-      "adopted": true,
-      "exists": true,
-      "resolvedVia": "guid",
-      "addressedByTitleOnly": false,
-      "touchedBy": 15
-    },
-    {
       "listTitle": "Portal Outbox Receipts",
       "listGuid": "88a81ca1-319a-45f5-8409-f91a24538ffa",
       "site": "Global_Digital_Documents_Centre",
@@ -5515,8 +5505,8 @@
       "touchedBy": 14
     },
     {
-      "listTitle": "DGO DIGITAL OPS",
-      "listGuid": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+      "listTitle": "Organizaitonal_Departments_Information",
+      "listGuid": "8aab9c4e-001f-4e32-862c-8a50e750f04e",
       "site": "NITDADGO-EAAACTIVITYTRACKING",
       "adopted": true,
       "exists": true,
@@ -5525,8 +5515,8 @@
       "touchedBy": 13
     },
     {
-      "listTitle": "Organizational_Categories_Matrix",
-      "listGuid": "f64c8b65-c921-46e9-8814-a8cef61f6016",
+      "listTitle": "DGO DIGITAL OPS",
+      "listGuid": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
       "site": "NITDADGO-EAAACTIVITYTRACKING",
       "adopted": true,
       "exists": true,
@@ -5545,8 +5535,8 @@
       "touchedBy": 11
     },
     {
-      "listTitle": "OTP_Transactions",
-      "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
+      "listTitle": "Organizational_Categories_Matrix",
+      "listGuid": "f64c8b65-c921-46e9-8814-a8cef61f6016",
       "site": "NITDADGO-EAAACTIVITYTRACKING",
       "adopted": true,
       "exists": true,
@@ -5593,6 +5583,16 @@
       "resolvedVia": "guid",
       "addressedByTitleOnly": false,
       "touchedBy": 8
+    },
+    {
+      "listTitle": "OTP_Transactions",
+      "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "adopted": true,
+      "exists": true,
+      "resolvedVia": "guid",
+      "addressedByTitleOnly": false,
+      "touchedBy": 7
     },
     {
       "listTitle": "Portal Status Timeline",
@@ -5655,16 +5655,6 @@
       "touchedBy": 5
     },
     {
-      "listTitle": "DEV_OPS_Global_Tracking_Queue",
-      "listGuid": "22c4e38d-5040-4e0f-aa47-dd3aa3f28abf",
-      "site": "NITDADGO-EAAACTIVITYTRACKING",
-      "adopted": true,
-      "exists": true,
-      "resolvedVia": "guid",
-      "addressedByTitleOnly": false,
-      "touchedBy": 5
-    },
-    {
       "listTitle": "DGO_HTTPFlowContractVersions",
       "listGuid": null,
       "site": "DGO_ECM_GOVERNANCE",
@@ -5719,6 +5709,16 @@
       "listGuid": "49b6e988-bc64-43b9-bc5d-dc02acf2e22d",
       "site": "NITDADGO-EAAACTIVITYTRACKING",
       "adopted": false,
+      "exists": true,
+      "resolvedVia": "guid",
+      "addressedByTitleOnly": false,
+      "touchedBy": 4
+    },
+    {
+      "listTitle": "DEV_OPS_Global_Tracking_Queue",
+      "listGuid": "22c4e38d-5040-4e0f-aa47-dd3aa3f28abf",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "adopted": true,
       "exists": true,
       "resolvedVia": "guid",
       "addressedByTitleOnly": false,
@@ -5825,16 +5825,6 @@
       "touchedBy": 2
     },
     {
-      "listTitle": "AI TEXT DATA LOG",
-      "listGuid": "d46a2be7-eaca-4056-bc4f-a439eb59721a",
-      "site": "NITDADGO-EAAACTIVITYTRACKING",
-      "adopted": true,
-      "exists": true,
-      "resolvedVia": "guid",
-      "addressedByTitleOnly": false,
-      "touchedBy": 2
-    },
-    {
       "listTitle": "Portal Digital OPS Hub Tracker",
       "listGuid": "83107389-0d2f-4707-a5a6-c5485b5047c2",
       "site": "NITDADGO-EAAACTIVITYTRACKING",
@@ -5862,6 +5852,16 @@
       "exists": false,
       "resolvedVia": null,
       "addressedByTitleOnly": true,
+      "touchedBy": 1
+    },
+    {
+      "listTitle": "AI TEXT DATA LOG",
+      "listGuid": "d46a2be7-eaca-4056-bc4f-a439eb59721a",
+      "site": "NITDADGO-EAAACTIVITYTRACKING",
+      "adopted": true,
+      "exists": true,
+      "resolvedVia": "guid",
+      "addressedByTitleOnly": false,
       "touchedBy": 1
     },
     {

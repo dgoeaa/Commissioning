@@ -66,7 +66,10 @@ const pkg = J('package.json');
 const classification = (() => {
   const rows = [...T('docs/README.md').matchAll(/^\|\s*\*\*(\w+)\*\*\s*\|([^|]+)\|([^|]+)\|([^|]+)\|/gm)]
     .map((m) => ({ kind: m[1], is: m[2].trim(), read: m[3].trim(), where: m[4].trim() }));
-  for (const want of ['Specification', 'Procedure', 'Record', 'Harvest']) {
+  /* 'Harvest' was a fourth tier whose only location was the harvest corpus. That corpus is no
+     longer carried, so the tier no longer exists and requiring it here would fail for a document
+     that is correct. The three that remain are still mandatory. */
+  for (const want of ['Specification', 'Procedure', 'Record']) {
     if (!rows.some((r) => r.kind === want)) fail(`docs/README.md no longer classifies "${want}" — this brief is written around that table`);
   }
   /* That table's paths are written relative to docs/, because that is where it sits. This page sits
@@ -224,17 +227,14 @@ you should not ask for a shortcut around it.
 
 ---
 
-## 3. Something in here looks like a credential. It is not.
+## 3. Nothing in here is a credential
 
-You will find **${deadSignatures.distinct} signature-shaped strings across ${deadSignatures.carrying} files** under
-\`docs/reference/foundational/\`, which holds ${deadSignatures.corpus} files in all. They look exactly like live
-Power Automate credentials because that is what they once were.
+This estate used to carry a harvest corpus holding signature-shaped strings — dead ones, from
+triggers that were rotated long ago, kept as the record of what had been built. That corpus is no
+longer carried, and \`npm run test:secrets\` holds the count at its baseline, which may only shrink.
 
-They are dead. The estate was re-issued and every one of those triggers was rotated; the current
-endpoints point at different workflows. They are kept as the record of what was built.
-
-So: **do not try to use them, and do not report them as a leak.** Both are wasted effort. What is
-worth taking from them is the rule they illustrate: deleting a file does not revoke a credential.
+The rule it illustrated is worth keeping even though the files are gone: **deleting a file does not
+revoke a credential.** Rotation does, and nothing else.
 Only re-issuing the trigger does.
 
 If you find a signature anywhere *outside* that directory, that is different, and it is a real
@@ -282,10 +282,9 @@ In order, highest first:
 3. **The generated documents**, which are those registers rendered for reading.
 4. **Everything else**, which is context.
 
-Three documents in this export brief a reader who no longer exists and carry a banner saying
-**DO NOT COMMISSION FROM THIS DOCUMENT**: \`AGENT_HANDOVER.md\`, \`COMMISSIONING_AGENT_BRIEF.md\` and
-\`AGENT_COMMISSIONING_DIRECTIVE.md\`. They are kept because deleting a superseded document loses the
-record that it existed. Do not work from them.
+No document in this export briefs an engagement. Three once did, and they are deleted rather
+than banner-marked, so there is nothing to read past: the commissioning path is the one named
+above, and the tenant work is in the governance runbook.
 
 ---
 

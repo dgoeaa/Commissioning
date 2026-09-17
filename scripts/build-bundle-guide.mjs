@@ -243,7 +243,6 @@ Paths are written from the repository root. This page sits in \`${HERE}/\`.
 | \`${HERE}/notification-instrument/\` | ${dir(`${HERE}/notification-instrument`)} files: the email templates, \`${PROCESSOR_SPEC}\` when you reach §3, and in \`${HERE}/notification-instrument/tenant-execution/evidence/\` the blank forms you fill and return |
 | \`${HERE}/governance/\` | \`${HERE}/governance/EXECUTION-AGENT-BRIEF.md\` before you start. \`${HERE}/governance/GOVERNANCE-STATUS.md\` to see what is already done. \`${HERE}/governance/WHAT-WAS-DONE.md\` for repository-side work you do not need to repeat |
 | the ${EVIDENCE.length} directories named \`evidence\` | Read-only, and the record of what happened: ${EVIDENCE.map((e) => `\`${e}\``).join(', ')}. **Never re-run a script you find in one** — re-running is the duplication case, not a repair |
-| \`docs/reference/foundational/\` | Only when a contract sends you there. It is the raw harvest of a superseded estate, kept as evidence and classified untrusted. The signature-shaped strings in it are dead |
 
 ---
 

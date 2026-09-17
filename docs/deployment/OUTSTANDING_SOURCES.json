@@ -102,20 +102,6 @@
       "notCountedBecause": "A narrative of the same position file. Counted there."
     },
     {
-      "id": "agent_commissioning_directive",
-      "title": "Agent commissioning directive",
-      "path": "docs/deployment/AGENT_COMMISSIONING_DIRECTIVE.md",
-      "counted": false,
-      "notCountedBecause": "Cites the readiness register's items to brief an agent. Every id in it is counted there."
-    },
-    {
-      "id": "commissioning_agent_brief",
-      "title": "Commissioning agent brief",
-      "path": "docs/deployment/COMMISSIONING_AGENT_BRIEF.md",
-      "counted": false,
-      "notCountedBecause": "Its O-1 to O-4 are the four conditions for production, each discharged by readiness register items that are counted. The O- ids are a framing, not a backlog."
-    },
-    {
       "id": "operator_walkthrough",
       "title": "Operator walkthrough",
       "path": "docs/deployment/OPERATOR_WALKTHROUGH.md",

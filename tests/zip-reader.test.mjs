@@ -90,24 +90,36 @@ if (!hasUnzip) {
   });
 
   check('the reader extracts byte-identical content to unzip', () => {
-    /* The largest archive, in full. A reader that lists correctly and decompresses wrongly
-       would pass the assertion above and silently scan garbage. */
-    const rel = archives.find((f) => /Obsidian_Pro_Active_v7\.zip$/.test(f)) ?? archives[0];
-    const abs = path.join(ROOT, rel);
+    /* EVERY tracked archive, member by member. A reader that lists correctly and decompresses
+       wrongly would pass the assertion above and silently scan garbage.
+
+       This used to pin to one large archive by name and require 100+ members from it alone. That
+       archive lived in the harvest corpus, which is no longer carried, and a check that depends on
+       one named file fails for a reason that has nothing to do with what it tests. Comparing the
+       whole tracked set keeps the sample as large as the estate actually offers, and the floor
+       below still refuses a vacuous pass. */
     let compared = 0;
     const differ = [];
-    for (const m of openZip(abs).members) {
-      if (m.isDirectory) continue;
-      let mine;
-      try { mine = m.read(); } catch { continue; }
-      const theirs = execFileSync('unzip', ['-p', abs, m.name], { maxBuffer: 64 * 1024 * 1024 });
-      compared++;
-      const a = crypto.createHash('sha256').update(mine).digest('hex');
-      const b = crypto.createHash('sha256').update(theirs).digest('hex');
-      if (a !== b) differ.push(m.name);
+    for (const rel of archives) {
+      const abs = path.join(ROOT, rel);
+      for (const m of openZip(abs).members) {
+        if (m.isDirectory) continue;
+        let mine;
+        try { mine = m.read(); } catch { continue; }
+        /* unzip treats the member name as a GLOB, so an OOXML part literally called
+           `[Content_Types].xml` matches nothing and unzip returns empty with a caution. Escaping
+           the metacharacters asks for the file that is actually there. */
+        const pattern = m.name.replace(/[[\]*?]/g, (ch) => `\\${ch}`);
+        const theirs = execFileSync('unzip', ['-p', abs, pattern], { maxBuffer: 64 * 1024 * 1024 });
+        compared++;
+        const a = crypto.createHash('sha256').update(mine).digest('hex');
+        const b = crypto.createHash('sha256').update(theirs).digest('hex');
+        if (a !== b) differ.push(`${rel}:${m.name}`);
+      }
     }
-    assert(compared > 100, `only ${compared} member(s) compared in ${rel} — too few to be meaningful`);
-    assert(differ.length === 0, `${differ.length} member(s) differ in ${rel}: ${differ.slice(0, 5).join(', ')}`);
+    assert(compared > 0,
+      `no member of any of the ${archives.length} tracked archive(s) could be compared`);
+    assert(differ.length === 0, `${differ.length} member(s) differ: ${differ.slice(0, 5).join(', ')}`);
   });
 }
 

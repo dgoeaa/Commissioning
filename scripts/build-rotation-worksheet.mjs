@@ -38,7 +38,11 @@ const URL_RE = /https:\/\/[^"\s\\]*?\/workflows\/([0-9a-f]{32})\/triggers\/[^/]+
 const leaked = new Map();     // workflowId -> Set of signature
 const filesTouched = new Set();
 (function scan(dir) {
-  for (const entry of readdirSync(path.join(ROOT, dir))) {
+  /* The corpus this scans is optional — an absent one leaks nothing, which is the answer, not
+     a failure. Before this, its absence threw ENOENT and stopped the worksheet being built. */
+  let entries;
+  try { entries = readdirSync(path.join(ROOT, dir)); } catch { return; }
+  for (const entry of entries) {
     const rel = path.join(dir, entry);
     const abs = path.join(ROOT, rel);
     if (statSync(abs).isDirectory()) { scan(rel); continue; }

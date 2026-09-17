@@ -471,81 +471,28 @@ check('outside a git work tree the gate degrades instead of crashing', () => {
 const recovery = await import('../scripts/lib/endpoint-recovery.mjs');
 const { keysOf } = await import('../scripts/lib/endpoint-surface.mjs');
 
-check('recovery resolves the runtime surface from the corpus', () => {
-  const { runtime } = recovery.recoverEndpoints({
+check('recovery recovers nothing, because the corpus it read is gone', () => {
+  /* Three checks used to live here: that recovery resolved five runtime keys from the harvest
+     corpus, that its mapping followed the operator's labelled flow documents, and that its
+     catalogue named at least 39 flows. All three tested `npm run recover`, which this estate
+     RETIRED — it wires from a pre-rotation corpus whose signatures are revoked, producing a
+     configuration that looks complete and answers 401 on every call.
+
+     The corpus has now been removed from the estate as well, so those three cannot be satisfied
+     and should not be: there is nothing left to recover FROM. What still matters is the failure
+     mode they were protecting against, which is recovery appearing to succeed. So the assertion
+     is inverted. If recovery ever starts finding endpoints again, some copy of the pre-rotation
+     corpus is back in the tree and an operator is one command away from a dead configuration. */
+  const { runtime, portal } = recovery.recoverEndpoints({
     runtimeKeys: ['FETCH_ALL', 'DYNAMIC_ACTIONS', 'REFERENCE_DATA', 'GET_DOCS', 'SUBSIDIARY_ACTIONS'],
-    portalKeys: [],
+    portalKeys: ['UPLOAD', 'SUBMISSION'],
   });
-  for (const k of ['FETCH_ALL', 'DYNAMIC_ACTIONS', 'REFERENCE_DATA', 'GET_DOCS', 'SUBSIDIARY_ACTIONS']) {
-    assert(runtime.found[k]?.url, `${k} was not recovered from the corpus`);
-    assert(/^https:\/\//.test(runtime.found[k].url), `${k} recovered a non-HTTPS URL`);
-    assert(/^[a-f0-9]{32}$/.test(runtime.found[k].workflowId || ''), `${k} has no workflow id`);
-  }
-});
-
-check('every recovered signature is canonical, in every surface', () => {
-  /* The defect this replaces: recovery matched "sig= followed by base64url characters"
-     greedily, so a URL with document prose glued onto its query string yielded a
-     56-character signature, and a lineage artefact carrying a mangled 40-character copy
-     yielded that. Both were provisioned into delivered packages, where they could not
-     authenticate and produced a network error at the point of use with nothing to point at.
-
-     A Power Automate trigger signature is base64url of a 32-byte HMAC: exactly 43
-     characters. Asserting it here, across the whole real estate, is the control. */
-  const { runtime, portal, catalogue } = recovery.recoverEndpoints({
-    runtimeKeys: keysOf('runtime'),
-    portalKeys: keysOf('portal'),
-  });
-  const sigOf = url => (new RegExp('si' + 'g=([A-Za-z0-9_-]+)').exec(url) || [])[1] || '';
-  const wrong = [];
-  for (const [surface, res] of [['runtime', runtime], ['portal', portal]]) {
-    for (const [key, v] of Object.entries(res.found)) {
-      const s = sigOf(v.url);
-      if (s.length !== recovery.CANONICAL_SIGNATURE_LENGTH) wrong.push(`${surface}.${key} (${s.length})`);
-    }
-  }
-  for (const c of catalogue) {
-    const s = sigOf(c.url);
-    if (s.length !== recovery.CANONICAL_SIGNATURE_LENGTH) wrong.push(`catalogue ${c.workflowId} (${s.length})`);
-  }
-  assert(wrong.length === 0, `non-canonical signatures recovered: ${wrong.join(', ')}`);
-});
-
-check('the mapping follows the operator\'s labelled flow documents', () => {
-  /* Four keys were wired from a single lineage artefact that disagrees with every other
-     document in the corpus, and one of them — REFERENCE_DATA — was pointed at a workflow
-     id that appears nowhere else at all, while the flow the operator's own list calls
-     "references" went unused. These four are the regression test. */
-  const { runtime } = recovery.recoverEndpoints({
-    runtimeKeys: ['REFERENCE_DATA', 'SINGLE_ASSIGNMENT', 'EMAIL_RELATED_TASK', 'AI_DOC_ANALYSIS'],
-    portalKeys: [],
-  });
-  const expected = {
-    REFERENCE_DATA: 'ff455c68e9ac493e858fb984bcfd01fb',    // GET REFERENCES / LOOKUPS
-    SINGLE_ASSIGNMENT: 'f71397ff3ca145059dc8f78c04923e9f',  // SINGLE ASSIGN
-    EMAIL_RELATED_TASK: 'a942d230337c4ddfa9a386e92bbd048b', // CREATE TASK FOR EMAIL
-    AI_DOC_ANALYSIS: '5b29edc84b5d4a8db3c885d8441aa977',    // Events processing
-  };
-  for (const [key, id] of Object.entries(expected)) {
-    assert(runtime.found[key]?.workflowId === id,
-      `${key} resolved to ${runtime.found[key]?.workflowId || '(nothing)'}, not the flow the ` +
-      'reference documents name');
-    assert(runtime.found[key].why, `${key} was wired without recording why`);
-  }
-});
-
-check('the catalogue names every flow the corpus supplies, wired or not', () => {
-  /* A flow with no contract key used to be indistinguishable from a flow that had been
-     overlooked. The catalogue is what makes "23 available flows are unwired" a statement
-     an operator can read, check and act on rather than something they discover by
-     grepping the corpus themselves. */
-  const cat = recovery.flowCatalogue();
-  assert(cat.length >= 39, `catalogue carries ${cat.length} flows; the corpus supplies more`);
-  const unnamed = cat.filter(c => !c.evidenceTier);
-  assert(unnamed.length === 0,
-    `flows with no cited evidence: ${unnamed.map(c => c.workflowId).join(', ')}`);
-  const withUrl = cat.filter(c => /^https:\/\//.test(c.url));
-  assert(withUrl.length === cat.length, 'a catalogue entry carries no URL');
+  const found = [...Object.keys(runtime.found || {}), ...Object.keys(portal.found || {})];
+  assert(found.length === 0,
+    `recovery resolved ${found.length} endpoint(s) — ${found.join(', ')} — so a pre-rotation `
+    + 'corpus is back in the tree. Every signature it carries is revoked.');
+  assert(recovery.flowCatalogue().length === 0,
+    'the flow catalogue is non-empty, so recovery still has a corpus to read');
 });
 
 check('recovery never invents an endpoint it cannot source', () => {

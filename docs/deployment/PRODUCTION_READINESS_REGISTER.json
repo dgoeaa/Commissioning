@@ -2585,11 +2585,6 @@
       "status": "DECISION_REQUIRED",
       "evidence": [
         {
-          "type": "file",
-          "ref": "docs/archive/dgo-ops/README.md",
-          "states": "what the archived set is, that it is not the live design system, and why it was kept"
-        },
-        {
           "type": "command",
           "ref": "npm run test:tokens",
           "states": "holds the LIVE design tokens, read from document-portal/ds/ and never from the archive"

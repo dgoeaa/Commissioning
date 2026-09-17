@@ -153,7 +153,6 @@ Paths are written from the repository root. This page sits in `docs/deployment/`
 | `docs/deployment/notification-instrument/` | 47 files: the email templates, `docs/deployment/notification-instrument/notification-processor/processor-spec.json` when you reach §3, and in `docs/deployment/notification-instrument/tenant-execution/evidence/` the blank forms you fill and return |
 | `docs/deployment/governance/` | `docs/deployment/governance/EXECUTION-AGENT-BRIEF.md` before you start. `docs/deployment/governance/GOVERNANCE-STATUS.md` to see what is already done. `docs/deployment/governance/WHAT-WAS-DONE.md` for repository-side work you do not need to repeat |
 | the 4 directories named `evidence` | Read-only, and the record of what happened: `docs/deployment/internal/evidence/`, `docs/deployment/notification-instrument/tenant-execution/evidence/`, `docs/deployment/sharepoint/evidence/`, `evidence/`. **Never re-run a script you find in one** — re-running is the duplication case, not a repair |
-| `docs/reference/foundational/` | Only when a contract sends you there. It is the raw harvest of a superseded estate, kept as evidence and classified untrusted. The signature-shaped strings in it are dead |
 
 ---
 

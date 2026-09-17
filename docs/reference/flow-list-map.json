@@ -9,8 +9,8 @@
     "version": "2.0.0"
   },
   "totals": {
-    "definitionsRead": 118,
-    "sharePointActions": 719,
+    "definitionsRead": 106,
+    "sharePointActions": 688,
     "distinctListsTouched": 30,
     "unresolvedGuids": 0,
     "unresolvedNames": 14,
@@ -877,8 +877,7 @@
       "listTitle": "AI TEXT DATA LOG",
       "adopted": true,
       "touchedBy": [
-        "DGSO INCOMING AI PROCESSING__b6d92bae-591e-fa1e-52eb-b350cad988a7__full_definition",
-        "dgso_incoming_ai_processing_provisioning_report_2026-08-04_1"
+        "DGSO INCOMING AI PROCESSING__b6d92bae-591e-fa1e-52eb-b350cad988a7__full_definition"
       ]
     },
     {
@@ -890,8 +889,7 @@
         "Bulk Assign Direct__57f137b6-5cab-7991-4084-20605a3a9d43__full_definition",
         "Dynamic_Multi-Actions__08584162519225125704688467311CU186__full_definition",
         "Universal Dynamic_Multi-Actions_Executor__1abbe547-9d7e-430e-bc2d-3ed59bc738b9__full_definition",
-        "Web - Email Task Created__3f2f649b-55af-48e0-9a1e-43135e11a4b0__full_definition",
-        "web_email_task_created__08584160936199347696097640638CU254"
+        "Web - Email Task Created__3f2f649b-55af-48e0-9a1e-43135e11a4b0__full_definition"
       ]
     },
     {
@@ -934,8 +932,6 @@
         "GetDocsPaginatedData__81cacabd-66c8-438e-b162-68e2ccb6754f__full_definition",
         "Universal Dynamic_Multi-Actions_Executor__1abbe547-9d7e-430e-bc2d-3ed59bc738b9__full_definition",
         "Web - Subsidiary Doc Actions__6d819704-0e1d-4557-9886-f1afe80155e4__full_definition",
-        "deployed_bulk_task_assignment_create_task__08584160940563880480924374615CU64",
-        "deployed_create_task__08584160987852269791356030937CU197",
         "optimized Bulk Assign Direct__9e098918-9ef7-013f-321a-f2604316ea6f__full_definition"
       ]
     },
@@ -981,7 +977,6 @@
         "Deployed - Create Task__b9d07010-1d98-417c-ad97-a305af770772__full_definition",
         "Deployed Bulk Task Assignment_Create Task__122bb363-ddea-40c7-8578-d0d613a17bf7__full_definition",
         "Dynamic_Multi-Actions__08584162519225125704688467311CU186__full_definition",
-        "Fetch_Tasks_POST__08584199631580572304667585520CU253__full_definition",
         "Fetch_Tasks_POST__d477fe23-3865-ce72-6837-1d166abf6802__full_definition",
         "Get Selected Activities and Tasks__912f4b9f-d1e3-4d1e-a789-8128eb581045__full_definition",
         "Portal_ECM_DOCS_STATUS__e21e7b9f-58c3-45be-bd47-6754ce6a895f__full_definition",
@@ -993,10 +988,7 @@
         "Web - Email Task Created__3f2f649b-55af-48e0-9a1e-43135e11a4b0__full_definition",
         "Web - Get Tasks GET SWITCH__49de1ff0-2c9a-ac37-1070-5ba9103c3bac__full_definition",
         "Web - Subsidiary Doc Actions__6d819704-0e1d-4557-9886-f1afe80155e4__full_definition",
-        "deployed_bulk_task_assignment_create_task__08584160940563880480924374615CU64",
-        "deployed_create_task__08584160987852269791356030937CU197",
-        "optimized Bulk Assign Direct__9e098918-9ef7-013f-321a-f2604316ea6f__full_definition",
-        "web_email_task_created__08584160936199347696097640638CU254"
+        "optimized Bulk Assign Direct__9e098918-9ef7-013f-321a-f2604316ea6f__full_definition"
       ]
     },
     {
@@ -1009,11 +1001,7 @@
         "IP_OTP_VERIFY__c5e314c7-68b5-4bdc-8935-0954ef6a256d__full_definition",
         "Portal_Verify_Confirm__3b69aa71-ffed-4956-9d20-2aa3021a8da0__full_definition",
         "Portal_Verify__86897b2f-9770-4efa-8486-2642f24bb947__full_definition",
-        "Web - OTP Generate__08584202058736633188274709906CU174__flow_run_record",
-        "Web - OTP Generate__08584202058736633188274709906CU174__full_definition",
         "Web - OTP Generate__a03d0ae8-a106-4aee-9985-d73ea7997653__full_definition",
-        "Web - OTP Verify__08584202058708887835754078979CU170__flow_run_record",
-        "Web - OTP Verify__08584202058708887835754078979CU170__full_definition",
         "Web - OTP Verify__3e201620-f1e8-4c17-a90a-4d95b94a24c2__full_definition",
         "otp-verify-patched-definition"
       ]
@@ -1033,13 +1021,10 @@
         "Deployed - Create Task__b9d07010-1d98-417c-ad97-a305af770772__full_definition",
         "Dynamic_Multi-Actions__08584162519225125704688467311CU186__full_definition",
         "FETCH_DOCS_V2_POST__34a6d00d-8c25-62f7-50ae-f1f564f64945__full_definition",
-        "Fetch_References_and_Lookups_Data - POST__08584199632313684394774780458CU49__full_definition",
         "OPS_REFERENCES_AND_LOOKUPS__9695b92b-f67a-6593-7f86-6134691c737e__full_definition",
         "Universal Dynamic_Multi-Actions_Executor__1abbe547-9d7e-430e-bc2d-3ed59bc738b9__full_definition",
         "Web - Email Task Created__3f2f649b-55af-48e0-9a1e-43135e11a4b0__full_definition",
-        "Web - Subsidiary Doc Actions__6d819704-0e1d-4557-9886-f1afe80155e4__full_definition",
-        "deployed_create_task__08584160987852269791356030937CU197",
-        "web_email_task_created__08584160936199347696097640638CU254"
+        "Web - Subsidiary Doc Actions__6d819704-0e1d-4557-9886-f1afe80155e4__full_definition"
       ]
     },
     {
@@ -1056,7 +1041,6 @@
         "Copy of - Fetch_All_Data_and_References_Matrix-POST__08584201914788160149253197884CU95__full_definition",
         "Dynamic_Multi-Actions__08584162519225125704688467311CU186__full_definition",
         "FETCH_DOCS_V2_POST__34a6d00d-8c25-62f7-50ae-f1f564f64945__full_definition",
-        "Fetch_References_and_Lookups_Data - POST__08584199632313684394774780458CU49__full_definition",
         "OPS_REFERENCES_AND_LOOKUPS__9695b92b-f67a-6593-7f86-6134691c737e__full_definition",
         "Universal Dynamic_Multi-Actions_Executor__1abbe547-9d7e-430e-bc2d-3ed59bc738b9__full_definition",
         "Web - Subsidiary Doc Actions__6d819704-0e1d-4557-9886-f1afe80155e4__full_definition"
@@ -12083,596 +12067,6 @@
         }
       ],
       "sharePointActions": 30
-    },
-    {
-      "file": "docs/reference/foundational/flows/definitions/Fetch_Emails_POST__08584199631612442806937288301CU192__full_definition.json",
-      "flow": "Fetch_Emails_POST__08584199631612442806937288301CU192__full_definition",
-      "workflowId": null,
-      "internalName": null,
-      "displayName": null,
-      "contentHash": "2c9b2fa2fedced54",
-      "duplicatePaths": [],
-      "actions": 39,
-      "references": [],
-      "sharePointActions": 0
-    },
-    {
-      "file": "docs/reference/foundational/flows/definitions/Fetch_References_and_Lookups_Data - POST__08584199632313684394774780458CU49__full_definition.json",
-      "flow": "Fetch_References_and_Lookups_Data - POST__08584199632313684394774780458CU49__full_definition",
-      "workflowId": null,
-      "internalName": null,
-      "displayName": null,
-      "contentHash": "719241f4d01e32e8",
-      "duplicatePaths": [],
-      "actions": 42,
-      "references": [
-        {
-          "action": "Get_items_Departments",
-          "path": "Scope_Global/Scope_Data_Retrieval/Scope_Fetch_Lookups/Scope_Departments/Get_items_Departments",
-          "operationId": "GetItems",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "8aab9c4e-001f-4e32-862c-8a50e750f04e",
-          "listTitle": "Organizaitonal_Departments_Information",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Get_items_Categories",
-          "path": "Scope_Global/Scope_Data_Retrieval/Scope_Fetch_Lookups/Scope_Categories/Get_items_Categories",
-          "operationId": "GetItems",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "f64c8b65-c921-46e9-8814-a8cef61f6016",
-          "listTitle": "Organizational_Categories_Matrix",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        }
-      ],
-      "sharePointActions": 2
-    },
-    {
-      "file": "docs/reference/foundational/flows/definitions/Fetch_Tasks_POST__08584199631580572304667585520CU253__full_definition.json",
-      "flow": "Fetch_Tasks_POST__08584199631580572304667585520CU253__full_definition",
-      "workflowId": null,
-      "internalName": null,
-      "displayName": null,
-      "contentHash": "7051cba5c829a53b",
-      "duplicatePaths": [
-        "docs/reference/foundational/flows/definitions/Fetch_Tasks_POST__08584199631700378132855087091CU174__full_definition.json"
-      ],
-      "actions": 36,
-      "references": [
-        {
-          "action": "Get_items",
-          "path": "Scope_Global/Scope_Data_Retrieval/Get_items",
-          "operationId": "GetItems",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
-          "listTitle": "Global Tracking Queue",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        }
-      ],
-      "sharePointActions": 1
-    },
-    {
-      "file": "docs/reference/foundational/flows/definitions/OTP_FLOWS/OTP_GENERATE/Web - OTP Generate__08584202058736633188274709906CU174__flow_run_record.json",
-      "flow": "Web - OTP Generate__08584202058736633188274709906CU174__flow_run_record",
-      "workflowId": "314aaf27593147089b38322e5ca25936",
-      "internalName": "a03d0ae8-a106-4aee-9985-d73ea7997653",
-      "displayName": "Web - OTP Generate",
-      "contentHash": "f8f6518863453d0b",
-      "duplicatePaths": [],
-      "actions": 53,
-      "references": [
-        {
-          "action": "Create_item_OTP_Record",
-          "path": "Scope_Global/Switch/case:Case_Generate/Create_item_OTP_Record",
-          "operationId": "PostItem",
-          "operation": "create",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
-          "listTitle": "OTP_Transactions",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Get_items",
-          "path": "Scope_Global/Switch/case:Case_Verify/Get_items",
-          "operationId": "GetItems",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
-          "listTitle": "OTP_Transactions",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Update_item",
-          "path": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/Update_item",
-          "operationId": "PatchItem",
-          "operation": "update",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
-          "listTitle": "OTP_Transactions",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        }
-      ],
-      "sharePointActions": 3
-    },
-    {
-      "file": "docs/reference/foundational/flows/definitions/OTP_FLOWS/OTP_GENERATE/Web - OTP Generate__08584202058736633188274709906CU174__full_definition.json",
-      "flow": "Web - OTP Generate__08584202058736633188274709906CU174__full_definition",
-      "workflowId": null,
-      "internalName": null,
-      "displayName": null,
-      "contentHash": "d4fdeee9892d79b8",
-      "duplicatePaths": [],
-      "actions": 53,
-      "references": [
-        {
-          "action": "Create_item_OTP_Record",
-          "path": "Scope_Global/Switch/case:Case_Generate/Create_item_OTP_Record",
-          "operationId": "PostItem",
-          "operation": "create",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
-          "listTitle": "OTP_Transactions",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Get_items",
-          "path": "Scope_Global/Switch/case:Case_Verify/Get_items",
-          "operationId": "GetItems",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
-          "listTitle": "OTP_Transactions",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Update_item",
-          "path": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/Update_item",
-          "operationId": "PatchItem",
-          "operation": "update",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
-          "listTitle": "OTP_Transactions",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        }
-      ],
-      "sharePointActions": 3
-    },
-    {
-      "file": "docs/reference/foundational/flows/definitions/OTP_FLOWS/OTP_VERIFY/Web - OTP Verify__08584202058708887835754078979CU170__flow_run_record.json",
-      "flow": "Web - OTP Verify__08584202058708887835754078979CU170__flow_run_record",
-      "workflowId": "43879c5165de439680055ab4258b3f27",
-      "internalName": "3e201620-f1e8-4c17-a90a-4d95b94a24c2",
-      "displayName": "Web - OTP Verify",
-      "contentHash": "1963a42c3c514d14",
-      "duplicatePaths": [],
-      "actions": 50,
-      "references": [
-        {
-          "action": "Create_item_OTP_Record",
-          "path": "Scope_Global/Switch/case:Case_Generate/Create_item_OTP_Record",
-          "operationId": "PostItem",
-          "operation": "create",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
-          "listTitle": "OTP_Transactions",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Get_items",
-          "path": "Scope_Global/Switch/case:Case_Verify/Get_items",
-          "operationId": "GetItems",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
-          "listTitle": "OTP_Transactions",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Update_item",
-          "path": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/Update_item",
-          "operationId": "PatchItem",
-          "operation": "update",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
-          "listTitle": "OTP_Transactions",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        }
-      ],
-      "sharePointActions": 3
-    },
-    {
-      "file": "docs/reference/foundational/flows/definitions/OTP_FLOWS/OTP_VERIFY/Web - OTP Verify__08584202058708887835754078979CU170__full_definition.json",
-      "flow": "Web - OTP Verify__08584202058708887835754078979CU170__full_definition",
-      "workflowId": null,
-      "internalName": null,
-      "displayName": null,
-      "contentHash": "9aa7943664d181b4",
-      "duplicatePaths": [],
-      "actions": 50,
-      "references": [
-        {
-          "action": "Create_item_OTP_Record",
-          "path": "Scope_Global/Switch/case:Case_Generate/Create_item_OTP_Record",
-          "operationId": "PostItem",
-          "operation": "create",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
-          "listTitle": "OTP_Transactions",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Get_items",
-          "path": "Scope_Global/Switch/case:Case_Verify/Get_items",
-          "operationId": "GetItems",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
-          "listTitle": "OTP_Transactions",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Update_item",
-          "path": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/Update_item",
-          "operationId": "PatchItem",
-          "operation": "update",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "9421d473-8906-43b7-a41f-a213046683c1",
-          "listTitle": "OTP_Transactions",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        }
-      ],
-      "sharePointActions": 3
-    },
-    {
-      "file": "docs/reference/foundational/flows/response-samples/flow_b_acknowledge_task.http.json",
-      "flow": "flow_b_acknowledge_task.http",
-      "workflowId": null,
-      "internalName": null,
-      "displayName": null,
-      "contentHash": "120ea13e85957acb",
-      "duplicatePaths": [],
-      "actions": 9,
-      "references": [],
-      "sharePointActions": 0
-    },
-    {
-      "file": "docs/reference/foundational/flows/run-records/deployed_bulk_task_assignment_create_task__08584160940563880480924374615CU64/definition.json",
-      "flow": "deployed_bulk_task_assignment_create_task__08584160940563880480924374615CU64",
-      "workflowId": null,
-      "internalName": null,
-      "displayName": null,
-      "contentHash": "686471a42a8af417",
-      "duplicatePaths": [],
-      "actions": 144,
-      "references": [
-        {
-          "action": "Get_item_Task",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Apply_to_each_SelectedDocs/Scope_Create_Task/Get_item_Task",
-          "operationId": "GetItem",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
-          "listTitle": "Global Tracking Queue",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Create_Task",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Apply_to_each_SelectedDocs/Scope_Create_Task/Create_Task",
-          "operationId": "PostItem",
-          "operation": "create",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
-          "listTitle": "Global Tracking Queue",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Get_item_Doc",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Apply_to_each_SelectedDocs/Scope_Create_Task/Get_item_Doc",
-          "operationId": "GetItem",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
-          "listTitle": "DGO DIGITAL OPS",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Update_item_Task",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Apply_to_each_SelectedDocs/Scope_Create_Task/Update_item_Task",
-          "operationId": "PatchItem",
-          "operation": "update",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
-          "listTitle": "Global Tracking Queue",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Update_item_Doc",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Apply_to_each_SelectedDocs/Scope_Create_Task/Update_item_Doc",
-          "operationId": "PatchItem",
-          "operation": "update",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
-          "listTitle": "DGO DIGITAL OPS",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        }
-      ],
-      "sharePointActions": 5
-    },
-    {
-      "file": "docs/reference/foundational/flows/run-records/deployed_create_task__08584160987852269791356030937CU197/definition.json",
-      "flow": "deployed_create_task__08584160987852269791356030937CU197",
-      "workflowId": null,
-      "internalName": null,
-      "displayName": null,
-      "contentHash": "bdf3a9f8b3bd2961",
-      "duplicatePaths": [],
-      "actions": 108,
-      "references": [
-        {
-          "action": "Get_items_Departments_AssignedToTitle",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Scope_Assigned_To_Title_Resolution/Get_items_Departments_AssignedToTitle",
-          "operationId": "GetItems",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "8aab9c4e-001f-4e32-862c-8a50e750f04e",
-          "listTitle": "Organizaitonal_Departments_Information",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Get_item_Task",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Scope_Create_Task/Get_item_Task",
-          "operationId": "GetItem",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
-          "listTitle": "Global Tracking Queue",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Create_Task",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Scope_Create_Task/Create_Task",
-          "operationId": "PostItem",
-          "operation": "create",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
-          "listTitle": "Global Tracking Queue",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Update_item_Task",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Scope_Create_Task/Update_item_Task",
-          "operationId": "PatchItem",
-          "operation": "update",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
-          "listTitle": "Global Tracking Queue",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Update_item_Doc",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Scope_Create_Task/Update_item_Doc",
-          "operationId": "PatchItem",
-          "operation": "update",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
-          "listTitle": "DGO DIGITAL OPS",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Get_item_Doc",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Scope_Create_Task/Get_item_Doc",
-          "operationId": "GetItem",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
-          "listTitle": "DGO DIGITAL OPS",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        }
-      ],
-      "sharePointActions": 6
-    },
-    {
-      "file": "docs/reference/foundational/flows/run-records/dgso_incoming_ai_processing_provisioning_report_2026-08-04_1/definition_raw.json",
-      "flow": "dgso_incoming_ai_processing_provisioning_report_2026-08-04_1",
-      "workflowId": "b6d92bae-591e-fa1e-52eb-b350cad988a7",
-      "internalName": null,
-      "displayName": null,
-      "contentHash": "19fe081f5cc18e0b",
-      "duplicatePaths": [],
-      "actions": 100,
-      "references": [
-        {
-          "action": "Create_item",
-          "path": "Scope_Gemini_Text_Processing/Scope_AI_HTTP/Scope_HTTP_SUCCESSFUL/Create_item",
-          "operationId": "PostItem",
-          "operation": "create",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "d46a2be7-eaca-4056-bc4f-a439eb59721a",
-          "listTitle": "AI TEXT DATA LOG",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        }
-      ],
-      "sharePointActions": 1
-    },
-    {
-      "file": "docs/reference/foundational/flows/run-records/web_email_task_created__08584160936199347696097640638CU254/definition.json",
-      "flow": "web_email_task_created__08584160936199347696097640638CU254",
-      "workflowId": null,
-      "internalName": null,
-      "displayName": null,
-      "contentHash": "54957af5981d7aa4",
-      "duplicatePaths": [],
-      "actions": 134,
-      "references": [
-        {
-          "action": "Get_items_Departments_AssignedToTitle",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Email_Notification/Scope_Assigned_To_Title_Resolution/Get_items_Departments_AssignedToTitle",
-          "operationId": "GetItems",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "8aab9c4e-001f-4e32-862c-8a50e750f04e",
-          "listTitle": "Organizaitonal_Departments_Information",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Get_item_Task_Email",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Scope_Create_Task/Get_item_Task_Email",
-          "operationId": "GetItem",
-          "operation": "read",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "22c4e38d-5040-4e0f-aa47-dd3aa3f28abf",
-          "listTitle": "DEV_OPS_Global_Tracking_Queue",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Create_Task_Email",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Scope_Create_Task/Create_Task_Email",
-          "operationId": "PostItem",
-          "operation": "create",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "22c4e38d-5040-4e0f-aa47-dd3aa3f28abf",
-          "listTitle": "DEV_OPS_Global_Tracking_Queue",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        },
-        {
-          "action": "Update_item_Task_Email",
-          "path": "Scope_Global/Condition_Validate_Input/else/Scope_Task_Processing/Scope_Create_Task/Update_item_Task_Email",
-          "operationId": "PatchItem",
-          "operation": "update",
-          "siteUrl": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
-          "listGuid": "ee82725a-c408-45e2-a8e8-facf7a092047",
-          "listTitle": "Global Tracking Queue",
-          "dynamic": false,
-          "connector": "shared_sharepointonline",
-          "site": "NITDADGO-EAAACTIVITYTRACKING",
-          "adopted": true,
-          "resolved": "by GUID"
-        }
-      ],
-      "sharePointActions": 4
     }
   ]
 }
