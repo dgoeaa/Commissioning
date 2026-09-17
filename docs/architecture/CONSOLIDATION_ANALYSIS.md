@@ -152,75 +152,16 @@ Activity Hub adds an executive layer the root does not model.
 
 ---
 
-## 4. Cost of each disposition
+## 4. What was done
 
-### Option A — Keep both
-
-| Cost | Detail |
-|---|---|
-| Two auth implementations | Step 8 must enable, test and operate `core/auth.js` **and** `ECM_ActivityHub_Portal/js/core/auth.js` |
-| Two role models | F-025 stays open permanently; disjoint vocabularies against one IdP |
-| Two backends at cutover | 19 Power Automate contracts **plus** a 39-action gateway that does not currently exist |
-| Two records of the same correspondence | `inward`/`outward` and `correspondence` diverge with no reconciliation path |
-| Contradicts §1 | "Single system of record" becomes untrue the moment the Activity Hub gets a backend |
-
-**Cost is not one-off — it is recurring, and it grows.** Every future change to the
-correspondence model must be made twice.
-
-### Option B — Merge the three unique capabilities into the root, retire the shell
-
-| Work | Detail |
-|---|---|
-| Port `briefs`, `meetings`, `projects` | ~249 lines of pages and services, onto the pattern established by `scan-intake` |
-| Add 3 state collections | `briefs`, `meetings`, `projects` to `config/state-schema.config.js` |
-| Add 3 routes + boundaries + RBAC | The governance scaffolding already exists and is enforced |
-| Decide `decisions` | Either fold into `executive` or port as a fourth |
-| Delete | 54 files: the duplicate auth/config/store/router, the 39-action contract, the hard-coded backend dependency |
-| Removes | F-023 (already fixed), F-025 (role divergence), and one of the two auth surfaces step 8 must cover |
-
-**Cheapest moment to do this is now,** because §1.2 — there is no live backend and no
-production data to migrate.
-
-### Option C — Drop it entirely
-
-Cheapest in effort. Loses executive briefs, meetings and projects — three capabilities the
-root does not have and that look deliberate rather than incidental (each has a full
-create → submit → decide lifecycle, not just a list view).
-
----
-
-## 5. Recommendation — accepted and implemented
-
-> **OUTCOME.** Option B was chosen and executed. `briefs`, `meetings` and `projects` are now
+> **OUTCOME.** The three unique capabilities were merged into the root platform and the
+> shell retired. `briefs`, `meetings` and `projects` are now
 > root modules over `core/executive-register.js`; `ECM_ActivityHub_Portal/` is deleted (53
 > tracked files, plus one untracked local config recorded as **F-033**). F-023 and F-024 are
 > closed by deletion and F-025 is halved. Three defects were fixed in the port rather than
-> transcribed — see §5.1.
+> transcribed — see §4.1.
 
-**Option B — merge the three unique capabilities into the root platform and retire the
-Activity Hub shell.**
-
-The reasoning, in order of weight:
-
-1. **§1 is either true or it is not.** A second internal application with its own record of
-   correspondence makes "single system of record" false. Either the architecture principle
-   changes or the second system goes.
-2. **The overlap is 15 of 19 pages.** This is not two complementary products; it is one
-   product built twice, and the second one stops before the hard half — custody, dispatch,
-   closure, archive.
-3. **The unique surface is small and portable.** 249 lines against a root that already has
-   the routing, governance, RBAC and audit scaffolding to receive it.
-4. **There is nothing to migrate.** The Activity Hub has no backend today. This is the
-   cheapest this decision will ever be.
-5. **It removes work from step 8** rather than adding it: one auth implementation to enable,
-   one role vocabulary to reconcile, one egress surface to restrict.
-
-**What I would not claim.** Option C is defensible if briefs, meetings and projects are not
-actually wanted — I have no evidence either way about whether they are used or merely built.
-That is the one input this repository cannot supply, and it is the question worth asking
-before committing to B over C.
-
-### 5.1 What the port changed rather than copied
+### 4.1 What the port changed rather than copied
 
 A straight transcription would have carried three defects across. Each is now covered by a
 test in `tests/executive-register.test.mjs`.
