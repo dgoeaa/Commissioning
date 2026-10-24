@@ -1,0 +1,533 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:24Z",
+    "workflow_identity":  {
+                              "internal_name":  "e209e8a5-6f31-5664-f40d-85c58c43efbd",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "Get Emails HTTP",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           },
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+                                                                        "operationMetadataId":  "92c07e4b-c837-457f-a90a-303ad89bd933"
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "PowerAppV2",
+                                                       "inputs":  {
+                                                                      "schema":  {
+                                                                                     "type":  "object",
+                                                                                     "properties":  {
+
+                                                                                                    },
+                                                                                     "required":  [
+
+                                                                                                  ]
+                                                                                 }
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Send_an_HTTP_request_Sent_Items":  {
+                                                                               "runAfter":  {
+                                                                                                "Compose_URL_Query_String_Sent_Items":  [
+                                                                                                                                            "Succeeded"
+                                                                                                                                        ]
+                                                                                            },
+                                                                               "metadata":  {
+                                                                                                "operationMetadataId":  "555a30e1-7dd8-427c-8a84-00f5c82b2272"
+                                                                                            },
+                                                                               "type":  "OpenApiConnection",
+                                                                               "inputs":  {
+                                                                                              "host":  {
+                                                                                                           "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                                           "connectionName":  "shared_office365",
+                                                                                                           "operationId":  "HttpRequest"
+                                                                                                       },
+                                                                                              "parameters":  {
+                                                                                                                 "Uri":  "@outputs(\u0027Compose_URL_Query_String_Sent_Items\u0027)",
+                                                                                                                 "Method":  "GET",
+                                                                                                                 "ContentType":  "application/json"
+                                                                                                             },
+                                                                                              "authentication":  {
+                                                                                                                     "value":  "@json(decodeBase64(triggerOutputs().headers[\u0027X-MS-APIM-Tokens\u0027]))[\u0027$ConnectionKey\u0027]",
+                                                                                                                     "type":  "Raw"
+                                                                                                                 }
+                                                                                          }
+                                                                           },
+                                       "Parse_JSON_HTTP_Response_Sent_Items":  {
+                                                                                   "runAfter":  {
+                                                                                                    "Send_an_HTTP_request_Sent_Items":  [
+                                                                                                                                            "Succeeded"
+                                                                                                                                        ]
+                                                                                                },
+                                                                                   "metadata":  {
+                                                                                                    "operationMetadataId":  "f79d7d3b-d738-4252-b5ae-08f98c678f9e"
+                                                                                                },
+                                                                                   "type":  "ParseJson",
+                                                                                   "inputs":  {
+                                                                                                  "content":  "@body(\u0027Send_an_HTTP_request_Sent_Items\u0027)",
+                                                                                                  "schema":  {
+                                                                                                                 "type":  "object",
+                                                                                                                 "properties":  {
+                                                                                                                                    "@@odata.context":  {
+                                                                                                                                                            "type":  "string"
+                                                                                                                                                        },
+                                                                                                                                    "value":  {
+                                                                                                                                                  "type":  "array",
+                                                                                                                                                  "items":  {
+                                                                                                                                                                "type":  "object",
+                                                                                                                                                                "properties":  {
+                                                                                                                                                                                   "@@odata.etag":  {
+                                                                                                                                                                                                        "type":  "string"
+                                                                                                                                                                                                    },
+                                                                                                                                                                                   "id":  {
+                                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                                          },
+                                                                                                                                                                                   "receivedDateTime":  {
+                                                                                                                                                                                                            "type":  "string"
+                                                                                                                                                                                                        },
+                                                                                                                                                                                   "hasAttachments":  {
+                                                                                                                                                                                                          "type":  "boolean"
+                                                                                                                                                                                                      },
+                                                                                                                                                                                   "subject":  {
+                                                                                                                                                                                                   "type":  "string"
+                                                                                                                                                                                               },
+                                                                                                                                                                                   "bodyPreview":  {
+                                                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                                                   },
+                                                                                                                                                                                   "importance":  {
+                                                                                                                                                                                                      "type":  "string"
+                                                                                                                                                                                                  },
+                                                                                                                                                                                   "webLink":  {
+                                                                                                                                                                                                   "type":  "string"
+                                                                                                                                                                                               },
+                                                                                                                                                                                   "body":  {
+                                                                                                                                                                                                "type":  "object",
+                                                                                                                                                                                                "properties":  {
+                                                                                                                                                                                                                   "contentType":  {
+                                                                                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                                                                                   },
+                                                                                                                                                                                                                   "content":  {
+                                                                                                                                                                                                                                   "type":  "string"
+                                                                                                                                                                                                                               }
+                                                                                                                                                                                                               }
+                                                                                                                                                                                            },
+                                                                                                                                                                                   "from":  {
+                                                                                                                                                                                                "type":  "object",
+                                                                                                                                                                                                "properties":  {
+                                                                                                                                                                                                                   "emailAddress":  {
+                                                                                                                                                                                                                                        "type":  "object",
+                                                                                                                                                                                                                                        "properties":  {
+                                                                                                                                                                                                                                                           "name":  {
+                                                                                                                                                                                                                                                                        "type":  "string"
+                                                                                                                                                                                                                                                                    },
+                                                                                                                                                                                                                                                           "address":  {
+                                                                                                                                                                                                                                                                           "type":  "string"
+                                                                                                                                                                                                                                                                       }
+                                                                                                                                                                                                                                                       }
+                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                               }
+                                                                                                                                                                                            },
+                                                                                                                                                                                   "toRecipients":  {
+                                                                                                                                                                                                        "type":  "array",
+                                                                                                                                                                                                        "items":  {
+                                                                                                                                                                                                                      "type":  "object",
+                                                                                                                                                                                                                      "properties":  {
+                                                                                                                                                                                                                                         "emailAddress":  {
+                                                                                                                                                                                                                                                              "type":  "object",
+                                                                                                                                                                                                                                                              "properties":  {
+                                                                                                                                                                                                                                                                                 "name":  {
+                                                                                                                                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                                                                                                                                          },
+                                                                                                                                                                                                                                                                                 "address":  {
+                                                                                                                                                                                                                                                                                                 "type":  "string"
+                                                                                                                                                                                                                                                                                             }
+                                                                                                                                                                                                                                                                             }
+                                                                                                                                                                                                                                                          }
+                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                      "required":  [
+                                                                                                                                                                                                                                       "emailAddress"
+                                                                                                                                                                                                                                   ]
+                                                                                                                                                                                                                  }
+                                                                                                                                                                                                    },
+                                                                                                                                                                                   "ccRecipients":  {
+                                                                                                                                                                                                        "type":  "array",
+                                                                                                                                                                                                        "items":  {
+
+                                                                                                                                                                                                                  }
+                                                                                                                                                                                                    },
+                                                                                                                                                                                   "bccRecipients":  {
+                                                                                                                                                                                                         "type":  "array",
+                                                                                                                                                                                                         "items":  {
+
+                                                                                                                                                                                                                   }
+                                                                                                                                                                                                     }
+                                                                                                                                                                               },
+                                                                                                                                                                "required":  [
+                                                                                                                                                                                 "@@odata.etag",
+                                                                                                                                                                                 "id",
+                                                                                                                                                                                 "receivedDateTime",
+                                                                                                                                                                                 "hasAttachments",
+                                                                                                                                                                                 "subject",
+                                                                                                                                                                                 "bodyPreview",
+                                                                                                                                                                                 "importance",
+                                                                                                                                                                                 "webLink",
+                                                                                                                                                                                 "body",
+                                                                                                                                                                                 "from",
+                                                                                                                                                                                 "toRecipients",
+                                                                                                                                                                                 "ccRecipients",
+                                                                                                                                                                                 "bccRecipients"
+                                                                                                                                                                             ]
+                                                                                                                                                            }
+                                                                                                                                              },
+                                                                                                                                    "@@odata.nextLink":  {
+                                                                                                                                                             "type":  "string"
+                                                                                                                                                         }
+                                                                                                                                }
+                                                                                                             }
+                                                                                              }
+                                                                               },
+                                       "Select_Parse_JSON_Sent_Items":  {
+                                                                            "runAfter":  {
+                                                                                             "Parse_JSON_HTTP_Response_Sent_Items":  [
+                                                                                                                                         "Succeeded"
+                                                                                                                                     ]
+                                                                                         },
+                                                                            "metadata":  {
+                                                                                             "operationMetadataId":  "7734eb38-eaab-4d68-8375-d7b68786159b"
+                                                                                         },
+                                                                            "type":  "Select",
+                                                                            "inputs":  {
+                                                                                           "from":  "@body(\u0027Parse_JSON_HTTP_Response_Sent_Items\u0027)?[\u0027value\u0027]",
+                                                                                           "select":  {
+                                                                                                          "id":  "@item()?[\u0027id\u0027]",
+                                                                                                          "receivedDateTime":  "@item()?[\u0027receivedDateTime\u0027]",
+                                                                                                          "hasAttachments":  "@item()?[\u0027hasAttachments\u0027]",
+                                                                                                          "subject":  "@item()?[\u0027subject\u0027]",
+                                                                                                          "bodyPreview":  "@item()?[\u0027bodyPreview\u0027]",
+                                                                                                          "importance":  "@item()?[\u0027importance\u0027]",
+                                                                                                          "webLink":  "@item()?[\u0027webLink\u0027]",
+                                                                                                          "bodyContent":  "@item()?[\u0027body\u0027]?[\u0027content\u0027]",
+                                                                                                          "from":  "@item()?[\u0027from\u0027]?[\u0027emailAddress\u0027]?[\u0027name\u0027]",
+                                                                                                          "fromAddress":  "@item()?[\u0027from\u0027]?[\u0027emailAddress\u0027]?[\u0027name\u0027]",
+                                                                                                          "toRecipients":  "\"\"",
+                                                                                                          "ccRecipients":  "\"\"",
+                                                                                                          "bccRecipients":  "\"\"",
+                                                                                                          "attachments":  "\"\"",
+                                                                                                          "internetMessageId":  "\"\"",
+                                                                                                          "conversationId":  "\"\"",
+                                                                                                          "body":  "@item()?[\u0027body\u0027]?[\u0027content\u0027]"
+                                                                                                      }
+                                                                                       }
+                                                                        },
+                                       "Compose_HTTP_Request_URL_2":  {
+                                                                          "runAfter":  {
+
+                                                                                       },
+                                                                          "metadata":  {
+                                                                                           "operationMetadataId":  "72ef0e48-e482-4a2e-be13-f387f8e6f3df"
+                                                                                       },
+                                                                          "type":  "Compose",
+                                                                          "inputs":  "https://graph.microsoft.com/v1.0/me/mailFolders/Inbox/messages?$select=subject,from,receivedDateTime,bodyPreview,body,toRecipients,ccRecipients,bccRecipients,hasAttachments,importance,webLink\u0026$filter=isRead eq false AND receivedDateTime ge @{startOfDay(utcNow())} AND receivedDateTime lt @{addDays(startOfDay(utcNow()), 1)}\u0026$top=1000"
+                                                                      },
+                                       "Send_an_HTTP_request_Inbox":  {
+                                                                          "runAfter":  {
+                                                                                           "Compose_URL_Query_String_Inbox":  [
+                                                                                                                                  "Succeeded"
+                                                                                                                              ]
+                                                                                       },
+                                                                          "metadata":  {
+                                                                                           "operationMetadataId":  "555a30e1-7dd8-427c-8a84-00f5c82b2272"
+                                                                                       },
+                                                                          "type":  "OpenApiConnection",
+                                                                          "inputs":  {
+                                                                                         "host":  {
+                                                                                                      "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                                      "connectionName":  "shared_office365",
+                                                                                                      "operationId":  "HttpRequest"
+                                                                                                  },
+                                                                                         "parameters":  {
+                                                                                                            "Uri":  "@outputs(\u0027Compose_URL_Query_String_Inbox\u0027)",
+                                                                                                            "Method":  "GET",
+                                                                                                            "ContentType":  "application/json"
+                                                                                                        },
+                                                                                         "authentication":  {
+                                                                                                                "value":  "@json(decodeBase64(triggerOutputs().headers[\u0027X-MS-APIM-Tokens\u0027]))[\u0027$ConnectionKey\u0027]",
+                                                                                                                "type":  "Raw"
+                                                                                                            }
+                                                                                     }
+                                                                      },
+                                       "Parse_JSON_HTTP_Response_Inbox":  {
+                                                                              "runAfter":  {
+                                                                                               "Send_an_HTTP_request_Inbox":  [
+                                                                                                                                  "Succeeded"
+                                                                                                                              ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "f79d7d3b-d738-4252-b5ae-08f98c678f9e"
+                                                                                           },
+                                                                              "type":  "ParseJson",
+                                                                              "inputs":  {
+                                                                                             "content":  "@body(\u0027Send_an_HTTP_request_Inbox\u0027)",
+                                                                                             "schema":  {
+                                                                                                            "type":  "object",
+                                                                                                            "properties":  {
+                                                                                                                               "@@odata.context":  {
+                                                                                                                                                       "type":  "string"
+                                                                                                                                                   },
+                                                                                                                               "value":  {
+                                                                                                                                             "type":  "array",
+                                                                                                                                             "items":  {
+                                                                                                                                                           "type":  "object",
+                                                                                                                                                           "properties":  {
+                                                                                                                                                                              "@@odata.etag":  {
+                                                                                                                                                                                                   "type":  "string"
+                                                                                                                                                                                               },
+                                                                                                                                                                              "id":  {
+                                                                                                                                                                                         "type":  "string"
+                                                                                                                                                                                     },
+                                                                                                                                                                              "receivedDateTime":  {
+                                                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                                                   },
+                                                                                                                                                                              "hasAttachments":  {
+                                                                                                                                                                                                     "type":  "boolean"
+                                                                                                                                                                                                 },
+                                                                                                                                                                              "subject":  {
+                                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                                          },
+                                                                                                                                                                              "bodyPreview":  {
+                                                                                                                                                                                                  "type":  "string"
+                                                                                                                                                                                              },
+                                                                                                                                                                              "importance":  {
+                                                                                                                                                                                                 "type":  "string"
+                                                                                                                                                                                             },
+                                                                                                                                                                              "webLink":  {
+                                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                                          },
+                                                                                                                                                                              "body":  {
+                                                                                                                                                                                           "type":  "object",
+                                                                                                                                                                                           "properties":  {
+                                                                                                                                                                                                              "contentType":  {
+                                                                                                                                                                                                                                  "type":  "string"
+                                                                                                                                                                                                                              },
+                                                                                                                                                                                                              "content":  {
+                                                                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                                                                          }
+                                                                                                                                                                                                          }
+                                                                                                                                                                                       },
+                                                                                                                                                                              "from":  {
+                                                                                                                                                                                           "type":  "object",
+                                                                                                                                                                                           "properties":  {
+                                                                                                                                                                                                              "emailAddress":  {
+                                                                                                                                                                                                                                   "type":  "object",
+                                                                                                                                                                                                                                   "properties":  {
+                                                                                                                                                                                                                                                      "name":  {
+                                                                                                                                                                                                                                                                   "type":  "string"
+                                                                                                                                                                                                                                                               },
+                                                                                                                                                                                                                                                      "address":  {
+                                                                                                                                                                                                                                                                      "type":  "string"
+                                                                                                                                                                                                                                                                  }
+                                                                                                                                                                                                                                                  }
+                                                                                                                                                                                                                               }
+                                                                                                                                                                                                          }
+                                                                                                                                                                                       },
+                                                                                                                                                                              "toRecipients":  {
+                                                                                                                                                                                                   "type":  "array",
+                                                                                                                                                                                                   "items":  {
+                                                                                                                                                                                                                 "type":  "object",
+                                                                                                                                                                                                                 "properties":  {
+                                                                                                                                                                                                                                    "emailAddress":  {
+                                                                                                                                                                                                                                                         "type":  "object",
+                                                                                                                                                                                                                                                         "properties":  {
+                                                                                                                                                                                                                                                                            "name":  {
+                                                                                                                                                                                                                                                                                         "type":  "string"
+                                                                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                                                                                            "address":  {
+                                                                                                                                                                                                                                                                                            "type":  "string"
+                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                     }
+                                                                                                                                                                                                                                },
+                                                                                                                                                                                                                 "required":  [
+                                                                                                                                                                                                                                  "emailAddress"
+                                                                                                                                                                                                                              ]
+                                                                                                                                                                                                             }
+                                                                                                                                                                                               },
+                                                                                                                                                                              "ccRecipients":  {
+                                                                                                                                                                                                   "type":  "array",
+                                                                                                                                                                                                   "items":  {
+
+                                                                                                                                                                                                             }
+                                                                                                                                                                                               },
+                                                                                                                                                                              "bccRecipients":  {
+                                                                                                                                                                                                    "type":  "array",
+                                                                                                                                                                                                    "items":  {
+
+                                                                                                                                                                                                              }
+                                                                                                                                                                                                }
+                                                                                                                                                                          },
+                                                                                                                                                           "required":  [
+                                                                                                                                                                            "@@odata.etag",
+                                                                                                                                                                            "id",
+                                                                                                                                                                            "receivedDateTime",
+                                                                                                                                                                            "hasAttachments",
+                                                                                                                                                                            "subject",
+                                                                                                                                                                            "bodyPreview",
+                                                                                                                                                                            "importance",
+                                                                                                                                                                            "webLink",
+                                                                                                                                                                            "body",
+                                                                                                                                                                            "from",
+                                                                                                                                                                            "toRecipients",
+                                                                                                                                                                            "ccRecipients",
+                                                                                                                                                                            "bccRecipients"
+                                                                                                                                                                        ]
+                                                                                                                                                       }
+                                                                                                                                         },
+                                                                                                                               "@@odata.nextLink":  {
+                                                                                                                                                        "type":  "string"
+                                                                                                                                                    }
+                                                                                                                           }
+                                                                                                        }
+                                                                                         }
+                                                                          },
+                                       "Compose_URL_Query_String_Sent_Items":  {
+                                                                                   "runAfter":  {
+                                                                                                    "Compose_HTTP_Request_URL_2":  [
+                                                                                                                                       "Succeeded"
+                                                                                                                                   ]
+                                                                                                },
+                                                                                   "metadata":  {
+                                                                                                    "operationMetadataId":  "9c9d6344-897a-490b-a573-acf7cd590487"
+                                                                                                },
+                                                                                   "type":  "Compose",
+                                                                                   "inputs":  "https://graph.microsoft.com/v1.0/me/mailFolders/SentItems/messages?$select=subject,from,receivedDateTime,bodyPreview,body,toRecipients,ccRecipients,bccRecipients,hasAttachments,importance,webLink\u0026$filter=receivedDateTime lt @{addDays(startOfDay(utcNow()), 1)}\u0026$top=1000"
+                                                                               },
+                                       "Compose_URL_Query_String_Inbox":  {
+                                                                              "runAfter":  {
+                                                                                               "Compose_HTTP_Request_URL_2":  [
+                                                                                                                                  "Succeeded"
+                                                                                                                              ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "72ef0e48-e482-4a2e-be13-f387f8e6f3df"
+                                                                                           },
+                                                                              "type":  "Compose",
+                                                                              "inputs":  "https://graph.microsoft.com/v1.0/me/mailFolders/Inbox/messages?$select=subject,from,receivedDateTime,bodyPreview,body,toRecipients,ccRecipients,bccRecipients,hasAttachments,importance,webLink\u0026$filter=receivedDateTime lt @{addDays(startOfDay(utcNow()), 1)}\u0026$top=1000"
+                                                                          },
+                                       "Select_Parse_JSON_Inbox":  {
+                                                                       "runAfter":  {
+                                                                                        "Parse_JSON_HTTP_Response_Inbox":  [
+                                                                                                                               "Succeeded"
+                                                                                                                           ]
+                                                                                    },
+                                                                       "metadata":  {
+                                                                                        "operationMetadataId":  "7734eb38-eaab-4d68-8375-d7b68786159b"
+                                                                                    },
+                                                                       "type":  "Select",
+                                                                       "inputs":  {
+                                                                                      "from":  "@body(\u0027Parse_JSON_HTTP_Response_Inbox\u0027)?[\u0027value\u0027]",
+                                                                                      "select":  {
+                                                                                                     "id":  "@item()?[\u0027id\u0027]",
+                                                                                                     "receivedDateTime":  "@item()?[\u0027receivedDateTime\u0027]",
+                                                                                                     "hasAttachments":  "@item()?[\u0027hasAttachments\u0027]",
+                                                                                                     "subject":  "@item()?[\u0027subject\u0027]",
+                                                                                                     "bodyPreview":  "@item()?[\u0027bodyPreview\u0027]",
+                                                                                                     "importance":  "@item()?[\u0027importance\u0027]",
+                                                                                                     "webLink":  "@item()?[\u0027webLink\u0027]",
+                                                                                                     "bodyContent":  "@item()?[\u0027body\u0027]?[\u0027content\u0027]",
+                                                                                                     "from":  "@item()?[\u0027from\u0027]?[\u0027emailAddress\u0027]?[\u0027name\u0027]",
+                                                                                                     "fromAddress":  "@item()?[\u0027from\u0027]?[\u0027emailAddress\u0027]?[\u0027name\u0027]",
+                                                                                                     "toRecipients":  "\"\"",
+                                                                                                     "ccRecipients":  "\"\"",
+                                                                                                     "bccRecipients":  "\"\"",
+                                                                                                     "attachments":  "\"\"",
+                                                                                                     "internetMessageId":  "\"\"",
+                                                                                                     "conversationId":  "\"\"",
+                                                                                                     "body":  "@item()?[\u0027body\u0027]?[\u0027content\u0027]"
+                                                                                                 }
+                                                                                  }
+                                                                   },
+                                       "Respond_to_a_Power_App_or_flow":  {
+                                                                              "runAfter":  {
+                                                                                               "Compose_Merge_Inbox_and_Sent_Items":  [
+                                                                                                                                          "Succeeded"
+                                                                                                                                      ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "a0bbc750-50ff-4082-bbff-2b621dd76abb"
+                                                                                           },
+                                                                              "type":  "Response",
+                                                                              "kind":  "PowerApp",
+                                                                              "inputs":  {
+                                                                                             "statusCode":  200,
+                                                                                             "body":  {
+                                                                                                          "emaildata":  "@{string(outputs(\u0027Compose_JSON_Select_Output\u0027))}"
+                                                                                                      },
+                                                                                             "schema":  {
+                                                                                                            "type":  "object",
+                                                                                                            "properties":  {
+                                                                                                                               "emaildata":  {
+                                                                                                                                                 "title":  "emaildata",
+                                                                                                                                                 "x-ms-dynamically-added":  true,
+                                                                                                                                                 "type":  "string"
+                                                                                                                                             }
+                                                                                                                           }
+                                                                                                        }
+                                                                                         }
+                                                                          },
+                                       "Compose_Merge_Inbox_and_Sent_Items":  {
+                                                                                  "runAfter":  {
+                                                                                                   "Compose_JSON_Select_Output":  [
+                                                                                                                                      "Succeeded"
+                                                                                                                                  ]
+                                                                                               },
+                                                                                  "metadata":  {
+                                                                                                   "operationMetadataId":  "a89b88db-08f9-45d3-9ea1-16d9cba16cf4"
+                                                                                               },
+                                                                                  "type":  "Compose",
+                                                                                  "inputs":  "@concat(body(\u0027Select_Parse_JSON_Inbox\u0027),body(\u0027Select_Parse_JSON_Sent_Items\u0027))"
+                                                                              },
+                                       "Compose_JSON_Select_Output":  {
+                                                                          "runAfter":  {
+                                                                                           "Select_Parse_JSON_Inbox":  [
+                                                                                                                           "Succeeded",
+                                                                                                                           "Skipped",
+                                                                                                                           "Failed",
+                                                                                                                           "TimedOut"
+                                                                                                                       ],
+                                                                                           "Select_Parse_JSON_Sent_Items":  [
+                                                                                                                                "Succeeded",
+                                                                                                                                "Failed",
+                                                                                                                                "Skipped",
+                                                                                                                                "TimedOut"
+                                                                                                                            ]
+                                                                                       },
+                                                                          "metadata":  {
+                                                                                           "operationMetadataId":  "a89b88db-08f9-45d3-9ea1-16d9cba16cf4"
+                                                                                       },
+                                                                          "type":  "Compose",
+                                                                          "inputs":  "@union(body(\u0027Select_Parse_JSON_Inbox\u0027),body(\u0027Select_Parse_JSON_Sent_Items\u0027))"
+                                                                      }
+                                   }
+                   }
+}

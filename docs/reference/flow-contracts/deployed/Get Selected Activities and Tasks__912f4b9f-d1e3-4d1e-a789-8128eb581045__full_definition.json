@@ -1,0 +1,230 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:30Z",
+    "workflow_identity":  {
+                              "internal_name":  "912f4b9f-d1e3-4d1e-a789-8128eb581045",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "Get Selected Activities and Tasks",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           },
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+                                                                        "operationMetadataId":  "dc5d0ed6-b8cd-4729-9b3a-520bfacfee35"
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "PowerAppV2",
+                                                       "inputs":  {
+                                                                      "schema":  {
+                                                                                     "type":  "object",
+                                                                                     "properties":  {
+                                                                                                        "number":  {
+                                                                                                                       "title":  "Top Count",
+                                                                                                                       "type":  "number",
+                                                                                                                       "x-ms-dynamically-added":  true,
+                                                                                                                       "description":  "Please enter a number",
+                                                                                                                       "x-ms-content-hint":  "NUMBER"
+                                                                                                                   },
+                                                                                                        "text":  {
+                                                                                                                     "title":  "Activities Filter Query",
+                                                                                                                     "type":  "string",
+                                                                                                                     "x-ms-dynamically-added":  true,
+                                                                                                                     "description":  "Please enter your input",
+                                                                                                                     "x-ms-content-hint":  "TEXT"
+                                                                                                                 },
+                                                                                                        "text_1":  {
+                                                                                                                       "title":  "Tasks Filter Query",
+                                                                                                                       "type":  "string",
+                                                                                                                       "x-ms-dynamically-added":  true,
+                                                                                                                       "description":  "Please enter your input",
+                                                                                                                       "x-ms-content-hint":  "TEXT"
+                                                                                                                   }
+                                                                                                    },
+                                                                                     "required":  [
+                                                                                                      "number",
+                                                                                                      "text",
+                                                                                                      "text_1"
+                                                                                                  ]
+                                                                                 }
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Activities":  {
+                                                          "runAfter":  {
+                                                                           "Get_Tasks":  [
+                                                                                             "Succeeded"
+                                                                                         ]
+                                                                       },
+                                                          "metadata":  {
+                                                                           "operationMetadataId":  "7f5cfa12-3d77-4047-9921-2396aaf3a43b"
+                                                                       },
+                                                          "type":  "Select",
+                                                          "inputs":  {
+                                                                         "from":  "@outputs(\u0027Get_Activities\u0027)?[\u0027body/value\u0027]",
+                                                                         "select":  {
+                                                                                        "ID":  "@item()?[\u0027ID\u0027]",
+                                                                                        "Title":  "@item()?[\u0027Title\u0027]",
+                                                                                        "Created":  "@item()?[\u0027Created\u0027]",
+                                                                                        "Category":  "@item()?[\u0027Category0\u0027]",
+                                                                                        "Assignment Status":  "@item()?[\u0027AssignmentStatus\u0027]",
+                                                                                        "Status":  "@item()?[\u0027Status\u0027]",
+                                                                                        "Assigned To":  "@item()?[\u0027Routed_x0020_To\u0027]",
+                                                                                        "RefIDD":  "@item()?[\u0027RefIDD\u0027]",
+                                                                                        "CC\u0027d To":  "@item()?[\u0027CC_x0027_dTo\u0027]",
+                                                                                        "Modified":  "@item()?[\u0027Modified\u0027]"
+                                                                                    }
+                                                                     }
+                                                      },
+                                       "Get_Activities":  {
+                                                              "runAfter":  {
+
+                                                                           },
+                                                              "metadata":  {
+                                                                               "operationMetadataId":  "e571af41-8a8e-4966-b78a-2418dd147940"
+                                                                           },
+                                                              "type":  "OpenApiConnection",
+                                                              "inputs":  {
+                                                                             "host":  {
+                                                                                          "apiId":  "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                                                          "connectionName":  "shared_sharepointonline",
+                                                                                          "operationId":  "GetItems"
+                                                                                      },
+                                                                             "parameters":  {
+                                                                                                "dataset":  "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                                                                                                "table":  "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+                                                                                                "$filter":  "Created ge \u0027@{formatDateTime(addDays(utcNow(), -180), \u0027yyyy-MM-ddTHH:mm:ssZ\u0027)}\u0027 and Created le \u0027@{formatDateTime(utcNow(), \u0027yyyy-MM-ddTHH:mm:ssZ\u0027)}\u0027",
+                                                                                                "$orderby":  "ID desc",
+                                                                                                "$top":  "@triggerBody()[\u0027number\u0027]",
+                                                                                                "view":  "d85457ae-9ea2-4fd9-bf8f-9646f55de3d7"
+                                                                                            },
+                                                                             "authentication":  {
+                                                                                                    "value":  "@json(decodeBase64(triggerOutputs().headers[\u0027X-MS-APIM-Tokens\u0027]))[\u0027$ConnectionKey\u0027]",
+                                                                                                    "type":  "Raw"
+                                                                                                }
+                                                                         }
+                                                          },
+                                       "Respond_to_a_Power_App_or_flow":  {
+                                                                              "runAfter":  {
+                                                                                               "Tasks":  [
+                                                                                                             "Succeeded"
+                                                                                                         ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "60546b04-f605-4a32-936e-576bf7ab746d"
+                                                                                           },
+                                                                              "type":  "Response",
+                                                                              "kind":  "PowerApp",
+                                                                              "inputs":  {
+                                                                                             "statusCode":  200,
+                                                                                             "body":  {
+                                                                                                          "activities":  "@{body(\u0027Activities\u0027)}",
+                                                                                                          "tasks":  "@{body(\u0027Tasks\u0027)}"
+                                                                                                      },
+                                                                                             "schema":  {
+                                                                                                            "type":  "object",
+                                                                                                            "properties":  {
+                                                                                                                               "activities":  {
+                                                                                                                                                  "title":  "Activities",
+                                                                                                                                                  "x-ms-dynamically-added":  true,
+                                                                                                                                                  "type":  "string"
+                                                                                                                                              },
+                                                                                                                               "tasks":  {
+                                                                                                                                             "title":  "Tasks",
+                                                                                                                                             "x-ms-dynamically-added":  true,
+                                                                                                                                             "type":  "string"
+                                                                                                                                         }
+                                                                                                                           }
+                                                                                                        }
+                                                                                         }
+                                                                          },
+                                       "Get_Tasks":  {
+                                                         "runAfter":  {
+                                                                          "Get_Activities":  [
+                                                                                                 "Succeeded"
+                                                                                             ]
+                                                                      },
+                                                         "metadata":  {
+                                                                          "operationMetadataId":  "04c0d3d5-cf99-48db-827b-aba60aeec8d5"
+                                                                      },
+                                                         "type":  "OpenApiConnection",
+                                                         "inputs":  {
+                                                                        "host":  {
+                                                                                     "apiId":  "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                                                     "connectionName":  "shared_sharepointonline",
+                                                                                     "operationId":  "GetItems"
+                                                                                 },
+                                                                        "parameters":  {
+                                                                                           "dataset":  "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                                                                                           "table":  "ee82725a-c408-45e2-a8e8-facf7a092047",
+                                                                                           "$filter":  "Created ge \u0027@{formatDateTime(addDays(utcNow(), -180), \u0027yyyy-MM-ddTHH:mm:ssZ\u0027)}\u0027 and Created le \u0027@{formatDateTime(utcNow(), \u0027yyyy-MM-ddTHH:mm:ssZ\u0027)}\u0027",
+                                                                                           "$orderby":  "ID desc",
+                                                                                           "$top":  "@triggerBody()[\u0027number\u0027]",
+                                                                                           "view":  "c597306b-a456-47c7-8cd8-83a3d24b7866"
+                                                                                       },
+                                                                        "authentication":  {
+                                                                                               "value":  "@json(decodeBase64(triggerOutputs().headers[\u0027X-MS-APIM-Tokens\u0027]))[\u0027$ConnectionKey\u0027]",
+                                                                                               "type":  "Raw"
+                                                                                           }
+                                                                    }
+                                                     },
+                                       "Tasks":  {
+                                                     "runAfter":  {
+                                                                      "Activities":  [
+                                                                                         "Succeeded"
+                                                                                     ]
+                                                                  },
+                                                     "metadata":  {
+                                                                      "operationMetadataId":  "e507d0bf-c980-45c0-b9e5-8837f4cad5d2"
+                                                                  },
+                                                     "type":  "Select",
+                                                     "inputs":  {
+                                                                    "from":  "@outputs(\u0027Get_Tasks\u0027)?[\u0027body/value\u0027]",
+                                                                    "select":  {
+                                                                                   "RefID":  "@item()?[\u0027RefID\u0027]",
+                                                                                   "Priority":  "@item()?[\u0027Priority\u0027]",
+                                                                                   "Status":  "@item()?[\u0027Progress\u0027]",
+                                                                                   "ID":  "@item()?[\u0027ID\u0027]",
+                                                                                   "Title":  "@item()?[\u0027Title\u0027]",
+                                                                                   "Created":  "@item()?[\u0027Created\u0027]",
+                                                                                   "Activity Tracking ID":  "@item()?[\u0027ActivityTrackingID\u0027]",
+                                                                                   "RefIDD":  "@item()?[\u0027RefIDD\u0027]",
+                                                                                   "DueDate":  "@item()?[\u0027DueDate\u0027]",
+                                                                                   "Category":  "@item()?[\u0027Classification\u0027]",
+                                                                                   "AssignedTo":  "@item()?[\u0027AssignedTo\u0027]",
+                                                                                   "Co-Assignees":  "@item()?[\u0027Assigned\u0027]",
+                                                                                   "CCTo":  "@item()?[\u0027OData__x0033_rdAssigned\u0027]",
+                                                                                   "Comments":  "@item()?[\u0027Comments\u0027]",
+                                                                                   "Modified":  "@item()?[\u0027Modified\u0027]",
+                                                                                   "StartDate":  "@item()?[\u0027StartDate\u0027]",
+                                                                                   "AttachmentLink":  "@item()?[\u0027AttachmentLink\u0027]",
+                                                                                   "RefIDDN":  "@item()?[\u0027RefIDDN\u0027]",
+                                                                                   "Reference_ID":  "@item()?[\u0027Reference_ID\u0027]"
+                                                                               }
+                                                                }
+                                                 }
+                                   },
+                       "outputs":  {
+
+                                   }
+                   }
+}

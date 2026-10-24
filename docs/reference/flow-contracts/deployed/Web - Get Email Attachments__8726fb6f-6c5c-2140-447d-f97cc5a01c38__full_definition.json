@@ -1,0 +1,737 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:08:40Z",
+    "workflow_identity":  {
+                              "internal_name":  "8726fb6f-6c5c-2140-447d-f97cc5a01c38",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "Web - Get Email Attachments",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              },
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "Http",
+                                                       "inputs":  {
+                                                                      "schema":  {
+                                                                                     "type":  "object",
+                                                                                     "properties":  {
+                                                                                                        "emailId":  {
+                                                                                                                        "type":  "string"
+                                                                                                                    }
+                                                                                                    },
+                                                                                     "required":  [
+                                                                                                      "emailId"
+                                                                                                  ]
+                                                                                 },
+                                                                      "method":  "POST",
+                                                                      "triggerAuthenticationType":  "All"
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Get_email_(V2)":  {
+                                                              "runAfter":  {
+                                                                               "Compose_EmailMessageId":  [
+                                                                                                              "Succeeded"
+                                                                                                          ]
+                                                                           },
+                                                              "metadata":  {
+                                                                               "operationMetadataId":  "36347360-2afe-4292-8fd5-448d916964eb"
+                                                                           },
+                                                              "type":  "OpenApiConnection",
+                                                              "inputs":  {
+                                                                             "parameters":  {
+                                                                                                "messageId":  "@outputs(\u0027Compose_EmailMessageId\u0027)",
+                                                                                                "includeAttachments":  true
+                                                                                            },
+                                                                             "host":  {
+                                                                                          "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                          "connectionName":  "shared_office365_1",
+                                                                                          "operationId":  "GetEmailV2"
+                                                                                      },
+                                                                             "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                         }
+                                                          },
+                                       "Condition":  {
+                                                         "actions":  {
+                                                                         "Apply_to_each":  {
+                                                                                               "foreach":  "@outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/attachments\u0027]",
+                                                                                               "actions":  {
+                                                                                                               "Get_Attachment_(V2)":  {
+                                                                                                                                           "metadata":  {
+                                                                                                                                                            "operationMetadataId":  "cb969781-81f6-42be-b9d4-b45294595c06"
+                                                                                                                                                        },
+                                                                                                                                           "type":  "OpenApiConnection",
+                                                                                                                                           "inputs":  {
+                                                                                                                                                          "parameters":  {
+                                                                                                                                                                             "messageId":  "@outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/id\u0027]",
+                                                                                                                                                                             "attachmentId":  "@items(\u0027Apply_to_each\u0027)?[\u0027id\u0027]"
+                                                                                                                                                                         },
+                                                                                                                                                          "host":  {
+                                                                                                                                                                       "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                                                                                                       "connectionName":  "shared_office365_1",
+                                                                                                                                                                       "operationId":  "GetAttachment_V2"
+                                                                                                                                                                   },
+                                                                                                                                                          "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                                                                                                      }
+                                                                                                                                       },
+                                                                                                               "base64AttachmentContent":  {
+                                                                                                                                               "runAfter":  {
+                                                                                                                                                                "Get_Attachment_(V2)":  [
+                                                                                                                                                                                            "Succeeded"
+                                                                                                                                                                                        ]
+                                                                                                                                                            },
+                                                                                                                                               "metadata":  {
+                                                                                                                                                                "operationMetadataId":  "03b8a0e2-590e-47fe-8ee0-409ab46eed1f"
+                                                                                                                                                            },
+                                                                                                                                               "type":  "Compose",
+                                                                                                                                               "inputs":  "@base64(outputs(\u0027Get_Attachment_(V2)\u0027)?[\u0027body/contentBytes\u0027])"
+                                                                                                                                           },
+                                                                                                               "JSON_Attachments":  {
+                                                                                                                                        "runAfter":  {
+                                                                                                                                                         "base64AttachmentContent":  [
+                                                                                                                                                                                         "Succeeded"
+                                                                                                                                                                                     ]
+                                                                                                                                                     },
+                                                                                                                                        "metadata":  {
+                                                                                                                                                         "operationMetadataId":  "f701f1ab-9df2-4cb1-a157-e00d43a5fa69"
+                                                                                                                                                     },
+                                                                                                                                        "type":  "Compose",
+                                                                                                                                        "inputs":  {
+                                                                                                                                                       "Name":  "@{outputs(\u0027Get_Attachment_(V2)\u0027)?[\u0027body/name\u0027]}",
+                                                                                                                                                       "ContentType":  "@{outputs(\u0027Get_Attachment_(V2)\u0027)?[\u0027body/contentType\u0027]}",
+                                                                                                                                                       "ContentBytes":  "@{outputs(\u0027Get_Attachment_(V2)\u0027)?[\u0027body/contentBytes\u0027]}"
+                                                                                                                                                   }
+                                                                                                                                    },
+                                                                                                               "Append_to_array_variable":  {
+                                                                                                                                                "runAfter":  {
+                                                                                                                                                                 "JSON_Attachments":  [
+                                                                                                                                                                                          "Succeeded"
+                                                                                                                                                                                      ]
+                                                                                                                                                             },
+                                                                                                                                                "metadata":  {
+                                                                                                                                                                 "operationMetadataId":  "f151db21-5e10-49b0-b6c2-4062039c2617"
+                                                                                                                                                             },
+                                                                                                                                                "type":  "AppendToArrayVariable",
+                                                                                                                                                "inputs":  {
+                                                                                                                                                               "name":  "varAttachments",
+                                                                                                                                                               "value":  "@outputs(\u0027JSON_Attachments\u0027)"
+                                                                                                                                                           }
+                                                                                                                                            }
+                                                                                                           },
+                                                                                               "metadata":  {
+                                                                                                                "operationMetadataId":  "0dd0b073-8c7e-4f3b-b176-7ca2127ad6a8"
+                                                                                                            },
+                                                                                               "type":  "Foreach"
+                                                                                           }
+                                                                     },
+                                                         "runAfter":  {
+                                                                          "Get_email_(V2)":  [
+                                                                                                 "Succeeded"
+                                                                                             ]
+                                                                      },
+                                                         "else":  {
+                                                                      "actions":  {
+
+                                                                                  }
+                                                                  },
+                                                         "expression":  {
+                                                                            "equals":  [
+                                                                                           "@outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/hasAttachments\u0027]",
+                                                                                           true
+                                                                                       ]
+                                                                        },
+                                                         "metadata":  {
+                                                                          "operationMetadataId":  "75cb4f72-2901-4120-a633-548cc4d0a10a"
+                                                                      },
+                                                         "type":  "If"
+                                                     },
+                                       "Initialize_variable":  {
+                                                                   "runAfter":  {
+
+                                                                                },
+                                                                   "metadata":  {
+                                                                                    "operationMetadataId":  "3c5968ad-d4ee-46c5-8622-0036324c2884"
+                                                                                },
+                                                                   "type":  "InitializeVariable",
+                                                                   "inputs":  {
+                                                                                  "variables":  [
+                                                                                                    {
+                                                                                                        "name":  "varAttachments",
+                                                                                                        "type":  "array"
+                                                                                                    }
+                                                                                                ]
+                                                                              }
+                                                               },
+                                       "Attachments_Array_JSON_String":  {
+                                                                             "runAfter":  {
+                                                                                              "Condition":  [
+                                                                                                                "Succeeded",
+                                                                                                                "TimedOut",
+                                                                                                                "Skipped",
+                                                                                                                "Failed"
+                                                                                                            ]
+                                                                                          },
+                                                                             "metadata":  {
+                                                                                              "operationMetadataId":  "ad48ca59-16f1-45b9-83d5-fb3bc4eb27e2"
+                                                                                          },
+                                                                             "type":  "Compose",
+                                                                             "inputs":  "@json(string(variables(\u0027varAttachments\u0027)))"
+                                                                         },
+                                       "Compose_EmailMessageId":  {
+                                                                      "runAfter":  {
+                                                                                       "Initialize_variable":  [
+                                                                                                                   "Succeeded"
+                                                                                                               ]
+                                                                                   },
+                                                                      "type":  "Compose",
+                                                                      "inputs":  "@triggerBody()?[\u0027emailId\u0027]"
+                                                                  },
+                                       "Response":  {
+                                                        "runAfter":  {
+                                                                         "Attachments_Array_JSON_String":  [
+                                                                                                               "Succeeded",
+                                                                                                               "TimedOut",
+                                                                                                               "Skipped",
+                                                                                                               "Failed"
+                                                                                                           ]
+                                                                     },
+                                                        "type":  "Response",
+                                                        "kind":  "Http",
+                                                        "inputs":  {
+                                                                       "statusCode":  200,
+                                                                       "headers":  {
+                                                                                       "Access-Control-Allow-Origin":  "*",
+                                                                                       "Access-Control-Allow-Methods":  "GET, POST, OPTIONS",
+                                                                                       "Access-Control-Allow-Headers":  "Content-Type, x-api-key, x-app-id, x-correlation-id",
+                                                                                       "Content-Type":  "application/json"
+                                                                                   },
+                                                                       "body":  "@outputs(\u0027Attachments_Array_JSON_String\u0027)"
+                                                                   }
+                                                    },
+                                       "Scope_Flow_Data_Capture":  {
+                                                                       "actions":  {
+                                                                                       "Get_Flow_Definition":  {
+                                                                                                                   "runAfter":  {
+                                                                                                                                    "Try":  [
+                                                                                                                                                "Succeeded"
+                                                                                                                                            ]
+                                                                                                                                },
+                                                                                                                   "type":  "OpenApiConnection",
+                                                                                                                   "inputs":  {
+                                                                                                                                  "parameters":  {
+                                                                                                                                                     "environmentName":  "@workflow()?[\u0027tags\u0027]?[\u0027environmentName\u0027]",
+                                                                                                                                                     "flowName":  "@workflow()?[\u0027name\u0027]"
+                                                                                                                                                 },
+                                                                                                                                  "host":  {
+                                                                                                                                               "apiId":  "/providers/Microsoft.PowerApps/apis/shared_flowmanagement",
+                                                                                                                                               "connectionName":  "shared_flowmanagement",
+                                                                                                                                               "operationId":  "GetFlow"
+                                                                                                                                           },
+                                                                                                                                  "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                                                                              }
+                                                                                                               },
+                                                                                       "Compose_Redacted_Headers":  {
+                                                                                                                        "runAfter":  {
+                                                                                                                                         "Get_Flow_Definition":  [
+                                                                                                                                                                     "Succeeded"
+                                                                                                                                                                 ]
+                                                                                                                                     },
+                                                                                                                        "type":  "Compose",
+                                                                                                                        "inputs":  "@setProperty(setProperty(setProperty(setProperty(setProperty(coalesce(triggerOutputs()?[\u0027headers\u0027], json(\u0027{}\u0027)), \u0027Authorization\u0027, \u0027***REDACTED***\u0027), \u0027Cookie\u0027, \u0027***REDACTED***\u0027), \u0027x-api-key\u0027, \u0027***REDACTED***\u0027), \u0027Ocp-Apim-Subscription-Key\u0027, \u0027***REDACTED***\u0027), \u0027x-functions-key\u0027, \u0027***REDACTED***\u0027)"
+                                                                                                                    },
+                                                                                       "Compose_Redacted_Queries":  {
+                                                                                                                        "runAfter":  {
+                                                                                                                                         "Compose_Redacted_Headers":  [
+                                                                                                                                                                          "Succeeded"
+                                                                                                                                                                      ]
+                                                                                                                                     },
+                                                                                                                        "type":  "Compose",
+                                                                                                                        "inputs":  "@setProperty(setProperty(setProperty(coalesce(triggerOutputs()?[\u0027queries\u0027], json(\u0027{}\u0027)), \u0027sig\u0027, \u0027***REDACTED***\u0027), \u0027code\u0027, \u0027***REDACTED***\u0027), \u0027key\u0027, \u0027***REDACTED***\u0027)"
+                                                                                                                    },
+                                                                                       "Compose_Flow_Run_Record":  {
+                                                                                                                       "runAfter":  {
+                                                                                                                                        "Compose_TriggerBody":  [
+                                                                                                                                                                    "Succeeded"
+                                                                                                                                                                ]
+                                                                                                                                    },
+                                                                                                                       "type":  "Compose",
+                                                                                                                       "inputs":  {
+                                                                                                                                      "capture_metadata":  {
+                                                                                                                                                               "telemetry_kind":  "flow_run_record",
+                                                                                                                                                               "capture_version":  "2.0.0",
+                                                                                                                                                               "captured_at_utc":  "@{utcNow()}",
+                                                                                                                                                               "capture_scope":  "Scope_Flow_Data_Capture"
+                                                                                                                                                           },
+                                                                                                                                      "workflow_identity":  {
+                                                                                                                                                                "internal_name":  "@{workflow()?[\u0027name\u0027]}",
+                                                                                                                                                                "full_resource_id":  "@{workflow()?[\u0027id\u0027]}",
+                                                                                                                                                                "type":  "@{workflow()?[\u0027type\u0027]}",
+                                                                                                                                                                "location":  "@{workflow()?[\u0027location\u0027]}",
+                                                                                                                                                                "tags":  "@coalesce(workflow()?[\u0027tags\u0027], json(\u0027{}\u0027))",
+                                                                                                                                                                "run":  "@coalesce(workflow()?[\u0027run\u0027], json(\u0027{}\u0027))"
+                                                                                                                                                            },
+                                                                                                                                      "run_identity":  {
+                                                                                                                                                           "run_name":  "@{workflow()?[\u0027run\u0027]?[\u0027name\u0027]}",
+                                                                                                                                                           "run_resource_id":  "@{workflow()?[\u0027run\u0027]?[\u0027id\u0027]}",
+                                                                                                                                                           "run_type":  "@{workflow()?[\u0027run\u0027]?[\u0027type\u0027]}",
+                                                                                                                                                           "environment_id":  "@{workflow()?[\u0027tags\u0027]?[\u0027environmentName\u0027]}",
+                                                                                                                                                           "run_url":  "@{concat(\u0027https://make.powerautomate.com/environments/\u0027, coalesce(workflow()?[\u0027tags\u0027]?[\u0027environmentName\u0027], \u0027\u0027), \u0027/flows/\u0027, workflow()?[\u0027name\u0027], \u0027/runs/\u0027, coalesce(workflow()?[\u0027run\u0027]?[\u0027name\u0027], \u0027\u0027))}"
+                                                                                                                                                       },
+                                                                                                                                      "trigger_record":  {
+                                                                                                                                                             "name":  "@{trigger()?[\u0027name\u0027]}",
+                                                                                                                                                             "start_time":  "@{trigger()?[\u0027startTime\u0027]}",
+                                                                                                                                                             "end_time":  "@{trigger()?[\u0027endTime\u0027]}",
+                                                                                                                                                             "scheduled_time":  "@{trigger()?[\u0027scheduledTime\u0027]}",
+                                                                                                                                                             "status":  "@{trigger()?[\u0027status\u0027]}",
+                                                                                                                                                             "code":  "@{trigger()?[\u0027code\u0027]}",
+                                                                                                                                                             "tracking_id":  "@{trigger()?[\u0027trackingId\u0027]}",
+                                                                                                                                                             "client_tracking_id":  "@{trigger()?[\u0027clientTrackingId\u0027]}",
+                                                                                                                                                             "origin_history_name":  "@{trigger()?[\u0027originHistoryName\u0027]}",
+                                                                                                                                                             "correlation":  "@coalesce(trigger()?[\u0027correlation\u0027], json(\u0027{}\u0027))"
+                                                                                                                                                         },
+                                                                                                                                      "request":  {
+                                                                                                                                                      "method":  "@{triggerOutputs()?[\u0027method\u0027]}",
+                                                                                                                                                      "relative_path_parameters":  "@coalesce(triggerOutputs()?[\u0027relativePathParameters\u0027], json(\u0027{}\u0027))",
+                                                                                                                                                      "headers_redacted":  "@coalesce(outputs(\u0027Compose_Redacted_Headers\u0027), json(\u0027{}\u0027))",
+                                                                                                                                                      "queries_redacted":  "@coalesce(outputs(\u0027Compose_Redacted_Queries\u0027), json(\u0027{}\u0027))",
+                                                                                                                                                      "body":  "@triggerBody()"
+                                                                                                                                                  },
+                                                                                                                                      "design_definition":  {
+                                                                                                                                                                "get_flow_body":  "@coalesce(outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027], json(\u0027{}\u0027))",
+                                                                                                                                                                "display_name":  "@{outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027displayName\u0027]}",
+                                                                                                                                                                "state":  "@{outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027state\u0027]}",
+                                                                                                                                                                "provisioning_method":  "@{outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027provisioningMethod\u0027]}",
+                                                                                                                                                                "created_time":  "@{outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027createdTime\u0027]}",
+                                                                                                                                                                "last_modified_time":  "@{outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027lastModifiedTime\u0027]}",
+                                                                                                                                                                "creator":  "@coalesce(outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027creator\u0027], json(\u0027{}\u0027))",
+                                                                                                                                                                "definition":  "@coalesce(outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027definition\u0027], json(\u0027{}\u0027))",
+                                                                                                                                                                "trigger_definition":  "@coalesce(outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027definition\u0027]?[\u0027triggers\u0027], json(\u0027{}\u0027))",
+                                                                                                                                                                "trigger_input_schema":  "@coalesce(outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027definition\u0027]?[\u0027triggers\u0027]?[\u0027manual\u0027]?[\u0027inputs\u0027]?[\u0027schema\u0027], json(\u0027{}\u0027))",
+                                                                                                                                                                "action_definitions":  "@coalesce(outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027definition\u0027]?[\u0027actions\u0027], json(\u0027{}\u0027))",
+                                                                                                                                                                "connection_references":  "@coalesce(outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027connectionReferences\u0027], json(\u0027{}\u0027))"
+                                                                                                                                                            },
+                                                                                                                                      "response_record":  {
+                                                                                                                                                              "action_status":  "@{actions(\u0027Response\u0027)?[\u0027status\u0027]}",
+                                                                                                                                                              "action_code":  "@{actions(\u0027Response\u0027)?[\u0027code\u0027]}",
+                                                                                                                                                              "action_start_time":  "@{actions(\u0027Response\u0027)?[\u0027startTime\u0027]}",
+                                                                                                                                                              "action_end_time":  "@{actions(\u0027Response\u0027)?[\u0027endTime\u0027]}",
+                                                                                                                                                              "tracking_id":  "@{actions(\u0027Response\u0027)?[\u0027trackingId\u0027]}",
+                                                                                                                                                              "client_tracking_id":  "@{actions(\u0027Response\u0027)?[\u0027clientTrackingId\u0027]}",
+                                                                                                                                                              "correlation":  "@coalesce(actions(\u0027Response\u0027)?[\u0027correlation\u0027], json(\u0027{}\u0027))",
+                                                                                                                                                              "status_code_sent":  "@coalesce(actions(\u0027Response\u0027)?[\u0027inputs\u0027]?[\u0027statusCode\u0027], 0)",
+                                                                                                                                                              "headers_sent":  "@coalesce(actions(\u0027Response\u0027)?[\u0027inputs\u0027]?[\u0027headers\u0027], json(\u0027{}\u0027))",
+                                                                                                                                                              "body_sent":  "@coalesce(actions(\u0027Response\u0027)?[\u0027inputs\u0027]?[\u0027body\u0027], json(\u0027{}\u0027))",
+                                                                                                                                                              "raw_action_record":  "@coalesce(actions(\u0027Response\u0027), json(\u0027{}\u0027))"
+                                                                                                                                                          },
+                                                                                                                                      "outcome":  {
+                                                                                                                                                      "flow_outcome":  "@if(empty(filter(result(\u0027Try\u0027), equals(item()?[\u0027status\u0027], \u0027Failed\u0027))), \u0027Succeeded\u0027, \u0027Failed\u0027)",
+                                                                                                                                                      "failed_action_count":  "@length(filter(result(\u0027Try\u0027), equals(item()?[\u0027status\u0027], \u0027Failed\u0027)))",
+                                                                                                                                                      "first_failed_action":  "@coalesce(first(filter(result(\u0027Try\u0027), equals(item()?[\u0027status\u0027], \u0027Failed\u0027))), json(\u0027{}\u0027))",
+                                                                                                                                                      "all_try_action_results":  "@coalesce(result(\u0027Try\u0027), json(\u0027[]\u0027))"
+                                                                                                                                                  },
+                                                                                                                                      "timing":  {
+                                                                                                                                                     "trigger_start_time":  "@{trigger()?[\u0027startTime\u0027]}",
+                                                                                                                                                     "captured_at_utc":  "@{utcNow()}",
+                                                                                                                                                     "total_elapsed_seconds":  "@div(sub(ticks(utcNow()), ticks(trigger()?[\u0027startTime\u0027])), 10000000)",
+                                                                                                                                                     "total_elapsed_ms":  "@div(sub(ticks(utcNow()), ticks(trigger()?[\u0027startTime\u0027])), 10000)",
+                                                                                                                                                     "response_action_duration_ms":  "@if(empty(coalesce(actions(\u0027Response\u0027)?[\u0027endTime\u0027], \u0027\u0027)), 0, div(sub(ticks(actions(\u0027Response\u0027)?[\u0027endTime\u0027]), ticks(actions(\u0027Response\u0027)?[\u0027startTime\u0027])), 10000))"
+                                                                                                                                                 }
+                                                                                                                                  }
+                                                                                                                   },
+                                                                                       "Compose_Flow_Run_Record_Schema":  {
+                                                                                                                              "runAfter":  {
+                                                                                                                                               "Compose_Flow_Run_Record":  [
+                                                                                                                                                                               "Succeeded"
+                                                                                                                                                                           ]
+                                                                                                                                           },
+                                                                                                                              "type":  "Compose",
+                                                                                                                              "inputs":  {
+                                                                                                                                             "$schema":  "http://json-schema.org/draft-07/schema#",
+                                                                                                                                             "title":  "flow_run_record",
+                                                                                                                                             "type":  "object",
+                                                                                                                                             "required":  [
+                                                                                                                                                              "capture_metadata",
+                                                                                                                                                              "workflow_identity",
+                                                                                                                                                              "run_identity",
+                                                                                                                                                              "trigger_record",
+                                                                                                                                                              "request",
+                                                                                                                                                              "design_definition",
+                                                                                                                                                              "response_record",
+                                                                                                                                                              "outcome",
+                                                                                                                                                              "timing"
+                                                                                                                                                          ],
+                                                                                                                                             "properties":  {
+                                                                                                                                                                "capture_metadata":  {
+                                                                                                                                                                                         "type":  "object",
+                                                                                                                                                                                         "properties":  {
+                                                                                                                                                                                                            "telemetry_kind":  {
+                                                                                                                                                                                                                                   "type":  "string",
+                                                                                                                                                                                                                                   "enum":  [
+                                                                                                                                                                                                                                                "flow_run_record"
+                                                                                                                                                                                                                                            ]
+                                                                                                                                                                                                                               },
+                                                                                                                                                                                                            "capture_version":  {
+                                                                                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                                                                                },
+                                                                                                                                                                                                            "captured_at_utc":  {
+                                                                                                                                                                                                                                    "type":  "string",
+                                                                                                                                                                                                                                    "format":  "date-time"
+                                                                                                                                                                                                                                },
+                                                                                                                                                                                                            "capture_scope":  {
+                                                                                                                                                                                                                                  "type":  "string"
+                                                                                                                                                                                                                              }
+                                                                                                                                                                                                        }
+                                                                                                                                                                                     },
+                                                                                                                                                                "workflow_identity":  {
+                                                                                                                                                                                          "type":  "object",
+                                                                                                                                                                                          "properties":  {
+                                                                                                                                                                                                             "internal_name":  {
+                                                                                                                                                                                                                                   "type":  "string"
+                                                                                                                                                                                                                               },
+                                                                                                                                                                                                             "full_resource_id":  {
+                                                                                                                                                                                                                                      "type":  "string"
+                                                                                                                                                                                                                                  },
+                                                                                                                                                                                                             "type":  {
+                                                                                                                                                                                                                          "type":  "string"
+                                                                                                                                                                                                                      },
+                                                                                                                                                                                                             "location":  {
+                                                                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                                                                          },
+                                                                                                                                                                                                             "tags":  {
+                                                                                                                                                                                                                          "type":  "object"
+                                                                                                                                                                                                                      },
+                                                                                                                                                                                                             "run":  {
+                                                                                                                                                                                                                         "type":  "object"
+                                                                                                                                                                                                                     }
+                                                                                                                                                                                                         }
+                                                                                                                                                                                      },
+                                                                                                                                                                "run_identity":  {
+                                                                                                                                                                                     "type":  "object",
+                                                                                                                                                                                     "properties":  {
+                                                                                                                                                                                                        "run_name":  {
+                                                                                                                                                                                                                         "type":  "string"
+                                                                                                                                                                                                                     },
+                                                                                                                                                                                                        "run_resource_id":  {
+                                                                                                                                                                                                                                "type":  "string"
+                                                                                                                                                                                                                            },
+                                                                                                                                                                                                        "run_type":  {
+                                                                                                                                                                                                                         "type":  "string"
+                                                                                                                                                                                                                     },
+                                                                                                                                                                                                        "environment_id":  {
+                                                                                                                                                                                                                               "type":  "string"
+                                                                                                                                                                                                                           },
+                                                                                                                                                                                                        "run_url":  {
+                                                                                                                                                                                                                        "type":  "string",
+                                                                                                                                                                                                                        "format":  "uri"
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                    }
+                                                                                                                                                                                 },
+                                                                                                                                                                "trigger_record":  {
+                                                                                                                                                                                       "type":  "object",
+                                                                                                                                                                                       "properties":  {
+                                                                                                                                                                                                          "name":  {
+                                                                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                                                                   },
+                                                                                                                                                                                                          "start_time":  {
+                                                                                                                                                                                                                             "type":  "string",
+                                                                                                                                                                                                                             "format":  "date-time"
+                                                                                                                                                                                                                         },
+                                                                                                                                                                                                          "end_time":  {
+                                                                                                                                                                                                                           "type":  "string",
+                                                                                                                                                                                                                           "format":  "date-time"
+                                                                                                                                                                                                                       },
+                                                                                                                                                                                                          "scheduled_time":  {
+                                                                                                                                                                                                                                 "type":  "string",
+                                                                                                                                                                                                                                 "format":  "date-time"
+                                                                                                                                                                                                                             },
+                                                                                                                                                                                                          "status":  {
+                                                                                                                                                                                                                         "type":  "string"
+                                                                                                                                                                                                                     },
+                                                                                                                                                                                                          "code":  {
+                                                                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                                                                   },
+                                                                                                                                                                                                          "tracking_id":  {
+                                                                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                                                                          },
+                                                                                                                                                                                                          "client_tracking_id":  {
+                                                                                                                                                                                                                                     "type":  "string"
+                                                                                                                                                                                                                                 },
+                                                                                                                                                                                                          "origin_history_name":  {
+                                                                                                                                                                                                                                      "type":  "string"
+                                                                                                                                                                                                                                  },
+                                                                                                                                                                                                          "correlation":  {
+                                                                                                                                                                                                                              "type":  "object"
+                                                                                                                                                                                                                          }
+                                                                                                                                                                                                      }
+                                                                                                                                                                                   },
+                                                                                                                                                                "request":  {
+                                                                                                                                                                                "type":  "object",
+                                                                                                                                                                                "properties":  {
+                                                                                                                                                                                                   "method":  {
+                                                                                                                                                                                                                  "type":  "string"
+                                                                                                                                                                                                              },
+                                                                                                                                                                                                   "relative_path_parameters":  {
+                                                                                                                                                                                                                                    "type":  "object"
+                                                                                                                                                                                                                                },
+                                                                                                                                                                                                   "headers_redacted":  {
+                                                                                                                                                                                                                            "type":  "object"
+                                                                                                                                                                                                                        },
+                                                                                                                                                                                                   "queries_redacted":  {
+                                                                                                                                                                                                                            "type":  "object"
+                                                                                                                                                                                                                        },
+                                                                                                                                                                                                   "body":  {
+
+                                                                                                                                                                                                            }
+                                                                                                                                                                                               }
+                                                                                                                                                                            },
+                                                                                                                                                                "design_definition":  {
+                                                                                                                                                                                          "type":  "object",
+                                                                                                                                                                                          "properties":  {
+                                                                                                                                                                                                             "get_flow_body":  {
+                                                                                                                                                                                                                                   "type":  "object"
+                                                                                                                                                                                                                               },
+                                                                                                                                                                                                             "display_name":  {
+                                                                                                                                                                                                                                  "type":  "string"
+                                                                                                                                                                                                                              },
+                                                                                                                                                                                                             "state":  {
+                                                                                                                                                                                                                           "type":  "string"
+                                                                                                                                                                                                                       },
+                                                                                                                                                                                                             "provisioning_method":  {
+                                                                                                                                                                                                                                         "type":  "string"
+                                                                                                                                                                                                                                     },
+                                                                                                                                                                                                             "created_time":  {
+                                                                                                                                                                                                                                  "type":  "string",
+                                                                                                                                                                                                                                  "format":  "date-time"
+                                                                                                                                                                                                                              },
+                                                                                                                                                                                                             "last_modified_time":  {
+                                                                                                                                                                                                                                        "type":  "string",
+                                                                                                                                                                                                                                        "format":  "date-time"
+                                                                                                                                                                                                                                    },
+                                                                                                                                                                                                             "creator":  {
+                                                                                                                                                                                                                             "type":  "object"
+                                                                                                                                                                                                                         },
+                                                                                                                                                                                                             "definition":  {
+                                                                                                                                                                                                                                "type":  "object"
+                                                                                                                                                                                                                            },
+                                                                                                                                                                                                             "trigger_definition":  {
+                                                                                                                                                                                                                                        "type":  "object"
+                                                                                                                                                                                                                                    },
+                                                                                                                                                                                                             "trigger_input_schema":  {
+                                                                                                                                                                                                                                          "type":  "object"
+                                                                                                                                                                                                                                      },
+                                                                                                                                                                                                             "action_definitions":  {
+                                                                                                                                                                                                                                        "type":  "object"
+                                                                                                                                                                                                                                    },
+                                                                                                                                                                                                             "connection_references":  {
+                                                                                                                                                                                                                                           "type":  "object"
+                                                                                                                                                                                                                                       }
+                                                                                                                                                                                                         }
+                                                                                                                                                                                      },
+                                                                                                                                                                "response_record":  {
+                                                                                                                                                                                        "type":  "object",
+                                                                                                                                                                                        "properties":  {
+                                                                                                                                                                                                           "action_status":  {
+                                                                                                                                                                                                                                 "type":  "string"
+                                                                                                                                                                                                                             },
+                                                                                                                                                                                                           "action_code":  {
+                                                                                                                                                                                                                               "type":  "string"
+                                                                                                                                                                                                                           },
+                                                                                                                                                                                                           "action_start_time":  {
+                                                                                                                                                                                                                                     "type":  "string",
+                                                                                                                                                                                                                                     "format":  "date-time"
+                                                                                                                                                                                                                                 },
+                                                                                                                                                                                                           "action_end_time":  {
+                                                                                                                                                                                                                                   "type":  "string",
+                                                                                                                                                                                                                                   "format":  "date-time"
+                                                                                                                                                                                                                               },
+                                                                                                                                                                                                           "tracking_id":  {
+                                                                                                                                                                                                                               "type":  "string"
+                                                                                                                                                                                                                           },
+                                                                                                                                                                                                           "client_tracking_id":  {
+                                                                                                                                                                                                                                      "type":  "string"
+                                                                                                                                                                                                                                  },
+                                                                                                                                                                                                           "correlation":  {
+                                                                                                                                                                                                                               "type":  "object"
+                                                                                                                                                                                                                           },
+                                                                                                                                                                                                           "status_code_sent":  {
+                                                                                                                                                                                                                                    "type":  "integer"
+                                                                                                                                                                                                                                },
+                                                                                                                                                                                                           "headers_sent":  {
+                                                                                                                                                                                                                                "type":  "object"
+                                                                                                                                                                                                                            },
+                                                                                                                                                                                                           "body_sent":  {
+
+                                                                                                                                                                                                                         },
+                                                                                                                                                                                                           "raw_action_record":  {
+                                                                                                                                                                                                                                     "type":  "object"
+                                                                                                                                                                                                                                 }
+                                                                                                                                                                                                       }
+                                                                                                                                                                                    },
+                                                                                                                                                                "outcome":  {
+                                                                                                                                                                                "type":  "object",
+                                                                                                                                                                                "properties":  {
+                                                                                                                                                                                                   "flow_outcome":  {
+                                                                                                                                                                                                                        "type":  "string",
+                                                                                                                                                                                                                        "enum":  [
+                                                                                                                                                                                                                                     "Succeeded",
+                                                                                                                                                                                                                                     "Failed"
+                                                                                                                                                                                                                                 ]
+                                                                                                                                                                                                                    },
+                                                                                                                                                                                                   "failed_action_count":  {
+                                                                                                                                                                                                                               "type":  "integer"
+                                                                                                                                                                                                                           },
+                                                                                                                                                                                                   "first_failed_action":  {
+                                                                                                                                                                                                                               "type":  "object"
+                                                                                                                                                                                                                           },
+                                                                                                                                                                                                   "all_try_action_results":  {
+                                                                                                                                                                                                                                  "type":  "array"
+                                                                                                                                                                                                                              }
+                                                                                                                                                                                               }
+                                                                                                                                                                            },
+                                                                                                                                                                "timing":  {
+                                                                                                                                                                               "type":  "object",
+                                                                                                                                                                               "properties":  {
+                                                                                                                                                                                                  "trigger_start_time":  {
+                                                                                                                                                                                                                             "type":  "string",
+                                                                                                                                                                                                                             "format":  "date-time"
+                                                                                                                                                                                                                         },
+                                                                                                                                                                                                  "captured_at_utc":  {
+                                                                                                                                                                                                                          "type":  "string",
+                                                                                                                                                                                                                          "format":  "date-time"
+                                                                                                                                                                                                                      },
+                                                                                                                                                                                                  "total_elapsed_seconds":  {
+                                                                                                                                                                                                                                "type":  "number"
+                                                                                                                                                                                                                            },
+                                                                                                                                                                                                  "total_elapsed_ms":  {
+                                                                                                                                                                                                                           "type":  "number"
+                                                                                                                                                                                                                       },
+                                                                                                                                                                                                  "response_action_duration_ms":  {
+                                                                                                                                                                                                                                      "type":  "number"
+                                                                                                                                                                                                                                  }
+                                                                                                                                                                                              }
+                                                                                                                                                                           }
+                                                                                                                                                            }
+                                                                                                                                         }
+                                                                                                                          },
+                                                                                       "Compose_Telemetry_Attachments":  {
+                                                                                                                             "runAfter":  {
+                                                                                                                                              "Compose_Flow_Run_Record_Schema":  [
+                                                                                                                                                                                     "Succeeded"
+                                                                                                                                                                                 ]
+                                                                                                                                          },
+                                                                                                                             "type":  "Compose",
+                                                                                                                             "inputs":  [
+                                                                                                                                            {
+                                                                                                                                                "Name":  "@{coalesce(workflow()?[\u0027tags\u0027]?[\u0027flowDisplayName\u0027], workflow()?[\u0027name\u0027])}__@{workflow()?[\u0027run\u0027]?[\u0027name\u0027]}__flow_run_record.json",
+                                                                                                                                                "ContentBytes":  "@base64(string(outputs(\u0027Compose_Flow_Run_Record\u0027)))"
+                                                                                                                                            },
+                                                                                                                                            {
+                                                                                                                                                "Name":  "@{coalesce(workflow()?[\u0027tags\u0027]?[\u0027flowDisplayName\u0027], workflow()?[\u0027name\u0027])}__@{workflow()?[\u0027run\u0027]?[\u0027name\u0027]}__flow_run_record_schema.json",
+                                                                                                                                                "ContentBytes":  "@base64(string(outputs(\u0027Compose_Flow_Run_Record_Schema\u0027)))"
+                                                                                                                                            },
+                                                                                                                                            {
+                                                                                                                                                "Name":  "@{coalesce(workflow()?[\u0027tags\u0027]?[\u0027flowDisplayName\u0027], workflow()?[\u0027name\u0027])}__@{workflow()?[\u0027run\u0027]?[\u0027name\u0027]}__trigger_input_schema.json",
+                                                                                                                                                "ContentBytes":  "@base64(string(coalesce(outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027definition\u0027]?[\u0027triggers\u0027]?[\u0027manual\u0027]?[\u0027inputs\u0027]?[\u0027schema\u0027], json(\u0027{}\u0027))))"
+                                                                                                                                            },
+                                                                                                                                            {
+                                                                                                                                                "Name":  "@{coalesce(workflow()?[\u0027tags\u0027]?[\u0027flowDisplayName\u0027], workflow()?[\u0027name\u0027])}__@{workflow()?[\u0027run\u0027]?[\u0027name\u0027]}__full_definition.json",
+                                                                                                                                                "ContentBytes":  "@base64(string(coalesce(outputs(\u0027Get_Flow_Definition\u0027)?[\u0027body\u0027]?[\u0027properties\u0027]?[\u0027definition\u0027], json(\u0027{}\u0027))))"
+                                                                                                                                            },
+                                                                                                                                            {
+                                                                                                                                                "Name":  "@{coalesce(workflow()?[\u0027tags\u0027]?[\u0027flowDisplayName\u0027], workflow()?[\u0027name\u0027])}__@{workflow()?[\u0027run\u0027]?[\u0027name\u0027]}__Get_Flow_Definition.json",
+                                                                                                                                                "ContentBytes":  "@outputs(\u0027Compose_Body_Get_Flow_Definition\u0027)"
+                                                                                                                                            },
+                                                                                                                                            {
+                                                                                                                                                "Name":  "@{coalesce(workflow()?[\u0027tags\u0027]?[\u0027flowDisplayName\u0027], workflow()?[\u0027name\u0027])}__@{workflow()?[\u0027run\u0027]?[\u0027name\u0027]}__Flow_Trigger_Body.json",
+                                                                                                                                                "ContentBytes":  "@outputs(\u0027Compose_TriggerBody\u0027)"
+                                                                                                                                            }
+                                                                                                                                        ]
+                                                                                                                         },
+                                                                                       "Try":  {
+                                                                                                   "actions":  {
+
+                                                                                                               },
+                                                                                                   "type":  "Scope"
+                                                                                               },
+                                                                                       "Compose_Body_Get_Flow_Definition":  {
+                                                                                                                                "runAfter":  {
+                                                                                                                                                 "Compose_Redacted_Queries":  [
+                                                                                                                                                                                  "Succeeded"
+                                                                                                                                                                              ]
+                                                                                                                                             },
+                                                                                                                                "type":  "Compose",
+                                                                                                                                "inputs":  "@body(\u0027Get_Flow_Definition\u0027)"
+                                                                                                                            },
+                                                                                       "Compose_TriggerBody":  {
+                                                                                                                   "runAfter":  {
+                                                                                                                                    "Compose_Body_Get_Flow_Definition":  [
+                                                                                                                                                                             "Succeeded"
+                                                                                                                                                                         ]
+                                                                                                                                },
+                                                                                                                   "type":  "Compose",
+                                                                                                                   "inputs":  "@triggerBody()"
+                                                                                                               },
+                                                                                       "Send_Telemetry_Email":  {
+                                                                                                                    "runAfter":  {
+                                                                                                                                     "Compose_Telemetry_Attachments":  [
+                                                                                                                                                                           "Succeeded"
+                                                                                                                                                                       ]
+                                                                                                                                 },
+                                                                                                                    "type":  "OpenApiConnection",
+                                                                                                                    "inputs":  {
+                                                                                                                                   "parameters":  {
+                                                                                                                                                      "emailMessage/To":  "dgsRegistry@nitda.gov.ng",
+                                                                                                                                                      "emailMessage/Subject":  "@{coalesce(workflow()?[\u0027tags\u0027]?[\u0027flowDisplayName\u0027], workflow()?[\u0027name\u0027])} — Flow Run Record — @{workflow()?[\u0027run\u0027]?[\u0027name\u0027]}",
+                                                                                                                                                      "emailMessage/Body":  "\u003cp\u003eAutomated flow run record capture.\u003c/p\u003e\u003cp\u003eFlow: @{coalesce(workflow()?[\u0027tags\u0027]?[\u0027flowDisplayName\u0027], workflow()?[\u0027name\u0027])}\u003c/p\u003e\u003cp\u003eRun: @{workflow()?[\u0027run\u0027]?[\u0027name\u0027]}\u003c/p\u003e\u003cp\u003eOutcome: @{if(empty(filter(result(\u0027Try\u0027), equals(item()?[\u0027status\u0027], \u0027Failed\u0027))), \u0027Succeeded\u0027, \u0027Failed\u0027)}\u003c/p\u003e",
+                                                                                                                                                      "emailMessage/Attachments":  "@outputs(\u0027Compose_Telemetry_Attachments\u0027)",
+                                                                                                                                                      "emailMessage/Importance":  "Normal"
+                                                                                                                                                  },
+                                                                                                                                   "host":  {
+                                                                                                                                                "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                                                                                "connectionName":  "shared_office365",
+                                                                                                                                                "operationId":  "SendEmailV2"
+                                                                                                                                            },
+                                                                                                                                   "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                                                                               }
+                                                                                                                }
+                                                                                   },
+                                                                       "runAfter":  {
+                                                                                        "Response":  [
+                                                                                                         "Succeeded",
+                                                                                                         "TimedOut",
+                                                                                                         "Skipped",
+                                                                                                         "Failed"
+                                                                                                     ]
+                                                                                    },
+                                                                       "type":  "Scope"
+                                                                   }
+                                   },
+                       "outputs":  {
+
+                                   },
+                       "description":  "Click a button in a Power Apps application to send a email to a specified email address."
+                   }
+}

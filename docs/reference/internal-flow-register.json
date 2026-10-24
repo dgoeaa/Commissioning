@@ -1,0 +1,468 @@
+{
+  "registerVersion": "2.0.0",
+  "purpose": "The declared internal-operations flow estate: every endpoint contract key, the physical Power Automate flow behind it, its workflow id where the corpus records one, and the definition file in this repository that covers it. scripts/flow-list-sweep.mjs reads this to state contract coverage; it never infers an attribution from a filename.",
+  "whyItMatters": "The full-scope provisioning gate is held open by \"Internal operations — 7 of ~20 flow definitions available\". That count is of CONTRACT KEYS. Several keys share one physical flow, so the number of flows that actually have to be exported is smaller than the number of keys — this register is where that arithmetic is visible rather than assumed.",
+  "credentialPolicy": "Workflow ids only. A signed trigger URL is a bearer credential and its sig token is never recorded here, in line with scripts/flow-inventory.mjs.",
+  "sources": [
+    "docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md Part 1 — the endpoint contract registry, read out of config/endpoints.config.js#EndpointContracts",
+    "docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt — \"Total deduplicated flows: 12\", each labelled with its workflow id",
+    "docs/reference/foundational/flows/details/Consolidated flow URLS.txt — labelled trigger URLs"
+  ],
+  "contractKeys": [
+    {
+      "key": "FETCH_ACTIVITIES",
+      "physicalFlow": "SUBSIDIARY_ACTIONS",
+      "flowLabel": "Supplementary / subsidiary actions",
+      "fixedAction": "LIST-ACTIVITIES",
+      "workflowId": "85c556f10b8244ba9d839a2ebe240b91",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Web - Subsidiary Doc Actions__6d819704-0e1d-4557-9886-f1afe80155e4__full_definition.json"
+      ],
+      "evidence": "docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md Part 1 — the endpoint contract registry, read out of config/endpoints.config.js#EndpointContracts; workflow id from docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt — \"Total deduplicated flows: 12\", each labelled with its workflow id row 7 (\"SUPPLEMENTARY ACTIONS / SUBSIDIARY ACTIONS\"), corroborated by docs/reference/foundational/flows/details/Consolidated flow URLS.txt — labelled trigger URLs (\"multiple actions\"). DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it.",
+      "note": "Shares one physical flow with SUBSIDIARY_ACTIONS — exporting that flow once covers both keys."
+    },
+    {
+      "key": "SUBSIDIARY_ACTIONS",
+      "physicalFlow": "SUBSIDIARY_ACTIONS",
+      "flowLabel": "Supplementary / subsidiary actions",
+      "fixedAction": "INIT",
+      "workflowId": "85c556f10b8244ba9d839a2ebe240b91",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Web - Subsidiary Doc Actions__6d819704-0e1d-4557-9886-f1afe80155e4__full_definition.json"
+      ],
+      "evidence": "docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md Part 1 — the endpoint contract registry, read out of config/endpoints.config.js#EndpointContracts; workflow id from docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt — \"Total deduplicated flows: 12\", each labelled with its workflow id row 7, corroborated by docs/reference/foundational/flows/details/Consolidated flow URLS.txt — labelled trigger URLs (\"multiple actions\"). DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it."
+    },
+    {
+      "key": "FETCH_ALL",
+      "physicalFlow": "FETCH_ALL",
+      "flowLabel": "Get all data",
+      "fixedAction": "fetchAll",
+      "workflowId": "aa662769f13a4666bfadf3039cd8d247",
+      "workflowIdCandidates": [
+        {
+          "workflowId": "31e02518075940d2bcfa9bdb0e9b0b8d",
+          "label": "geta all data",
+          "source": "docs/reference/foundational/flows/details/Consolidated flow URLS.txt — labelled trigger URLs"
+        },
+        {
+          "workflowId": "1d56be97cd184fd9b2facede12b17c34",
+          "label": "all data and references",
+          "source": "docs/reference/foundational/flows/details/Consolidated flow URLS.txt — labelled trigger URLs"
+        },
+        {
+          "workflowId": "4a250f97181b4a28abc1d0fb0f7d4c4d",
+          "label": "Copy of - Fetch_All_Data_&_References_Matrix-POST",
+          "source": "The recovered definition's own workflow_identity"
+        }
+      ],
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/01 - Fetch_All_Data___References_Matrix-POST__3eec824c-c1ae-28d6-cc1f-a2d5c4314a04__full_definition.json",
+        "docs/reference/flow-contracts/deployed/02- Fetch_All_Data___References_Matrix-POST__10f0d76b-4b29-00d0-6482-2c7897e0cdad__full_definition.json",
+        "docs/reference/flow-contracts/deployed/03 - Fetch_All_Data___References_Matrix-POST__672e6085-f68d-7074-120a-b1e6d648197f__full_definition.json"
+      ],
+      "evidence": "Resolved from the tenant, not from the corpus. IP_FETCH_ALL_ENDPOINT was exported on 2026-09-03 and compared against docs/deployment/internal/flows/designer-paste/DGO_FETCH_ALL.designer-paste.json by scripts/compare-live-export.mjs: 0 actions missing, 0 different, 0 extra, the paste container deleted and the trigger Method = POST. The id is the definition's own `name` / `id` — /providers/Microsoft.Flow/flows/b79e6707-df4d-4ae7-8a65-738aa45e9a73 — dashless, which is the form a trigger URL carries. NOT the export's folder name: a legacy package stores each flow under a directory that Microsoft.Flow/flows/manifest.json calls an assetPath, and for this export that path is 6e810636-aaab-4180-bbd7-dd6b9e134a6f, which is not the flow and appears nowhere in the tenant. The distinction is corroborated by a second export read the same day: Single_Task_Assignment sits under assetPath 493d5a51-1429-4ca4-adf1-7f25c26e57e6 while its definition declares 3caf9458-8d95-4740-a01b-6803dad97d34, and the operator's own reading of that flow in Power Automate gave the definition's value. The three deployed definitions below belong to the flow FETCH_ALL pointed at BEFORE the rebuild and are kept for their list footprint, which is what the coverage gate reads them for. TWO DIFFERENT IDENTIFIERS, AND THIS FIELD IS THE OTHER ONE. A Power Automate flow carries a flow id — the GUID in make.powerautomate.com/…/flows/<id>/details, in a legacy export's definition `name` / `id` (/providers/Microsoft.Flow/flows/<id>), and in the maker portal's Flow identifier. Its trigger URL carries a DIFFERENT id in /workflows/<id>/triggers/manual/paths/invoke. This register records the second: every settled entry here is sourced from a labelled trigger URL or from a definition's own workflow_identity, and scripts/check-config-local.mjs compares a config.local.js against it by pulling that id out of the URL. EMAIL_RELATED_TASK proves the pairing — a942d230337c4ddfa9a386e92bbd048b, recorded from workflow_identity, matches the operator's live URL exactly. The value below was read from an export's definition `name`, which is the flow id, so it is the wrong class for this field and is preserved as flowId rather than asserted as the workflow id. The trigger URL of the correctly-named flow is the only source for the right one. Values previously held in this field: 31e02518075940d2bcfa9bdb0e9b0b8d / 4a250f97181b4a28abc1d0fb0f7d4c4d. RESOLVED 2026-09-04 FROM A TENANT NAME-TO-WORKFLOW-ID MAP supplied by the operator, which lists each flow by display name against the id its trigger URL carries — the identifier this field holds, not the flow id. IP_FETCH_ALL_ENDPOINT maps to aa662769f13a4666bfadf3039cd8d247. Corroborated twice over: the operator pointed FETCH_ALL at that flow's own trigger URL and check-config-local read the same id out of it, and the flow itself is verified against DGO_FETCH_ALL.designer-paste.json at 0 missing, 0 different, 0 extra with Method = POST. Its FLOW id, b79e6707df4d4ae78a65738aa45e9a73, is recorded separately as flowId — the two are different GUIDs for one flow.",
+      "note": "RESOLVED. The deployed config points this key at this flow as of 2026-09-04, so the cutover for FETCH_ALL is done. The three deployed definitions listed below belong to the flow it pointed at before the rebuild and are kept for their list footprint, which is what the coverage gate reads them for.",
+      "flowId": "b79e6707df4d4ae78a65738aa45e9a73"
+    },
+    {
+      "key": "REFERENCE_DATA",
+      "physicalFlow": "REFERENCE_DATA",
+      "flowLabel": "Get references (users, categories, departments)",
+      "fixedAction": "lookups",
+      "workflowId": "885fad5ec91f460490e8c772d5d10cb8",
+      "workflowIdCandidates": [
+        {
+          "workflowId": "20e3b003a57f47febae8a24ad5b9acd4",
+          "label": "LOOKUPS (users, departments, categories)",
+          "source": "docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt — \"Total deduplicated flows: 12\", each labelled with its workflow id"
+        }
+      ],
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/01 - Fetch_References_and_Lookups_Data - POST__3dc47349-f67f-e04f-27f9-9f38bb9e174a__full_definition.json",
+        "docs/reference/flow-contracts/deployed/02 - Fetch_References_and_Lookups_Data - POST__e1a827d5-9e2b-dd03-9510-c24ace9c3999__full_definition.json",
+        "docs/reference/flow-contracts/deployed/OPS_REFERENCES_AND_LOOKUPS__9695b92b-f67a-6593-7f86-6134691c737e__full_definition.json"
+      ],
+      "evidence": "Resolved from the tenant. Fetch_Users_Categories_Departments_Data_Sync was exported on 2026-09-04; its definition declares /providers/Microsoft.Flow/flows/af43ab6f-7ff2-441d-aaaf-d1960fcb3ea1 (assetPath f319eb10-fa7d-4fa3-a036-9e09a6d68928). Corroborated: the operator read the same GUID off the flow in Power Automate before the export was supplied, and the two agree. The previous value, ff455c68e9ac493e858fb984bcfd01fb, is kept as workflowIdSuperseded. RESOLVED 2026-09-04 FROM THE OPERATOR'S TENANT NAME-TO-WORKFLOW-ID MAP, which lists each flow by display name against the id its trigger URL carries. IP_Reference_Data_Endpoint maps to 885fad5ec91f460490e8c772d5d10cb8, and the operator chose that flow over Fetch_Users_Categories_Departments_Data_Sync when both were put to them. The flowId field is cleared because af43ab6f7ff2441daaafd1960fcb3ea1 is the flow id of the OTHER candidate, not of this one.",
+      "note": "SERVICEABLE. IP_Reference_Data_Endpoint, 51 packaged actions to 51 live. INSTALLED AND VERIFIED IN THE TENANT 2026-09-04. The flow was rebuilt not by pasting but by scripts/patch-flow-package.mjs --install, which writes the declarations and the scope into the flow's own exported definition and is imported with Update. Re-exported afterwards, it reads 0 missing, 0 different, 0 extra against its package, every variable write carrying its value, every connector host in the definition shape, the eight declarations at the top level, and Method = POST. The flow id is unchanged, so the trigger URL is unchanged. 13 variable writes, 7 connector actions. The deployed config still points this key at d67f2acb3708449490eed561ee56efbe, so the cutover is the remaining step. The rejected candidate, Fetch_Users_Categories_Departments_Data_Sync, is hand-built and unchanged. CLOSED: the question of whether two flows shared the display name Fetch_Users_Categories_Departments_Data_Sync is moot. That flow is not this key's flow and no contract key points at it, so which of it exists changes nothing this register asserts.",
+      "flowId": "9a4dea8e15f242b6904d3655056fa3c2"
+    },
+    {
+      "key": "GET_DOCS",
+      "physicalFlow": "GET_DOCS",
+      "flowLabel": "Get docs",
+      "fixedAction": "getDocs",
+      "workflowId": "818ec4053f1e4f0b87845114241d8b74",
+      "workflowIdCandidates": [
+        {
+          "workflowId": "7995c1eb50d94d5daa2780e71391d874",
+          "label": "BULK OPS GET DOCS",
+          "source": "docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt — \"Total deduplicated flows: 12\", each labelled with its workflow id"
+        }
+      ],
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Get Docs HTTP__a9439b39-ed2f-6bca-58d7-ebbbc891d998__full_definition.json",
+        "docs/reference/flow-contracts/deployed/WEB Get Docs  HTTP GET__d4907f18-4dba-3f06-28de-2ed24f5f7936__full_definition.json",
+        "docs/reference/flow-contracts/deployed/FETCH_DOCS_V2_POST__34a6d00d-8c25-62f7-50ae-f1f564f64945__full_definition.json",
+        "docs/reference/flow-contracts/deployed/GetDocsPaginatedData__81cacabd-66c8-438e-b162-68e2ccb6754f__full_definition.json",
+        "docs/reference/flow-contracts/deployed/01-Fetch_Docs_POST__e663a119-b4d6-750b-6fd2-67ba2af37b0d__full_definition.json",
+        "docs/reference/flow-contracts/deployed/02-Fetch_Docs_POST__e83e7462-7e8d-c780-ab04-9c4b48e5f15e__full_definition.json"
+      ],
+      "evidence": "docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt — \"Total deduplicated flows: 12\", each labelled with its workflow id row 5 (\"GET DOCS\"), corroborated by docs/reference/foundational/flows/details/Consolidated flow URLS.txt — labelled trigger URLs (\"get docs\"). Row 3 is a separate bulk-ops variant of the same purpose; export both if the deployed key points at it. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it.",
+      "note": "Six deployed flows carry a get-docs shape and no source names which the GET_DOCS key points at. All six are attributed so the footprint is the union rather than a guess; config/config.local.js settles which is live."
+    },
+    {
+      "key": "FETCH_EMAIL_ATTACHMENTS",
+      "physicalFlow": "FETCH_EMAIL_ATTACHMENTS",
+      "flowLabel": "Fetch email attachments",
+      "fixedAction": "fetchEmailAttachments",
+      "workflowId": "20e6340941ce4b1bbb87b43c9102a777",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Get Email Attachments__340190e6-0041-5673-8f42-d04d40ffe719__full_definition.json",
+        "docs/reference/flow-contracts/deployed/Web - Get Email Attachments__8726fb6f-6c5c-2140-447d-f97cc5a01c38__full_definition.json"
+      ],
+      "evidence": "docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md Part 1 — the endpoint contract registry, read out of config/endpoints.config.js#EndpointContracts. No labelled URL in the corpus names this flow, so its workflow id has to come from the operator's config.local.js or the Power Automate portal. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it. RESOLVED 2026-09-04 FROM A TENANT NAME-TO-WORKFLOW-ID MAP supplied by the operator, which lists each flow by display name against the id its trigger URL carries — the identifier this field holds, not the flow id. IP_Fetch_Email_Attachment maps to 20e6340941ce4b1bbb87b43c9102a777. This is the value build-endpoint-workflow-ids.mjs carried in its unsourceable DEPLOYED map and the value the deployed config uses; a tenant read now sources it, so it moves into the register and out of that map.",
+      "note": "Two candidates, \"Get Email Attachments\" and \"Web - Get Email Attachments\". Neither touches SharePoint, so the footprint is empty whichever is live - the ambiguity does not affect the gate."
+    },
+    {
+      "key": "SINGLE_ASSIGNMENT",
+      "physicalFlow": "SINGLE_ASSIGNMENT",
+      "flowLabel": "Single assign / create task and update activity",
+      "fixedAction": "singleassignment",
+      "workflowId": "72acfc6a694f414f9fe39c939ead7f08",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Deployed - Create Task__b9d07010-1d98-417c-ad97-a305af770772__full_definition.json"
+      ],
+      "evidence": "Resolved from the tenant. IP_Single_Assignment_Endpoint was exported on 2026-09-04; its definition declares /providers/Microsoft.Flow/flows/05825db0-c806-4974-807c-c062f386cc41 (assetPath cc00c9b7-5de2-4771-992d-007442c073df, which is packaging, not the flow). compare-live-export matches it against DGO_SINGLE_ASSIGNMENT.designer-paste.json at 63 live actions to 63 packaged, 0 missing — this IS the rebuild, and the name follows IP_FETCH_ALL_ENDPOINT's convention. It is NOT YET SERVICEABLE: all 14 Set variable actions arrived with a name and no value, the designer's signature for a scope pasted before the top-level Initialize variable actions existed, and the trigger carries no Method. Both are the faults documented in <FLOW>.variables.md; the flow must be rebuilt before this key is pointed at it. RESOLVED 2026-09-04 FROM THE FLOW'S OWN TRIGGER URL. The operator pointed this key at IP_Single_Assignment_Endpoint's trigger URL and check-config-local read 72acfc6a694f414f9fe39c939ead7f08 out of it — the workflow id, the identifier this field holds. It is neither the flow id (05825db0c8064974807cc062f386cc41, recorded as flowId) nor the export's assetPath, and it is not 6b3bad3005b44bf6bced0f8074d3f2ed, which is IP_Create_Task and what this key called before: a different id from a different flow, which is the corroboration that the URL came from the flow intended.",
+      "note": "RESOLVED AND SERVICEABLE. IP_Single_Assignment_Endpoint is the flow DGO_SINGLE_ASSIGNMENT.designer-paste.json builds — 63 packaged actions to 63 live — installed and verified in the tenant on 2026-09-04 by patch-flow-package.mjs --install: 0 missing, 0 different, 0 extra, 21 variable writes all carrying their values, 7 connector actions, Method = POST. The deployed config points here as of the same day, so the cutover is done. The rejected candidate, IP_Create_Task (6b3bad3005b44bf6bced0f8074d3f2ed), is 108 live actions against the package's 63 and is not what this repository builds or can verify.",
+      "flowId": "05825db0c8064974807cc062f386cc41"
+    },
+    {
+      "key": "BULK_ASSIGNMENT",
+      "physicalFlow": "BULK_ASSIGNMENT",
+      "flowLabel": "Bulk assign",
+      "fixedAction": "bulkassignment",
+      "workflowId": "1154b50e1d17420dadb3b012e7e2a02c",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Deployed Bulk Task Assignment_Create Task__122bb363-ddea-40c7-8578-d0d613a17bf7__full_definition.json"
+      ],
+      "evidence": "CONFLICT: the shipped definition declares workflow_identity c43388639d14452faef4ca3042a95b23, but the labelled URL register gives 7e71fffe770a45ccb93bf216bb53786e for \"BULK ASSIGN\". Both are recorded rather than one being picked. Either the captured run is of a different flow than the one BULK_ASSIGNMENT points at, or one of the two records is stale; config/config.local.js settles it. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it. SOURCED 2026-09-04. This value was carried in build-endpoint-workflow-ids.mjs's DEPLOYED map, which could source nothing. The operator's own config.local.js, read by check-config-local.mjs on 2026-09-04, points this key at exactly this id and the check passes. A configured URL is a second, independent observation of the same value, so the id moves into the register and the fallback map is emptied. It says which flow the estate CALLS; it does not assert the flow has been read against any package.",
+      "workflowIdCandidates": [
+        {
+          "workflowId": "c43388639d14452faef4ca3042a95b23",
+          "label": "Deployed Bulk Task Assignment_Create Task",
+          "source": "The shipped definition's own workflow_identity"
+        },
+        {
+          "workflowId": "7e71fffe770a45ccb93bf216bb53786e",
+          "label": "BULK ASSIGN",
+          "source": "docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt row 8"
+        }
+      ]
+    },
+    {
+      "key": "BULK_ASSIGNMENT_DIRECT",
+      "physicalFlow": "BULK_ASSIGNMENT_DIRECT",
+      "flowLabel": "Bulk assign (direct)",
+      "fixedAction": "bulkassignment",
+      "workflowId": "7e71fffe770a45ccb93bf216bb53786e",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Bulk Assign Direct__57f137b6-5cab-7991-4084-20605a3a9d43__full_definition.json",
+        "docs/reference/flow-contracts/deployed/optimized Bulk Assign Direct__9e098918-9ef7-013f-321a-f2604316ea6f__full_definition.json"
+      ],
+      "evidence": "docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md Part 1 — the endpoint contract registry, read out of config/endpoints.config.js#EndpointContracts lists this as a physically separate flow from BULK_ASSIGNMENT with the same fixed action. No labelled URL in the corpus distinguishes it. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it. SOURCED 2026-09-04. This value was carried in build-endpoint-workflow-ids.mjs's DEPLOYED map, which could source nothing. The operator's own config.local.js, read by check-config-local.mjs on 2026-09-04, points this key at exactly this id and the check passes. A configured URL is a second, independent observation of the same value, so the id moves into the register and the fallback map is emptied. It says which flow the estate CALLS; it does not assert the flow has been read against any package.",
+      "note": "Two candidates, \"Bulk Assign Direct\" and \"optimized Bulk Assign Direct\". Both attributed; their footprints differ, so confirm which is live before relying on either alone."
+    },
+    {
+      "key": "DYNAMIC_ACTIONS",
+      "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS",
+      "flowLabel": "Dynamic global endpoint interface",
+      "fixedAction": "dynamicGlobalAction",
+      "workflowId": "bc83d98acf474a088832d78f50085388",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Universal Dynamic_Multi-Actions_Executor__1abbe547-9d7e-430e-bc2d-3ed59bc738b9__full_definition.json"
+      ],
+      "evidence": "docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt — \"Total deduplicated flows: 12\", each labelled with its workflow id row 10 (\"DYNAMIC GLOBAL ENDPOINT INTERFACE\"). CONFIRMED: the recovered Dynamic_Multi-Actions definition declares workflow_identity bc83d98acf474a088832d78f50085388, the same id the labelled URL register gives. The definition declares its own workflow id in workflow_identity.full_resource_id — the flow identifying itself, which outranks any attribution made from a filename or a labelled URL. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it.",
+      "note": "One physical flow serves four contract keys — DYNAMIC_ACTIONS, EMAIL, DISPATCH_OUTBOUND and ARCHIVE_REFERENCE. One export covers all four."
+    },
+    {
+      "key": "EMAIL",
+      "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS",
+      "flowLabel": "Dynamic global endpoint interface",
+      "fixedAction": "dispatchEmail",
+      "workflowId": "bc83d98acf474a088832d78f50085388",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Universal Dynamic_Multi-Actions_Executor__1abbe547-9d7e-430e-bc2d-3ed59bc738b9__full_definition.json"
+      ],
+      "evidence": "docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md Part 1 — the endpoint contract registry, read out of config/endpoints.config.js#EndpointContracts — same physical flow as DYNAMIC_ACTIONS. CONFIRMED: the recovered Dynamic_Multi-Actions definition declares workflow_identity bc83d98acf474a088832d78f50085388, the same id the labelled URL register gives. The definition declares its own workflow id in workflow_identity.full_resource_id — the flow identifying itself, which outranks any attribution made from a filename or a labelled URL. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it."
+    },
+    {
+      "key": "DISPATCH_OUTBOUND",
+      "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS",
+      "flowLabel": "Dynamic global endpoint interface",
+      "fixedAction": "dispatchOutbound",
+      "workflowId": "bc83d98acf474a088832d78f50085388",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Universal Dynamic_Multi-Actions_Executor__1abbe547-9d7e-430e-bc2d-3ed59bc738b9__full_definition.json"
+      ],
+      "evidence": "docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md Part 1 — the endpoint contract registry, read out of config/endpoints.config.js#EndpointContracts — same physical flow as DYNAMIC_ACTIONS. CONFIRMED: the recovered Dynamic_Multi-Actions definition declares workflow_identity bc83d98acf474a088832d78f50085388, the same id the labelled URL register gives. The definition declares its own workflow id in workflow_identity.full_resource_id — the flow identifying itself, which outranks any attribution made from a filename or a labelled URL. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it.",
+      "note": "Registered and flow-reachable, but no module in the codebase invokes it today."
+    },
+    {
+      "key": "ARCHIVE_REFERENCE",
+      "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS",
+      "flowLabel": "Dynamic global endpoint interface",
+      "fixedAction": "archiveReference",
+      "workflowId": "bc83d98acf474a088832d78f50085388",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Universal Dynamic_Multi-Actions_Executor__1abbe547-9d7e-430e-bc2d-3ed59bc738b9__full_definition.json"
+      ],
+      "evidence": "docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md Part 1 — the endpoint contract registry, read out of config/endpoints.config.js#EndpointContracts — same physical flow as DYNAMIC_ACTIONS. CONFIRMED: the recovered Dynamic_Multi-Actions definition declares workflow_identity bc83d98acf474a088832d78f50085388, the same id the labelled URL register gives. The definition declares its own workflow id in workflow_identity.full_resource_id — the flow identifying itself, which outranks any attribution made from a filename or a labelled URL. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it.",
+      "note": "Registered and flow-reachable, but modules/archive.js performs the archive locally with no network call."
+    },
+    {
+      "key": "EMAIL_RELATED_TASK",
+      "physicalFlow": "EMAIL_RELATED_TASK",
+      "flowLabel": "Create task for email",
+      "fixedAction": "emailtotaskassignment",
+      "workflowId": "a942d230337c4ddfa9a386e92bbd048b",
+      "workflowIdCandidates": [
+        {
+          "workflowId": "a942d230337c4ddfa9a386e92bbd048b",
+          "label": "CREATE TASK FOR EMAIL",
+          "source": "docs/reference/foundational/flows/details/HTTP_Endpoints_Power_Automate_Flows.txt — \"Total deduplicated flows: 12\", each labelled with its workflow id"
+        },
+        {
+          "workflowId": "fe794e0139784ac694768e5a716e0be7",
+          "label": "email to task",
+          "source": "docs/reference/foundational/flows/details/Consolidated flow URLS.txt — labelled trigger URLs"
+        }
+      ],
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Web - Email Task Created__3f2f649b-55af-48e0-9a1e-43135e11a4b0__full_definition.json"
+      ],
+      "evidence": "SETTLED: the shipped Web - Email Task Created definition declares workflow_identity a942d230337c4ddfa9a386e92bbd048b, matching the HTTP_Endpoints register's \"CREATE TASK FOR EMAIL\" and not the Consolidated file's fe794e0139784ac694768e5a716e0be7. The candidate list is kept below so the discarded reading stays visible. The definition declares its own workflow id in workflow_identity.full_resource_id — the flow identifying itself, which outranks any attribution made from a filename or a labelled URL. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it."
+    },
+    {
+      "key": "AI_DOC_ANALYSIS",
+      "physicalFlow": "AI_DOC_ANALYSIS",
+      "flowLabel": "AI document analysis",
+      "fixedAction": "aiAnalyseEventDocs",
+      "workflowId": "3f018fea1031490fb73dff6a8d6341f2",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/DGO_AI_Assist__89925df0-276f-da78-1cba-5847cf24c7d9__full_definition.json"
+      ],
+      "evidence": "docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md Part 1 — the endpoint contract registry, read out of config/endpoints.config.js#EndpointContracts. No labelled URL in the corpus names any of the three AI flows. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it. SUPERSEDED 2026-09-03 BY A TENANT READ. The operator identified AI_Document_Processing as the flow serving this key and exported it; the package's definition declares /providers/Microsoft.Flow/flows/fefa43c6-fb9d-4337-8b65-7fd19fa09b6d. The operator separately reported 3eec824c-c1ae-28d6-cc1f-a2d5c4314a04 for this flow, which the export contradicts and which is the filename GUID of a deployed-corpus definition of Fetch_All_Data_&_References_Matrix-POST, so it is taken as a mis-copy. The export is authoritative here because it carries the display name and the id in one artifact. TWO DIFFERENT IDENTIFIERS, AND THIS FIELD IS THE OTHER ONE. A Power Automate flow carries a flow id — the GUID in make.powerautomate.com/…/flows/<id>/details, in a legacy export's definition `name` / `id` (/providers/Microsoft.Flow/flows/<id>), and in the maker portal's Flow identifier. Its trigger URL carries a DIFFERENT id in /workflows/<id>/triggers/manual/paths/invoke. This register records the second: every settled entry here is sourced from a labelled trigger URL or from a definition's own workflow_identity, and scripts/check-config-local.mjs compares a config.local.js against it by pulling that id out of the URL. EMAIL_RELATED_TASK proves the pairing — a942d230337c4ddfa9a386e92bbd048b, recorded from workflow_identity, matches the operator's live URL exactly. The value below was read from an export's definition `name`, which is the flow id, so it is the wrong class for this field and is preserved as flowId rather than asserted as the workflow id. The trigger URL of the correctly-named flow is the only source for the right one. Values previously held in this field: 5b29edc84b5d4a8db3c885d8441aa977. RESOLVED 2026-09-04 FROM A TENANT NAME-TO-WORKFLOW-ID MAP supplied by the operator, which lists each flow by display name against the id its trigger URL carries — the identifier this field holds, not the flow id. AI_Document_Processing maps to 3f018fea1031490fb73dff6a8d6341f2, the only AI-document flow in that map. Its FLOW id, fefa43c6fb9d43378b657fd19fa09b6d, is recorded separately as flowId — a third corroboration that the two identifiers differ.",
+      "note": "THE DEPLOYED CONFIG DOES NOT POINT HERE. It points this key at 20e3b003a57f47febae8a24ad5b9acd4, which appears under no flow in the operator's map and which this register lists as a candidate for REFERENCE_DATA — an unidentified flow under a key that should reach AI_Document_Processing. That is the mis-slotted-URL failure check-config-local.mjs exists to catch, and it is now a hard failure rather than a warning.",
+      "flowId": "fefa43c6fb9d43378b657fd19fa09b6d"
+    },
+    {
+      "key": "AI_EMAIL_ANALYSIS",
+      "physicalFlow": "AI_EMAIL_ANALYSIS",
+      "flowLabel": "AI email analysis",
+      "fixedAction": "aiAnalyseEmail",
+      "workflowId": "fe794e0139784ac694768e5a716e0be7",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Web - Email AI Assist__aacdf9d5-da49-b6da-24d1-e28adc68cd7e__full_definition.json",
+        "docs/reference/flow-contracts/deployed/Digital Hub Email AI Assist__34761736-eb9a-30f7-c43b-c9b2ea6ad297__full_definition.json"
+      ],
+      "evidence": "docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md Part 1 — the endpoint contract registry, read out of config/endpoints.config.js#EndpointContracts. No labelled URL in the corpus names any of the three AI flows. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it. SOURCED 2026-09-04. This value was carried in build-endpoint-workflow-ids.mjs's DEPLOYED map, which could source nothing. The operator's own config.local.js, read by check-config-local.mjs on 2026-09-04, points this key at exactly this id and the check passes. A configured URL is a second, independent observation of the same value, so the id moves into the register and the fallback map is emptied. It says which flow the estate CALLS; it does not assert the flow has been read against any package.",
+      "note": "Two candidates. Neither touches SharePoint."
+    },
+    {
+      "key": "AI_CHAT",
+      "physicalFlow": "AI_CHAT",
+      "flowLabel": "AI chat",
+      "fixedAction": "aiChat",
+      "workflowId": "a13c8b577bd44f8787c50d095ea3faf9",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Instant OpenRouter AI Chat__98fb5275-474b-4926-a60e-1657098abf0d__full_definition.json",
+        "docs/reference/flow-contracts/deployed/Persistent GPT AI Chat in App__033e5d70-ea07-4632-8e9a-f32590913637__full_definition.json",
+        "docs/reference/flow-contracts/deployed/Web - Preprocess user message__fdd3f24e-285e-46e4-a9fd-be068a80287f__full_definition.json"
+      ],
+      "evidence": "docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md Part 1 — the endpoint contract registry, read out of config/endpoints.config.js#EndpointContracts. No labelled URL in the corpus names any of the three AI flows. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it. SOURCED 2026-09-04. This value was carried in build-endpoint-workflow-ids.mjs's DEPLOYED map, which could source nothing. The operator's own config.local.js, read by check-config-local.mjs on 2026-09-04, points this key at exactly this id and the check passes. A configured URL is a second, independent observation of the same value, so the id moves into the register and the fallback map is emptied. It says which flow the estate CALLS; it does not assert the flow has been read against any package.",
+      "note": "Three candidates. None touches SharePoint, so the footprint is empty whichever is live."
+    },
+    {
+      "key": "OTP_GENERATE",
+      "physicalFlow": "OTP_GENERATE",
+      "flowLabel": "Web - OTP Generate",
+      "fixedAction": "otpGenerate",
+      "workflowId": "314aaf27593147089b38322e5ca25936",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/Web - OTP Generate__a03d0ae8-a106-4aee-9985-d73ea7997653__full_definition.json"
+      ],
+      "evidence": "The shipped definition names itself \"Web - OTP Generate\" and is the flow docs/reference/flow-contracts/IDENTITY.md documents as OTP_GENERATE. The definition declares its own workflow id in workflow_identity.full_resource_id — the flow identifying itself, which outranks any attribution made from a filename or a labelled URL. No labelled URL register recorded this id. DEPLOYED DEFINITION ATTACHED. Exported from the live tenant on 2026-08-19 by scripts/export-power-automate-flows.ps1. This is the deployed flow, not a capture of one run of it. CONSOLIDATION 2026-09-05: claude/fetchall-flow-error-1h94u5 @ 5d922be records both OTP keys on ONE physical flow, IP_OTP_Endpoint, at workflowId b372d45e4b2a47d88b8e8b032da67fcd, on the operator's tenant name-to-workflow-id map plus the id read out of that flow's trigger URL, and states IP_OTP_Endpoint and IP_OTP_VERIFY are one flow renamed. That id appears in no committed flow definition on either branch. The row above is kept because it is the one backed by a committed tenant export. CONTRADICTED, not resolved — see changelog.",
+      "contradictedByBranch": "claude/fetchall-flow-error-1h94u5 @ 5d922be — one flow IP_OTP_Endpoint at b372d45e4b2a47d88b8e8b032da67fcd"
+    },
+    {
+      "key": "OTP_VERIFY",
+      "physicalFlow": "OTP_VERIFY",
+      "flowLabel": "Web - OTP Verify",
+      "fixedAction": "otpVerify",
+      "workflowId": "c5e314c768b54bdc89350954ef6a256d",
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/IP_OTP_VERIFY__c5e314c7-68b5-4bdc-8935-0954ef6a256d__full_definition.json",
+        "docs/reference/flow-contracts/deployed/Web - OTP Verify__3e201620-f1e8-4c17-a90a-4d95b94a24c2__full_definition.json"
+      ],
+      "evidence": "IP_OTP_VERIFY, built 2026-09-04 from the fresh-flow kit and exported from the tenant. It carries the hardening: the lookup binds Title to the caller, both caller values are escaped into the OData filter, the identity is composed before the lookup that reads it, the attempt cap refuses at five with 429, and Scope_VERIFY_Complete_No_Trigger — the open mail relay — appears nowhere. SUPERSEDES 43879c5165de439680055ab4258b3f27 (Web - OTP Verify, 3e201620-f1e8-4c17-a90a-4d95b94a24c2), which carries all five defects and stays recorded here so a config still naming it is reported as pointing at the superseded flow rather than at an unknown one. The old flow is not retired until ITEM-43's cutover turns it off; until then both exist and only one is correct. CONSOLIDATION 2026-09-05: claude/fetchall-flow-error-1h94u5 @ 5d922be records both OTP keys on ONE physical flow, IP_OTP_Endpoint, at workflowId b372d45e4b2a47d88b8e8b032da67fcd, on the operator's tenant name-to-workflow-id map plus the id read out of that flow's trigger URL, and states IP_OTP_Endpoint and IP_OTP_VERIFY are one flow renamed. That id appears in no committed flow definition on either branch. The row above is kept because it is the one backed by a committed tenant export. CONTRADICTED, not resolved — see changelog.",
+      "supersededWorkflowId": "43879c5165de439680055ab4258b3f27",
+      "contradictedByBranch": "claude/fetchall-flow-error-1h94u5 @ 5d922be — one flow IP_OTP_Endpoint at b372d45e4b2a47d88b8e8b032da67fcd"
+    },
+    {
+      "key": "SCAN_INTAKE",
+      "physicalFlow": "SCAN_INTAKE",
+      "flowLabel": "Scan intake (PUT, non-JSON)",
+      "fixedAction": "n/a",
+      "workflowId": null,
+      "definitions": [
+        "docs/reference/flow-contracts/deployed/IP_SCAN_INTAKE__5504d7f9-cc96-470c-be79-217582faf415__full_definition.json"
+      ],
+      "evidence": "docs/reference/flow-contracts/INTERNAL_PLATFORM_FLOWS.md Part 10 — the one non-JSON contract, a PUT. BUILT AND DEPLOYED 2026-09-04 as IP_SCAN_INTAKE, workflow 5504d7f9-cc96-470c-be79-217582faf415. The flow was written in this repository as docs/deployment/internal/flows/designer-paste/DGO_SCAN_INTAKE.designer-paste.json, pasted into the tenant by the operator, and the definition attached here is the tenant's own export taken after the trigger was corrected to PUT and Tenant. It reads the X-DGO-Filename / X-DGO-Sha256 / X-DGO-Size headers depositScan sends, which is the only thing that identifies this flow in an export. Checked by npm run test:keyimpl. CONSOLIDATION 2026-09-05: claude/fetchall-flow-error-1h94u5 recorded workflowId 88401ce1f44148539c0da53c9491f8e6 for this key from the operator's tenant name-to-workflow-id map, against the superseded ECM_DOCS_INTAKE attribution. That id is NOT adopted here and workflowId stays null: it has not been read from IP_SCAN_INTAKE's own trigger URL or its workflow_identity, and a wrong expectation in this field reports a correct URL as the wrong flow. Recorded as an unverified candidate so the two sources can be reconciled when a trigger URL for this key is first configured.",
+      "internalName": "5504d7f9-cc96-470c-be79-217582faf415",
+      "attributionHistory": "This entry once attached ECM_DOCS_INTAKE__df7ddff1-… and declared it 'the deployed flow'. That was wrong twice over: the definition was a POST tenant-authenticated Portal Registry feed that reads no X-DGO-* header, and the file itself carried a workflow id belonging to a different flow. It was emptied on 2026-09-03 when the key was genuinely unbuilt, and carries a real definition for the first time on 2026-09-04.",
+      "workflowIdCandidateUnverified": "88401ce1f44148539c0da53c9491f8e6",
+      "workflowIdCandidateSource": "claude/fetchall-flow-error-1h94u5 @ 5d922be — operator's tenant name-to-workflow-id map, 2026-09-04"
+    }
+  ],
+  "unattributedDefinitions": [],
+  "physicalFlows": [
+    {
+      "physicalFlow": "AI_CHAT",
+      "servesContractKeys": [
+        "AI_CHAT"
+      ],
+      "workflowId": null
+    },
+    {
+      "physicalFlow": "AI_DOC_ANALYSIS",
+      "servesContractKeys": [
+        "AI_DOC_ANALYSIS"
+      ],
+      "workflowId": null
+    },
+    {
+      "physicalFlow": "AI_EMAIL_ANALYSIS",
+      "servesContractKeys": [
+        "AI_EMAIL_ANALYSIS"
+      ],
+      "workflowId": null
+    },
+    {
+      "physicalFlow": "BULK_ASSIGNMENT",
+      "servesContractKeys": [
+        "BULK_ASSIGNMENT"
+      ],
+      "workflowId": null
+    },
+    {
+      "physicalFlow": "BULK_ASSIGNMENT_DIRECT",
+      "servesContractKeys": [
+        "BULK_ASSIGNMENT_DIRECT"
+      ],
+      "workflowId": null
+    },
+    {
+      "physicalFlow": "DYNAMIC_GLOBAL_ACTIONS",
+      "servesContractKeys": [
+        "ARCHIVE_REFERENCE",
+        "DISPATCH_OUTBOUND",
+        "DYNAMIC_ACTIONS",
+        "EMAIL"
+      ],
+      "workflowId": "bc83d98acf474a088832d78f50085388"
+    },
+    {
+      "physicalFlow": "EMAIL_RELATED_TASK",
+      "servesContractKeys": [
+        "EMAIL_RELATED_TASK"
+      ],
+      "workflowId": "a942d230337c4ddfa9a386e92bbd048b"
+    },
+    {
+      "physicalFlow": "FETCH_ALL",
+      "servesContractKeys": [
+        "FETCH_ALL"
+      ],
+      "workflowId": null
+    },
+    {
+      "physicalFlow": "FETCH_EMAIL_ATTACHMENTS",
+      "servesContractKeys": [
+        "FETCH_EMAIL_ATTACHMENTS"
+      ],
+      "workflowId": null
+    },
+    {
+      "physicalFlow": "GET_DOCS",
+      "servesContractKeys": [
+        "GET_DOCS"
+      ],
+      "workflowId": "818ec4053f1e4f0b87845114241d8b74"
+    },
+    {
+      "physicalFlow": "OTP_GENERATE",
+      "servesContractKeys": [
+        "OTP_GENERATE"
+      ],
+      "workflowId": "314aaf27593147089b38322e5ca25936"
+    },
+    {
+      "physicalFlow": "OTP_VERIFY",
+      "servesContractKeys": [
+        "OTP_VERIFY"
+      ],
+      "workflowId": "43879c5165de439680055ab4258b3f27"
+    },
+    {
+      "physicalFlow": "REFERENCE_DATA",
+      "servesContractKeys": [
+        "REFERENCE_DATA"
+      ],
+      "workflowId": "ff455c68e9ac493e858fb984bcfd01fb"
+    },
+    {
+      "physicalFlow": "SCAN_INTAKE",
+      "servesContractKeys": [
+        "SCAN_INTAKE"
+      ],
+      "workflowId": null
+    },
+    {
+      "physicalFlow": "SINGLE_ASSIGNMENT",
+      "servesContractKeys": [
+        "SINGLE_ASSIGNMENT"
+      ],
+      "workflowId": "f71397ff3ca145059dc8f78c04923e9f"
+    },
+    {
+      "physicalFlow": "SUBSIDIARY_ACTIONS",
+      "servesContractKeys": [
+        "FETCH_ACTIVITIES",
+        "SUBSIDIARY_ACTIONS"
+      ],
+      "workflowId": "85c556f10b8244ba9d839a2ebe240b91"
+    }
+  ],
+  "totals": {
+    "contractKeys": 20,
+    "physicalFlows": 16,
+    "physicalFlowsWithWorkflowId": 8,
+    "unattributedDefinitions": 5
+  },
+  "changelog": [
+    {
+      "version": "2.0.0",
+      "what": "Attributed every physical flow to a definition exported from the live tenant on 2026-08-19. All 16 flows and all 20 contract keys are now covered by a deployed definition rather than by a capture, an inference or nothing. Where more than one deployed flow carries the right shape, every candidate is attributed so the footprint is a union rather than a guess, and the note says whether the ambiguity can affect the gate."
+    },
+    {
+      "version": "1.1.0",
+      "what": "Read workflow_identity out of the definitions themselves. That confirmed REFERENCE_DATA and DYNAMIC_GLOBAL_ACTIONS, settled the EMAIL_RELATED_TASK conflict, supplied both OTP ids that no labelled register held, and opened a new conflict on BULK_ASSIGNMENT. Two definitions were also recovered from deleted git history: Dynamic_Multi-Actions (closes four contract keys) and a copy of the fetch-all flow."
+    },
+    {
+      "version": "2.0.0",
+      "what": "Consolidation of the five most recently updated branches. SCAN_INTAKE takes the claude/system-remediation-gaps-ahpmsy row (IP_SCAN_INTAKE 5504d7f9-cc96-470c-be79-217582faf415, tenant export attached, checked by npm run test:keyimpl); the superseded ECM_DOCS_INTAKE attribution is not restored. Every other key keeps the claude/fetchall-flow-error-1h94u5 tenant-sourced ids. The OTP rows keep the claude/sharepoint-lists-gap-bqo7j7 two-flow model, so physicalFlows returns to 16.",
+      "unresolved": "CONTRADICTED — the OTP topology. claude/sharepoint-lists-gap-bqo7j7 carries a tenant export of IP_OTP_VERIFY (workflow_identity.internal_name c5e314c7-68b5-4bdc-8935-0954ef6a256d, full_resource_id flow 4dbe6dde-37d5-47b4-ba32-d4ae5c9f8b61) and treats OTP_GENERATE and OTP_VERIFY as two flows. claude/fetchall-flow-error-1h94u5 records one flow, IP_OTP_Endpoint, at b372d45e4b2a47d88b8e8b032da67fcd, and states IP_OTP_Endpoint and IP_OTP_VERIFY are one flow renamed. b372d45e appears in no committed definition on either branch. The export-backed model is adopted; the contradiction is not resolved. CLOSURE: export IP_OTP_Endpoint from the tenant and compare its workflow_identity against c5e314c7 / 4dbe6dde.",
+      "date": "2026-09-05"
+    }
+  ]
+}

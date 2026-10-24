@@ -1,0 +1,188 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:24Z",
+    "workflow_identity":  {
+                              "internal_name":  "a9439b39-ed2f-6bca-58d7-ebbbc891d998",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "Get Docs HTTP",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           },
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+                                                                        "operationMetadataId":  "d2adf6fb-8d58-4351-aa98-0b02ae49011e"
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "PowerAppV2",
+                                                       "inputs":  {
+                                                                      "schema":  {
+                                                                                     "type":  "object",
+                                                                                     "properties":  {
+                                                                                                        "text":  {
+                                                                                                                     "title":  "SelectColumns",
+                                                                                                                     "type":  "string",
+                                                                                                                     "x-ms-dynamically-added":  true,
+                                                                                                                     "description":  "Please enter your input",
+                                                                                                                     "x-ms-content-hint":  "TEXT"
+                                                                                                                 },
+                                                                                                        "text_1":  {
+                                                                                                                       "title":  "ExpandColumns",
+                                                                                                                       "type":  "string",
+                                                                                                                       "x-ms-dynamically-added":  true,
+                                                                                                                       "description":  "Please enter your input",
+                                                                                                                       "x-ms-content-hint":  "TEXT"
+                                                                                                                   },
+                                                                                                        "text_2":  {
+                                                                                                                       "title":  "FilterQuery",
+                                                                                                                       "type":  "string",
+                                                                                                                       "x-ms-dynamically-added":  true,
+                                                                                                                       "description":  "Please enter your input",
+                                                                                                                       "x-ms-content-hint":  "TEXT"
+                                                                                                                   }
+                                                                                                    },
+                                                                                     "required":  [
+
+                                                                                                  ]
+                                                                                 }
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Compose":  {
+                                                       "runAfter":  {
+
+                                                                    },
+                                                       "metadata":  {
+                                                                        "operationMetadataId":  "e5484165-1b4f-4bd8-89dc-896c0ce25709"
+                                                                    },
+                                                       "type":  "Compose",
+                                                       "inputs":  "xxxxx"
+                                                   },
+                                       "Compose_ODataQuery":  {
+                                                                  "runAfter":  {
+                                                                                   "Compose":  [
+                                                                                                   "Succeeded"
+                                                                                               ]
+                                                                               },
+                                                                  "metadata":  {
+                                                                                   "operationMetadataId":  "f31363e3-d49b-48d1-941f-5159eb69eb0b"
+                                                                               },
+                                                                  "type":  "Compose",
+                                                                  "inputs":  "@concat(\n  \u0027?$select=\u0027, triggerBody()[\u0027text\u0027],\n  if(not(empty(triggerBody()[\u0027text_1\u0027])), concat(\u0027\u0026$expand=\u0027, triggerBody()[\u0027text_1\u0027]), \u0027\u0027),\n  if(not(empty(triggerBody()[\u0027text_2\u0027])), concat(\u0027\u0026$filter=\u0027, triggerBody()[\u0027text_2\u0027]), \u0027\u0027),\n  \u0027\u0026$orderby=Created desc\u0027,\n  \u0027\u0026$top=2000\u0027\n)"
+                                                              },
+                                       "Send_an_HTTP_request_to_SharePoint":  {
+                                                                                  "runAfter":  {
+                                                                                                   "Compose_ODataQuery":  [
+                                                                                                                              "Succeeded"
+                                                                                                                          ]
+                                                                                               },
+                                                                                  "metadata":  {
+                                                                                                   "operationMetadataId":  "7deda896-5baa-4e5a-b784-7edf0aaa0c54"
+                                                                                               },
+                                                                                  "type":  "OpenApiConnection",
+                                                                                  "inputs":  {
+                                                                                                 "host":  {
+                                                                                                              "apiId":  "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                                                                              "connectionName":  "shared_sharepointonline",
+                                                                                                              "operationId":  "HttpRequest"
+                                                                                                          },
+                                                                                                 "parameters":  {
+                                                                                                                    "dataset":  "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                                                                                                                    "parameters/method":  "GET",
+                                                                                                                    "parameters/uri":  "_api/web/lists/getbytitle(\u0027DGO DIGITAL OPS\u0027)/items@{outputs(\u0027Compose_ODataQuery\u0027)}",
+                                                                                                                    "parameters/headers":  {
+                                                                                                                                               "Accept":  "application/json;odata=nometadata"
+                                                                                                                                           }
+                                                                                                                },
+                                                                                                 "authentication":  {
+                                                                                                                        "value":  "@json(decodeBase64(triggerOutputs().headers[\u0027X-MS-APIM-Tokens\u0027]))[\u0027$ConnectionKey\u0027]",
+                                                                                                                        "type":  "Raw"
+                                                                                                                    }
+                                                                                             }
+                                                                              },
+                                       "Compose_Duration":  {
+                                                                "runAfter":  {
+                                                                                 "Compose_ItemsCount":  [
+                                                                                                            "Succeeded"
+                                                                                                        ]
+                                                                             },
+                                                                "metadata":  {
+                                                                                 "operationMetadataId":  "3c2c71cf-63c9-458d-b8b4-697e0e74d41a"
+                                                                             },
+                                                                "type":  "Compose",
+                                                                "inputs":  "xxx"
+                                                            },
+                                       "Compose_ItemsCount":  {
+                                                                  "runAfter":  {
+                                                                                   "Send_an_HTTP_request_to_SharePoint":  [
+                                                                                                                              "Succeeded"
+                                                                                                                          ]
+                                                                               },
+                                                                  "metadata":  {
+                                                                                   "operationMetadataId":  "109f4502-4d32-4d55-82e3-134bb2fbefda"
+                                                                               },
+                                                                  "type":  "Compose",
+                                                                  "inputs":  "@length(body(\u0027Send_an_HTTP_request_to_SharePoint\u0027)?[\u0027value\u0027])"
+                                                              },
+                                       "Respond_to_a_Power_App_or_flow":  {
+                                                                              "runAfter":  {
+                                                                                               "Compose_itemsJSON":  [
+                                                                                                                         "Succeeded"
+                                                                                                                     ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "b2808754-fb2d-4cf9-9993-35e7e5f42988"
+                                                                                           },
+                                                                              "type":  "Response",
+                                                                              "kind":  "PowerApp",
+                                                                              "inputs":  {
+                                                                                             "statusCode":  200,
+                                                                                             "body":  {
+                                                                                                          "responsedata":  "@{outputs(\u0027Compose_itemsJSON\u0027)}"
+                                                                                                      },
+                                                                                             "schema":  {
+                                                                                                            "type":  "object",
+                                                                                                            "properties":  {
+                                                                                                                               "responsedata":  {
+                                                                                                                                                    "title":  "responsedata",
+                                                                                                                                                    "x-ms-dynamically-added":  true,
+                                                                                                                                                    "type":  "string"
+                                                                                                                                                }
+                                                                                                                           }
+                                                                                                        }
+                                                                                         }
+                                                                          },
+                                       "Compose_itemsJSON":  {
+                                                                 "runAfter":  {
+                                                                                  "Compose_Duration":  [
+                                                                                                           "Succeeded"
+                                                                                                       ]
+                                                                              },
+                                                                 "metadata":  {
+                                                                                  "operationMetadataId":  "3c2c71cf-63c9-458d-b8b4-697e0e74d41a"
+                                                                              },
+                                                                 "type":  "Compose",
+                                                                 "inputs":  "@string(body(\u0027Send_an_HTTP_request_to_SharePoint\u0027)?[\u0027value\u0027])"
+                                                             }
+                                   }
+                   }
+}

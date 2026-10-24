@@ -1,0 +1,419 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:20Z",
+    "workflow_identity":  {
+                              "internal_name":  "2b146c0c-a7d2-c676-5447-76807c98e6b9",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "Get Tasks HTTP",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           },
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+                                                                        "operationMetadataId":  "3ce91112-0396-408e-83ab-fe241995179d"
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "PowerAppV2",
+                                                       "inputs":  {
+                                                                      "schema":  {
+                                                                                     "type":  "object",
+                                                                                     "properties":  {
+                                                                                                        "text":  {
+                                                                                                                     "title":  "SelectColumns",
+                                                                                                                     "type":  "string",
+                                                                                                                     "x-ms-dynamically-added":  true,
+                                                                                                                     "description":  "Add relevant columns to retrieve",
+                                                                                                                     "x-ms-content-hint":  "TEXT"
+                                                                                                                 },
+                                                                                                        "text_1":  {
+                                                                                                                       "title":  "ExpandColumns",
+                                                                                                                       "type":  "string",
+                                                                                                                       "x-ms-dynamically-added":  true,
+                                                                                                                       "description":  "Add Complex Columns to breakdown",
+                                                                                                                       "x-ms-content-hint":  "TEXT"
+                                                                                                                   },
+                                                                                                        "text_2":  {
+                                                                                                                       "title":  "FilterQuery",
+                                                                                                                       "type":  "string",
+                                                                                                                       "x-ms-dynamically-added":  true,
+                                                                                                                       "description":  "Provide Filter Parameters",
+                                                                                                                       "x-ms-content-hint":  "TEXT"
+                                                                                                                   }
+                                                                                                    },
+                                                                                     "required":  [
+                                                                                                      "text",
+                                                                                                      "text_1",
+                                                                                                      "text_2"
+                                                                                                  ]
+                                                                                 }
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Compose_ODataQuery":  {
+                                                                  "runAfter":  {
+
+                                                                               },
+                                                                  "metadata":  {
+                                                                                   "operationMetadataId":  "06307790-f8b7-418e-802e-71530abcc499"
+                                                                               },
+                                                                  "type":  "Compose",
+                                                                  "inputs":  "@concat(\n  \u0027?$select=\u0027, triggerBody()[\u0027text\u0027],\n  if(not(empty(triggerBody()[\u0027text_1\u0027])), concat(\u0027\u0026$expand=\u0027, triggerBody()[\u0027text_1\u0027]), \u0027\u0027),\n  if(not(empty(triggerBody()[\u0027text_2\u0027])), concat(\u0027\u0026$filter=\u0027, triggerBody()[\u0027text_2\u0027]), \u0027\u0027),\n  \u0027\u0026$orderby=Created desc\u0027,\n  \u0027\u0026$top=2000\u0027\n)"
+                                                              },
+                                       "Compose_HTTP_Data":  {
+                                                                 "runAfter":  {
+                                                                                  "Select_1":  [
+                                                                                                   "Succeeded"
+                                                                                               ]
+                                                                              },
+                                                                 "metadata":  {
+                                                                                  "operationMetadataId":  "c16595f0-4be3-4d77-97b4-8973dd55b071"
+                                                                              },
+                                                                 "type":  "Compose",
+                                                                 "inputs":  "@string(outputs(\u0027Send_an_HTTP_request_to_SharePoint\u0027)?[\u0027body\u0027])"
+                                                             },
+                                       "Respond_to_a_Power_App_or_flow":  {
+                                                                              "runAfter":  {
+                                                                                               "Compose_HTTP_Data":  [
+                                                                                                                         "Succeeded"
+                                                                                                                     ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "44d72f53-ed2a-4602-b657-824b3df35efd"
+                                                                                           },
+                                                                              "type":  "Response",
+                                                                              "kind":  "PowerApp",
+                                                                              "inputs":  {
+                                                                                             "statusCode":  200,
+                                                                                             "body":  {
+                                                                                                          "gbltasksflowresponse":  "@{body(\u0027Select_1\u0027)}"
+                                                                                                      },
+                                                                                             "schema":  {
+                                                                                                            "type":  "object",
+                                                                                                            "properties":  {
+                                                                                                                               "gbltasksflowresponse":  {
+                                                                                                                                                            "title":  "gbltasksflowresponse",
+                                                                                                                                                            "x-ms-dynamically-added":  true,
+                                                                                                                                                            "type":  "string"
+                                                                                                                                                        }
+                                                                                                                           }
+                                                                                                        }
+                                                                                         }
+                                                                          },
+                                       "Send_an_HTTP_request_to_SharePoint":  {
+                                                                                  "runAfter":  {
+                                                                                                   "Compose_ODataQuery":  [
+                                                                                                                              "Succeeded"
+                                                                                                                          ]
+                                                                                               },
+                                                                                  "metadata":  {
+                                                                                                   "operationMetadataId":  "8837c48c-8d51-4715-a274-3b5df2d0ac5a"
+                                                                                               },
+                                                                                  "type":  "OpenApiConnection",
+                                                                                  "inputs":  {
+                                                                                                 "parameters":  {
+                                                                                                                    "dataset":  "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                                                                                                                    "parameters/method":  "GET",
+                                                                                                                    "parameters/uri":  "_api/web/lists/getbytitle(\u0027Global Tracking Queue\u0027)/items@{outputs(\u0027Compose_ODataQuery\u0027)}",
+                                                                                                                    "parameters/headers":  {
+                                                                                                                                               "Accept":  "application/json;odata=nometadata"
+                                                                                                                                           }
+                                                                                                                },
+                                                                                                 "host":  {
+                                                                                                              "apiId":  "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                                                                              "connectionName":  "shared_sharepointonline",
+                                                                                                              "operationId":  "HttpRequest"
+                                                                                                          },
+                                                                                                 "authentication":  {
+                                                                                                                        "value":  "@json(decodeBase64(triggerOutputs().headers[\u0027X-MS-APIM-Tokens\u0027]))[\u0027$ConnectionKey\u0027]",
+                                                                                                                        "type":  "Raw"
+                                                                                                                    }
+                                                                                             }
+                                                                              },
+                                       "Parse_JSON_2":  {
+                                                            "runAfter":  {
+                                                                             "Send_an_HTTP_request_to_SharePoint":  [
+                                                                                                                        "Succeeded"
+                                                                                                                    ]
+                                                                         },
+                                                            "metadata":  {
+                                                                             "operationMetadataId":  "0a033cc0-7c81-4838-a2ca-d0150d9376d5"
+                                                                         },
+                                                            "type":  "ParseJson",
+                                                            "inputs":  {
+                                                                           "content":  "@body(\u0027Send_an_HTTP_request_to_SharePoint\u0027)",
+                                                                           "schema":  {
+                                                                                          "type":  "object",
+                                                                                          "properties":  {
+                                                                                                             "statusCode":  {
+                                                                                                                                "type":  "integer"
+                                                                                                                            },
+                                                                                                             "headers":  {
+                                                                                                                             "type":  "object",
+                                                                                                                             "properties":  {
+                                                                                                                                                "Cache-Control":  {
+                                                                                                                                                                      "type":  "string"
+                                                                                                                                                                  },
+                                                                                                                                                "Transfer-Encoding":  {
+                                                                                                                                                                          "type":  "string"
+                                                                                                                                                                      },
+                                                                                                                                                "Vary":  {
+                                                                                                                                                             "type":  "string"
+                                                                                                                                                         },
+                                                                                                                                                "Set-Cookie":  {
+                                                                                                                                                                   "type":  "string"
+                                                                                                                                                               },
+                                                                                                                                                "Strict-Transport-Security":  {
+                                                                                                                                                                                  "type":  "string"
+                                                                                                                                                                              },
+                                                                                                                                                "X-NetworkStatistics":  {
+                                                                                                                                                                            "type":  "string"
+                                                                                                                                                                        },
+                                                                                                                                                "X-SharePointHealthScore":  {
+                                                                                                                                                                                "type":  "string"
+                                                                                                                                                                            },
+                                                                                                                                                "X-SP-SERVERSTATE":  {
+                                                                                                                                                                         "type":  "string"
+                                                                                                                                                                     },
+                                                                                                                                                "DATASERVICEVERSION":  {
+                                                                                                                                                                           "type":  "string"
+                                                                                                                                                                       },
+                                                                                                                                                "SPClientServiceRequestDuration":  {
+                                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                                   },
+                                                                                                                                                "IsOCDI":  {
+                                                                                                                                                               "type":  "string"
+                                                                                                                                                           },
+                                                                                                                                                "X-DataBoundary":  {
+                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                   },
+                                                                                                                                                "X-1DSCollectorUrl":  {
+                                                                                                                                                                          "type":  "string"
+                                                                                                                                                                      },
+                                                                                                                                                "X-AriaCollectorURL":  {
+                                                                                                                                                                           "type":  "string"
+                                                                                                                                                                       },
+                                                                                                                                                "SPRequestGuid":  {
+                                                                                                                                                                      "type":  "string"
+                                                                                                                                                                  },
+                                                                                                                                                "Request-Id":  {
+                                                                                                                                                                   "type":  "string"
+                                                                                                                                                               },
+                                                                                                                                                "MS-CV":  {
+                                                                                                                                                              "type":  "string"
+                                                                                                                                                          },
+                                                                                                                                                "SPLogId":  {
+                                                                                                                                                                "type":  "string"
+                                                                                                                                                            },
+                                                                                                                                                "X-Frame-Options":  {
+                                                                                                                                                                        "type":  "string"
+                                                                                                                                                                    },
+                                                                                                                                                "Content-Security-Policy":  {
+                                                                                                                                                                                "type":  "string"
+                                                                                                                                                                            },
+                                                                                                                                                "MicrosoftSharePointTeamServices":  {
+                                                                                                                                                                                        "type":  "string"
+                                                                                                                                                                                    },
+                                                                                                                                                "X-Content-Type-Options":  {
+                                                                                                                                                                               "type":  "string"
+                                                                                                                                                                           },
+                                                                                                                                                "X-MS-InvokeApp":  {
+                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                   },
+                                                                                                                                                "P3P":  {
+                                                                                                                                                            "type":  "string"
+                                                                                                                                                        },
+                                                                                                                                                "X-AspNet-Version":  {
+                                                                                                                                                                         "type":  "string"
+                                                                                                                                                                     },
+                                                                                                                                                "X-Powered-By":  {
+                                                                                                                                                                     "type":  "string"
+                                                                                                                                                                 },
+                                                                                                                                                "x-ms-request-id":  {
+                                                                                                                                                                        "type":  "string"
+                                                                                                                                                                    },
+                                                                                                                                                "x-ms-environment-id":  {
+                                                                                                                                                                            "type":  "string"
+                                                                                                                                                                        },
+                                                                                                                                                "x-ms-tenant-id":  {
+                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                   },
+                                                                                                                                                "x-ms-dlp-re":  {
+                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                },
+                                                                                                                                                "x-ms-dlp-gu":  {
+                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                },
+                                                                                                                                                "x-ms-dlp-ef":  {
+                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                },
+                                                                                                                                                "Timing-Allow-Origin":  {
+                                                                                                                                                                            "type":  "string"
+                                                                                                                                                                        },
+                                                                                                                                                "x-ms-apihub-cached-response":  {
+                                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                                },
+                                                                                                                                                "x-ms-apihub-obo":  {
+                                                                                                                                                                        "type":  "string"
+                                                                                                                                                                    },
+                                                                                                                                                "Date":  {
+                                                                                                                                                             "type":  "string"
+                                                                                                                                                         },
+                                                                                                                                                "Content-Type":  {
+                                                                                                                                                                     "type":  "string"
+                                                                                                                                                                 },
+                                                                                                                                                "Expires":  {
+                                                                                                                                                                "type":  "string"
+                                                                                                                                                            },
+                                                                                                                                                "Last-Modified":  {
+                                                                                                                                                                      "type":  "string"
+                                                                                                                                                                  },
+                                                                                                                                                "Content-Length":  {
+                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                   }
+                                                                                                                                            }
+                                                                                                                         },
+                                                                                                             "body":  {
+                                                                                                                          "type":  "object",
+                                                                                                                          "properties":  {
+                                                                                                                                             "odata.nextLink":  {
+                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                },
+                                                                                                                                             "value":  {
+                                                                                                                                                           "type":  "array",
+                                                                                                                                                           "items":  {
+                                                                                                                                                                         "type":  "object",
+                                                                                                                                                                         "properties":  {
+                                                                                                                                                                                            "RefID":  {
+                                                                                                                                                                                                          "type":  "array"
+                                                                                                                                                                                                      },
+                                                                                                                                                                                            "Editor":  {
+                                                                                                                                                                                                           "type":  "object",
+                                                                                                                                                                                                           "properties":  {
+                                                                                                                                                                                                                              "EMail":  {
+                                                                                                                                                                                                                                            "type":  "string"
+                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                          }
+                                                                                                                                                                                                       },
+                                                                                                                                                                                            "GBDLookUp":  {
+                                                                                                                                                                                                              "type":  "array"
+                                                                                                                                                                                                          },
+                                                                                                                                                                                            "Author":  {
+                                                                                                                                                                                                           "type":  "object",
+                                                                                                                                                                                                           "properties":  {
+                                                                                                                                                                                                                              "Title":  {
+                                                                                                                                                                                                                                            "type":  "string"
+                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                          }
+                                                                                                                                                                                                       },
+                                                                                                                                                                                            "Id":  {
+                                                                                                                                                                                                       "type":  "integer"
+                                                                                                                                                                                                   },
+                                                                                                                                                                                            "Title":  {
+                                                                                                                                                                                                          "type":  "string"
+                                                                                                                                                                                                      },
+                                                                                                                                                                                            "Description":  {
+                                                                                                                                                                                                                "type":  "string"
+                                                                                                                                                                                                            },
+                                                                                                                                                                                            "Progress":  {
+                                                                                                                                                                                                             "type":  "string"
+                                                                                                                                                                                                         },
+                                                                                                                                                                                            "Priority":  {
+                                                                                                                                                                                                             "type":  "string"
+                                                                                                                                                                                                         },
+                                                                                                                                                                                            "StartDate":  {
+                                                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                                                          },
+                                                                                                                                                                                            "DueDate":  {
+                                                                                                                                                                                                            "type":  "string"
+                                                                                                                                                                                                        },
+                                                                                                                                                                                            "GDSUROUT":  {
+                                                                                                                                                                                                             "type":  "string"
+                                                                                                                                                                                                         },
+                                                                                                                                                                                            "AssignedTo":  {
+                                                                                                                                                                                                               "type":  "string"
+                                                                                                                                                                                                           },
+                                                                                                                                                                                            "Created":  {
+                                                                                                                                                                                                            "type":  "string"
+                                                                                                                                                                                                        },
+                                                                                                                                                                                            "ID":  {
+                                                                                                                                                                                                       "type":  "integer"
+                                                                                                                                                                                                   }
+                                                                                                                                                                                        },
+                                                                                                                                                                         "required":  [
+                                                                                                                                                                                          "RefID",
+                                                                                                                                                                                          "Editor",
+                                                                                                                                                                                          "GBDLookUp",
+                                                                                                                                                                                          "Author",
+                                                                                                                                                                                          "Id",
+                                                                                                                                                                                          "Title",
+                                                                                                                                                                                          "Description",
+                                                                                                                                                                                          "Progress",
+                                                                                                                                                                                          "Priority",
+                                                                                                                                                                                          "StartDate",
+                                                                                                                                                                                          "DueDate",
+                                                                                                                                                                                          "GDSUROUT",
+                                                                                                                                                                                          "AssignedTo",
+                                                                                                                                                                                          "Created",
+                                                                                                                                                                                          "ID"
+                                                                                                                                                                                      ]
+                                                                                                                                                                     }
+                                                                                                                                                       }
+                                                                                                                                         }
+                                                                                                                      }
+                                                                                                         }
+                                                                                      }
+                                                                       }
+                                                        },
+                                       "Select_1":  {
+                                                        "runAfter":  {
+                                                                         "Parse_JSON_2":  [
+                                                                                              "Succeeded"
+                                                                                          ]
+                                                                     },
+                                                        "metadata":  {
+                                                                         "operationMetadataId":  "ae80c77e-986b-47ff-b7c8-025e0979a610"
+                                                                     },
+                                                        "type":  "Select",
+                                                        "inputs":  {
+                                                                       "from":  "@body(\u0027Parse_JSON_2\u0027)?[\u0027value\u0027]",
+                                                                       "select":  {
+                                                                                      "Title":  "@{coalesce(item()?[\u0027Author\u0027]?[\u0027Title\u0027], \u0027No Title\u0027)}",
+                                                                                      "AssignedTo":  "@{coalesce(item()?[\u0027AssignedTo\u0027], \u0027Unassigned\u0027)}",
+                                                                                      "Created":  "@{coalesce(item()?[\u0027Created\u0027], \u0027No Date\u0027)}",
+                                                                                      "Priority":  "@{coalesce(item()?[\u0027Priority\u0027], \u0027Normal\u0027)}",
+                                                                                      "Progress":  "@{coalesce(item()?[\u0027Progress\u0027], \u0027Not Started\u0027)}",
+                                                                                      "DueDate":  "@{coalesce(item()?[\u0027DueDate\u0027], \u0027No Due Date\u0027)}",
+                                                                                      "StartDate":  "@{coalesce(item()?[\u0027StartDate\u0027], \u0027No Start Date\u0027)}",
+                                                                                      "Description":  "@{coalesce(item()?[\u0027Description\u0027], \u0027No Description\u0027)}",
+                                                                                      "Editor":  "@{coalesce(item()?[\u0027Editor\u0027], \u0027No Editor\u0027)}",
+                                                                                      "Author":  "@{coalesce(item()?[\u0027Author\u0027], \u0027No Author\u0027)}",
+                                                                                      "RefID":  "@{coalesce(item()?[\u0027RefID\u0027], \u0027No RefID\u0027)}",
+                                                                                      "GBDLookUp":  "@{coalesce(item()?[\u0027GBDLookUp\u0027], \u0027No Lookup\u0027)}",
+                                                                                      "GDSUROUT":  "@{coalesce(item()?[\u0027GDSUROUT\u0027], \u0027No Route\u0027)}",
+                                                                                      "ID":  "@{coalesce(item()?[\u0027ID\u0027], \u0027No ID\u0027)}"
+                                                                                  }
+                                                                   }
+                                                    }
+                                   }
+                   }
+}

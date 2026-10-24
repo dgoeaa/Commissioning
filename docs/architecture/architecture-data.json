@@ -1,0 +1,499 @@
+{
+  "generatedFrom": "scripts/architecture-data.mjs",
+  "routes": {
+    "total": 31,
+    "visible": 25,
+    "hidden": 6
+  },
+  "routeList": [
+    "acknowledgment",
+    "activities",
+    "admin-suite",
+    "approvals",
+    "archive",
+    "assistant",
+    "briefs",
+    "bulk-assignment",
+    "comments",
+    "correspondence",
+    "correspondence-email",
+    "diagnostics",
+    "dispatch",
+    "ecm-erp-charter",
+    "endpoint-console",
+    "executive",
+    "fasttrack",
+    "home",
+    "lookup",
+    "meetings",
+    "operator-hud",
+    "orchestrator",
+    "projects",
+    "registry",
+    "reports",
+    "response-tracking",
+    "scan-intake",
+    "settings",
+    "single-assignment",
+    "statistics",
+    "user-admin"
+  ],
+  "visibleWorkspaces": [
+    {
+      "route": "home",
+      "label": "Command Center",
+      "group": "START HERE",
+      "handoffs": [
+        "correspondence",
+        "orchestrator",
+        "approvals",
+        "dispatch",
+        "response-tracking",
+        "activities",
+        "fasttrack",
+        "assistant"
+      ]
+    },
+    {
+      "route": "ecm-erp-charter",
+      "label": "ERP–ECM Charter",
+      "group": "START HERE",
+      "handoffs": [
+        "correspondence",
+        "orchestrator",
+        "approvals",
+        "dispatch",
+        "reports"
+      ]
+    },
+    {
+      "route": "activities",
+      "label": "Activities",
+      "group": "OPERATIONS",
+      "handoffs": [
+        "correspondence",
+        "orchestrator"
+      ]
+    },
+    {
+      "route": "correspondence",
+      "label": "Intake & Assignment",
+      "group": "OPERATIONS",
+      "handoffs": [
+        "single-assignment",
+        "bulk-assignment",
+        "registry"
+      ]
+    },
+    {
+      "route": "orchestrator",
+      "label": "My Work",
+      "group": "OPERATIONS",
+      "handoffs": [
+        "acknowledgment",
+        "comments",
+        "lookup"
+      ]
+    },
+    {
+      "route": "acknowledgment",
+      "label": "Acknowledgment Queue",
+      "group": "OPERATIONS",
+      "handoffs": [
+        "orchestrator"
+      ]
+    },
+    {
+      "route": "registry",
+      "label": "Registry",
+      "group": "OPERATIONS",
+      "handoffs": [
+        "scan-intake",
+        "correspondence"
+      ]
+    },
+    {
+      "route": "comments",
+      "label": "Comments",
+      "group": "OPERATIONS",
+      "handoffs": [
+        "orchestrator"
+      ]
+    },
+    {
+      "route": "lookup",
+      "label": "Lookup & Direct Action",
+      "group": "OPERATIONS",
+      "handoffs": [
+        "dispatch",
+        "response-tracking"
+      ]
+    },
+    {
+      "route": "response-tracking",
+      "label": "Tracking & Monitoring",
+      "group": "CONTROL",
+      "handoffs": [
+        "reports",
+        "statistics",
+        "projects"
+      ]
+    },
+    {
+      "route": "fasttrack",
+      "label": "FastTrack SLA",
+      "group": "CONTROL",
+      "handoffs": [
+        "response-tracking"
+      ]
+    },
+    {
+      "route": "approvals",
+      "label": "Review & Approval",
+      "group": "CONTROL",
+      "handoffs": [
+        "executive",
+        "briefs",
+        "meetings",
+        "dispatch"
+      ]
+    },
+    {
+      "route": "briefs",
+      "label": "Briefs & Submissions",
+      "group": "CONTROL",
+      "handoffs": [
+        "approvals",
+        "meetings"
+      ]
+    },
+    {
+      "route": "meetings",
+      "label": "Meetings",
+      "group": "CONTROL",
+      "handoffs": [
+        "orchestrator",
+        "approvals"
+      ]
+    },
+    {
+      "route": "projects",
+      "label": "Projects",
+      "group": "CONTROL",
+      "handoffs": [
+        "response-tracking",
+        "reports"
+      ]
+    },
+    {
+      "route": "reports",
+      "label": "Reports",
+      "group": "CONTROL",
+      "handoffs": [
+        "statistics"
+      ]
+    },
+    {
+      "route": "statistics",
+      "label": "Statistics",
+      "group": "CONTROL",
+      "handoffs": [
+        "reports"
+      ]
+    },
+    {
+      "route": "executive",
+      "label": "DGCEO Correspondence & Decision Hub",
+      "group": "CONTROL",
+      "handoffs": [
+        "approvals",
+        "briefs"
+      ]
+    },
+    {
+      "route": "dispatch",
+      "label": "Dispatch",
+      "group": "CLOSURE",
+      "handoffs": [
+        "archive",
+        "lookup"
+      ]
+    },
+    {
+      "route": "correspondence-email",
+      "label": "Correspondence Email Desk",
+      "group": "CLOSURE",
+      "handoffs": [
+        "dispatch",
+        "archive"
+      ]
+    },
+    {
+      "route": "assistant",
+      "label": "Assistant",
+      "group": "SYSTEM",
+      "handoffs": [
+        "home"
+      ]
+    },
+    {
+      "route": "admin-suite",
+      "label": "Admin Suite",
+      "group": "SYSTEM",
+      "handoffs": [
+        "endpoint-console",
+        "user-admin",
+        "diagnostics",
+        "settings",
+        "operator-hud"
+      ]
+    },
+    {
+      "route": "operator-hud",
+      "label": "Operator HUD",
+      "group": "SYSTEM",
+      "handoffs": [
+        "diagnostics"
+      ]
+    },
+    {
+      "route": "settings",
+      "label": "Administration",
+      "group": "SYSTEM",
+      "handoffs": [
+        "user-admin",
+        "diagnostics"
+      ]
+    },
+    {
+      "route": "diagnostics",
+      "label": "System Health",
+      "group": "SYSTEM",
+      "handoffs": [
+        "operator-hud",
+        "settings"
+      ]
+    }
+  ],
+  "hiddenRoutes": {
+    "single-assignment": "Intake & Assignment",
+    "bulk-assignment": "Intake & Assignment",
+    "scan-intake": "Registry",
+    "archive": "Dispatch",
+    "user-admin": "Administration",
+    "endpoint-console": "Administration"
+  },
+  "state": {
+    "collections": 22,
+    "list": [
+      "activities",
+      "approvals",
+      "audit",
+      "briefs",
+      "categories",
+      "comments",
+      "correspondence",
+      "correspondenceEmails",
+      "departments",
+      "dispatches",
+      "emails",
+      "escalations",
+      "fileMovements",
+      "meetings",
+      "notifications",
+      "operations",
+      "pending",
+      "projects",
+      "registryFiles",
+      "registryMinutes",
+      "tracking",
+      "users"
+    ]
+  },
+  "endpoints": {
+    "keys": 19
+  },
+  "roles": [
+    "systemAdmin",
+    "userAdmin",
+    "executive",
+    "director",
+    "operator",
+    "viewer"
+  ],
+  "roleRouteAccess": {
+    "systemAdmin": [
+      "*"
+    ],
+    "userAdmin": [
+      "home",
+      "settings",
+      "user-admin",
+      "diagnostics",
+      "operator-hud",
+      "admin-suite"
+    ],
+    "executive": [
+      "home",
+      "executive",
+      "response-tracking",
+      "approvals",
+      "briefs",
+      "meetings",
+      "projects",
+      "reports",
+      "statistics",
+      "lookup",
+      "assistant",
+      "archive"
+    ],
+    "director": [
+      "home",
+      "activities",
+      "correspondence",
+      "response-tracking",
+      "orchestrator",
+      "approvals",
+      "dispatch",
+      "scan-intake",
+      "briefs",
+      "meetings",
+      "projects",
+      "reports",
+      "statistics",
+      "lookup",
+      "assistant"
+    ],
+    "operator": [
+      "home",
+      "activities",
+      "correspondence",
+      "response-tracking",
+      "orchestrator",
+      "single-assignment",
+      "bulk-assignment",
+      "scan-intake",
+      "registry",
+      "comments",
+      "dispatch",
+      "correspondence-email",
+      "meetings",
+      "projects",
+      "lookup",
+      "assistant"
+    ],
+    "viewer": [
+      "home",
+      "response-tracking",
+      "reports",
+      "statistics",
+      "lookup"
+    ]
+  },
+  "layers": {
+    "files": {
+      "config": 41,
+      "core": 73,
+      "shared": 8,
+      "modules": 31
+    },
+    "edges": {
+      "core->config": 45,
+      "shared->core": 14,
+      "shared->config": 9,
+      "modules->core": 273,
+      "modules->config": 36,
+      "modules->shared": 1
+    },
+    "dynamicEdges": {
+      "core->modules": 31,
+      "core->config": 1,
+      "core->shared": 3,
+      "modules->core": 7
+    },
+    "acyclic": true,
+    "compositionRoot": {
+      "file": "core/boot.js",
+      "dynamicModuleImports": 31
+    },
+    "acyclicIncludingDynamic": false
+  },
+  "zones": [
+    {
+      "id": "public",
+      "label": "Public",
+      "auth": "None — anonymous submission is the point",
+      "components": [
+        {
+          "name": "document-portal/",
+          "detail": "41 files · 5 pages · service worker",
+          "note": "Carries the signed URLs it calls, in a file every visitor can read"
+        }
+      ]
+    },
+    {
+      "id": "internal",
+      "label": "Internal",
+      "auth": "One-time-code proof, verified by the flow (provisioned, inert)",
+      "components": [
+        {
+          "name": "root platform",
+          "detail": "31 routes · 31 modules · 73 core",
+          "note": "The single system of record, since D6(b)"
+        }
+      ]
+    },
+    {
+      "id": "record",
+      "label": "Systems of record",
+      "auth": "Each flow authenticates, authorises and validates its own callers — nothing else can",
+      "components": [
+        {
+          "name": "Power Automate",
+          "detail": "25 workflows (dev/pilot, to be decommissioned) · 19 contract keys",
+          "note": "Invoked directly by the browser · F-001 · cutover scope"
+        },
+        {
+          "name": "SharePoint",
+          "detail": "Lists + document library",
+          "note": "Holds the bytes; reached through the flows"
+        }
+      ]
+    }
+  ],
+  "channels": [
+    {
+      "id": "A",
+      "label": "Document portal",
+      "origin": "External submitter",
+      "channel": "Portal",
+      "route": "PF_CONFIG.endpoints.SUBMISSION",
+      "status": "implemented"
+    },
+    {
+      "id": "B",
+      "label": "Email",
+      "origin": "Mailbox",
+      "channel": "Email",
+      "route": "FETCH_ALL → correspondence-email",
+      "status": "implemented"
+    },
+    {
+      "id": "C",
+      "label": "Scan / physical",
+      "origin": "Registry counter",
+      "channel": "Registry",
+      "route": "DGO_CONFIG.endpoints.SCAN_INTAKE",
+      "status": "implemented"
+    },
+    {
+      "id": "D",
+      "label": "Internal origination",
+      "origin": "NITDA staff",
+      "channel": "Document",
+      "route": "modules/correspondence.js",
+      "status": "implemented"
+    }
+  ],
+  "moduleBoundaries": 30
+}

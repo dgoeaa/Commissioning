@@ -1,0 +1,295 @@
+{
+  "remediationId": "04-intake-writeback",
+  "visit": 4,
+  "endpoint": "(internal - not a public endpoint)",
+  "closes": "C7. No flow anywhere patches Portal Registry, so a citizen can only ever be shown what SUBMISSION wrote. Six of the seven governed status values are unreachable.",
+  "appliesTo": [
+    {
+      "flow": "ECM_DOCS_INTAKE",
+      "internalName": "df7ddff1-9275-4f23-acf6-e169525f4e2f"
+    }
+  ],
+  "decision": "D1 - a second branch on the existing crossing, not a new flow and not a SharePoint trigger. There is nothing to trigger on: ECM_DOCS_INTAKE is a live read feed, not a copy, and no flow in the estate creates an internal row from portal data.",
+  "triggerUnchanged": "HTTP POST, triggerAuthenticationType = Tenant. An anonymous caller cannot invoke this flow before or after.",
+  "structure": {
+    "wrap": "Wrap the existing Scope_Global_Intake_Feed in a Switch. Move nothing inside it.",
+    "switchOn": "@coalesce(triggerBody()?['action'], 'feed')",
+    "cases": {
+      "feed": "The existing Scope_Global_Intake_Feed, byte for byte. This is also the default, so every caller sending no action keeps the behaviour it has today.",
+      "writeback": "Scope_Writeback, below."
+    },
+    "createFirst": {
+      "name": "Scope_Writeback",
+      "type": "Scope",
+      "where": "a new case on the Switch that wraps Scope_Global_Intake_Feed",
+      "note": "The three actions above are placed inside it, so the scope has to exist before they can be. The patcher's placement pass is a fixpoint and will retry them until it does."
+    }
+  },
+  "actions": [
+    {
+      "name": "Get_Registry_Row_By_Reference",
+      "type": "OpenApiConnection",
+      "list": "Portal Registry",
+      "operation": "GetItems",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetItems"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+          "table": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+          "$filter": "Title eq '@{coalesce(triggerBody()?[''reference''],'''')}'",
+          "$top": 1
+        }
+      },
+      "why": "Missing reference is a 404, not a create. This branch never inserts into the registry - only the portal may do that.",
+      "flow": "ECM_DOCS_INTAKE",
+      "place": {
+        "parent": "Scope_Writeback",
+        "first": true
+      }
+    },
+    {
+      "name": "Patch_Registry_Status",
+      "type": "OpenApiConnection",
+      "list": "Portal Registry",
+      "operation": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+          "table": "4c49f66a-23cd-4e1f-8ce7-ec1bb40eb667",
+          "id": "@first(outputs('Get_Registry_Row_By_Reference')?['body/value'])?['ID']",
+          "item/Status": "@triggerBody()?['status']",
+          "item/StatusLabel": "@triggerBody()?['statusLabel']",
+          "item/ActionRequired": "@coalesce(triggerBody()?['actionRequired'],false)",
+          "item/AcknowledgedAtUtc": "@triggerBody()?['acknowledgedAtUtc']",
+          "item/ClosedAtUtc": "@triggerBody()?['closedAtUtc']",
+          "item/UpdatedAtUtc": "@utcNow()"
+        }
+      },
+      "why": "Status must be one of the seven governed keys in config/status-vocabulary.config.js. Reject anything else rather than writing a word the portal cannot render.",
+      "flow": "ECM_DOCS_INTAKE",
+      "place": {
+        "parent": "Scope_Writeback",
+        "after": "Get_Registry_Row_By_Reference"
+      }
+    },
+    {
+      "name": "Create_Timeline_Event",
+      "type": "OpenApiConnection",
+      "list": "Portal Status Timeline",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+          "table": "5b486a5e-0ce7-46d7-a159-d84c77f3d1fd",
+          "item/Title": "@coalesce(triggerBody()?['reference'],'')",
+          "item/SubmissionRef": "@coalesce(triggerBody()?['reference'],'')",
+          "item/AtUtc": "@utcNow()",
+          "item/Status": "@triggerBody()?['status']",
+          "item/Label": "@triggerBody()?['statusLabel']",
+          "item/Actor": "@coalesce(triggerBody()?['actor'],'registry')",
+          "item/Note": "@coalesce(triggerBody()?['note'],'')"
+        }
+      },
+      "why": "The timeline is what the citizen actually reads. A status patched without an event is a change nobody can see.",
+      "flow": "ECM_DOCS_INTAKE",
+      "place": {
+        "parent": "Scope_Writeback",
+        "after": "Patch_Registry_Status"
+      }
+    }
+  ],
+  "requestShape": {
+    "action": "writeback",
+    "reference": "NITDA-2026-00001",
+    "status": "review",
+    "statusLabel": "Under review",
+    "actionRequired": false,
+    "acknowledgedAtUtc": "2026-08-20T09:00:00Z",
+    "closedAtUtc": null,
+    "actor": "officer@nitda.gov.ng",
+    "note": "With the assigned unit for technical assessment."
+  },
+  "clientChange": {
+    "file": "config/endpoints.config.js",
+    "add": "PORTAL_STATUS_WRITEBACK: Object.freeze({ method:'POST', action:\"writeback\", write:true, sourceKey:\"SCAN_INTAKE\", url:EndpointUrls.SCAN_INTAKE }),",
+    "why": "Same flow, same URL, different fixed action. No new endpoint to configure, rotate or publish."
+  },
+  "boundary": "The write goes into the portal estate from the internal side. No internal list is touched in either direction, and the flow stays tenant-authenticated, so the crossing count stays at one.",
+  "verification": [
+    "npm run wiring   # C7 appears with both operations and the boundary section stays clean",
+    "Patch a submission to review and read it back through STATUS - the citizen must see the new status and a second timeline event",
+    "Call ECM_DOCS_INTAKE with no action and confirm the feed is unchanged"
+  ],
+  "standardConformance": {
+    "decision": "D7 - the standard work rides along with each visit rather than waiting for a sixth pass. The flow is already open, and adding a catch scope to a flow whose actions you have just rewritten costs a fraction of coming back to it.",
+    "standard": "docs/deployment/sharepoint/flow-standard.json",
+    "order": "Do the standard work FIRST, before the SharePoint actions in Step B. The variables and Scope_Global have to exist before an action can reference them, and moving actions into a scope afterwards is where things get dropped.",
+    "perFlow": [
+      {
+        "flow": "ECM_DOCS_INTAKE",
+        "conformanceBefore": "33% by rule count",
+        "conforms": false,
+        "missing": [
+          {
+            "check": "vars.core",
+            "title": "Initialise the standard variable set",
+            "how": "Three Initialize variable actions at the very top of the flow, before Scope_Global.",
+            "add": [
+              {
+                "name": "Initialize_variable_varStatusCode",
+                "type": "Integer",
+                "value": 200
+              },
+              {
+                "name": "Initialize_variable_varData",
+                "type": "Object",
+                "value": {}
+              },
+              {
+                "name": "Initialize_variable_varErrors",
+                "type": "Array",
+                "value": []
+              }
+            ],
+            "why": "One response envelope can only serve every flow if every flow reports its outcome the same way."
+          },
+          {
+            "check": "vars.timing",
+            "title": "Initialise the timing variables",
+            "how": "Four more Initialize variable actions, alongside the core set.",
+            "add": [
+              {
+                "name": "Initialize_variable_varRequestId",
+                "type": "String",
+                "value": "@guid()"
+              },
+              {
+                "name": "Initialize_variable_varReceivedAtUtc",
+                "type": "String",
+                "value": "@utcNow()"
+              },
+              {
+                "name": "Initialize_variable_varStartTicks",
+                "type": "Integer",
+                "value": "@ticks(utcNow())"
+              },
+              {
+                "name": "Initialize_variable_varCompletedAtUtc",
+                "type": "String",
+                "value": ""
+              },
+              {
+                "name": "Initialize_variable_varDurationMs",
+                "type": "Integer",
+                "value": 0
+              }
+            ],
+            "alsoAdd": {
+              "name": "Scope_Finalize_Response_State",
+              "where": "Inside Scope_Global, after the work and before the envelope",
+              "actions": [
+                {
+                  "name": "Set_variable_varCompletedAtUtc",
+                  "value": "@utcNow()"
+                },
+                {
+                  "name": "Set_variable_varDurationMs",
+                  "value": "@div(sub(ticks(utcNow()), variables('varStartTicks')), 10000)"
+                }
+              ]
+            },
+            "why": "The envelope and the run record both report timing. Computing it once is what keeps them agreeing."
+          },
+          {
+            "check": "scope.global",
+            "title": "Wrap the work in Scope_Global",
+            "how": "Add a Scope named Scope_Global and move every existing action except the Initialize variable actions inside it.",
+            "why": "One place to attach a catch. Without it the failure path has to be repeated on every branch, which is why the flows missing this are the same flows missing a catch."
+          },
+          {
+            "check": "response.envelope",
+            "title": "Answer through the standard envelope",
+            "how": "Add a Compose named Compose__Standard_Response_Revised as the last action inside Scope_Global, before the Response.",
+            "inputs": {
+              "ok": "@less(variables('varStatusCode'), 400)",
+              "status": {
+                "http": "@variables('varStatusCode')",
+                "code": "@if(less(variables('varStatusCode'), 400), 'OK', concat('ERR', string(variables('varStatusCode'))))",
+                "message": "@if(less(variables('varStatusCode'), 400), 'Success', 'Failed')"
+              },
+              "request": {
+                "requestId": "@if(empty(trim(coalesce(triggerBody()?['requestId'], ''))), variables('varRequestId'), triggerBody()?['requestId'])",
+                "trackingId": "@coalesce(triggerBody()?['trackingId'], triggerBody()?['trackingID'], '')",
+                "action": "@coalesce(triggerBody()?['action'], '')",
+                "operation": "@coalesce(triggerBody()?['operation'], '')",
+                "mode": "@coalesce(triggerBody()?['mode'], '')",
+                "requestedBy": "@coalesce(triggerBody()?['userEmail'], triggerBody()?['requestedBy'], 'anonymous')",
+                "source": "@coalesce(triggerBody()?['source'], 'portal')"
+              },
+              "timing": {
+                "receivedAtUtc": "@variables('varReceivedAtUtc')",
+                "completedAtUtc": "@variables('varCompletedAtUtc')",
+                "durationMs": "@variables('varDurationMs')"
+              },
+              "data": "@variables('varData')",
+              "errors": "@variables('varErrors')",
+              "meta": {
+                "ts": "@variables('varCompletedAtUtc')"
+              }
+            },
+            "why": "core/contracts.js unwraps exactly this shape. A flow answering anything else has to be special-cased in the client, which is how one-off shapes accumulate."
+          },
+          {
+            "check": "redaction.headers",
+            "title": "Redact headers before capture",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Headers, running after Compose_Redacted_Queries.",
+            "inputs": "@setProperty(\n  setProperty(\n    setProperty(\n      setProperty(\n        coalesce(triggerOutputs()?['headers'], json('{}')),\n        'Authorization',\n        '***REDACTED***'\n      ),\n      'Cookie',\n      '***REDACTED***'\n    ),\n    'x-api-key',\n    '***REDACTED***'\n  ),\n  'Ocp-Apim-Subscription-Key',\n  '***REDACTED***'\n)",
+            "why": "Without it the observability harness becomes the leak.",
+            "wireInto": {
+              "action": "Compose_Flow_Run_Record",
+              "underKey": "request",
+              "pair": {
+                "key": "headers_redacted",
+                "value": "@coalesce(outputs('Compose_Redacted_Headers'), json('{}'))"
+              },
+              "note": "Same: an unconsumed Compose redacts nothing. Compose_Flow_Run_Record must also be moved to run after Compose_Redacted_Headers, or it composes before the value exists."
+            }
+          },
+          {
+            "check": "redaction.queries",
+            "title": "Redact the query string before capture",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Queries. Place it first in that scope, immediately after Get_Flow_Definition.",
+            "inputs": "@setProperty(\n  setProperty(\n    coalesce(triggerOutputs()?['queries'], json('{}')),\n    'sig',\n    '***REDACTED***'\n  ),\n  'code',\n  '***REDACTED***'\n)",
+            "why": "sig is the trigger credential and code is the one-time password. On the verification flows this is the difference between telemetry and a log of every OTP issued.",
+            "wireInto": {
+              "action": "Compose_Flow_Run_Record",
+              "underKey": "request",
+              "pair": {
+                "key": "queries_redacted",
+                "value": "@coalesce(outputs('Compose_Redacted_Queries'), json('{}'))"
+              },
+              "note": "Adding the Compose without this leaves it inert: the run record captures no query string at all, and the conformance check still passes. The rule is about what reaches telemetry, not about an action existing."
+            }
+          }
+        ]
+      }
+    ],
+    "check": "node scripts/verify-flow-standard.mjs --portal",
+    "measuredFrom": "scripts/verify-flow-standard.mjs, at generation time",
+    "generatedBy": "scripts/build-remediation-standard.mjs"
+  }
+}

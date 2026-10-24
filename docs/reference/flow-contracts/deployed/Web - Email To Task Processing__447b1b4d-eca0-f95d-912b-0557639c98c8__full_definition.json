@@ -1,0 +1,1072 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:11Z",
+    "workflow_identity":  {
+                              "internal_name":  "447b1b4d-eca0-f95d-912b-0557639c98c8",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "Web - Email To Task Processing",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              },
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "type":  "Request",
+                                                       "kind":  "Http",
+                                                       "inputs":  {
+                                                                      "triggerAuthenticationType":  "All",
+                                                                      "schema":  {
+                                                                                     "type":  "object",
+                                                                                     "properties":  {
+                                                                                                        "emailId":  {
+                                                                                                                        "type":  "string"
+                                                                                                                    }
+                                                                                                    }
+                                                                                 },
+                                                                      "method":  "POST"
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Initialize_variable_varResponse":  {
+                                                                               "runAfter":  {
+                                                                                                "Initialize_variable_varAPIKey":  [
+                                                                                                                                      "Succeeded"
+                                                                                                                                  ]
+                                                                                            },
+                                                                               "metadata":  {
+                                                                                                "operationMetadataId":  "9939ee16-ff04-4b41-93c0-70bffcb2fce8"
+                                                                                            },
+                                                                               "type":  "InitializeVariable",
+                                                                               "inputs":  {
+                                                                                              "variables":  [
+                                                                                                                {
+                                                                                                                    "name":  "varResponse",
+                                                                                                                    "type":  "string"
+                                                                                                                }
+                                                                                                            ]
+                                                                                          }
+                                                                           },
+                                       "HTTP_Request_to_AI_API":  {
+                                                                      "runAfter":  {
+                                                                                       "Compose._HTTP_Body":  [
+                                                                                                                  "Succeeded"
+                                                                                                              ]
+                                                                                   },
+                                                                      "metadata":  {
+                                                                                       "operationMetadataId":  "e999b38e-d831-43d0-b3ff-2d9c6c40b8fc"
+                                                                                   },
+                                                                      "type":  "Http",
+                                                                      "inputs":  {
+                                                                                     "uri":  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent",
+                                                                                     "method":  "POST",
+                                                                                     "headers":  {
+                                                                                                     "Content-Type":  "application/json",
+                                                                                                     "X-goog-api-key":  "@{variables(\u0027varAPIKey\u0027)}"
+                                                                                                 },
+                                                                                     "body":  "@outputs(\u0027Compose._HTTP_Body\u0027)"
+                                                                                 },
+                                                                      "runtimeConfiguration":  {
+                                                                                                   "contentTransfer":  {
+                                                                                                                           "transferMode":  "Chunked"
+                                                                                                                       }
+                                                                                               }
+                                                                  },
+                                       "Scope_Errror":  {
+                                                            "actions":  {
+                                                                            "Parse_JSON_Error":  {
+                                                                                                     "metadata":  {
+                                                                                                                      "operationMetadataId":  "1e42fa00-1592-4a78-bee2-158382e10af8"
+                                                                                                                  },
+                                                                                                     "type":  "ParseJson",
+                                                                                                     "inputs":  {
+                                                                                                                    "content":  "@body(\u0027HTTP_Request_to_AI_API\u0027)",
+                                                                                                                    "schema":  {
+                                                                                                                                   "type":  "object",
+                                                                                                                                   "properties":  {
+                                                                                                                                                      "candidates":  {
+                                                                                                                                                                         "type":  "array",
+                                                                                                                                                                         "items":  {
+                                                                                                                                                                                       "type":  "object",
+                                                                                                                                                                                       "properties":  {
+                                                                                                                                                                                                          "content":  {
+                                                                                                                                                                                                                          "type":  "object",
+                                                                                                                                                                                                                          "properties":  {
+                                                                                                                                                                                                                                             "role":  {
+                                                                                                                                                                                                                                                          "type":  "string"
+                                                                                                                                                                                                                                                      },
+                                                                                                                                                                                                                                             "parts":  {
+                                                                                                                                                                                                                                                           "type":  "array",
+                                                                                                                                                                                                                                                           "items":  {
+                                                                                                                                                                                                                                                                         "type":  "object",
+                                                                                                                                                                                                                                                                         "properties":  {
+                                                                                                                                                                                                                                                                                            "text":  {
+                                                                                                                                                                                                                                                                                                         "type":  "string"
+                                                                                                                                                                                                                                                                                                     }
+                                                                                                                                                                                                                                                                                        },
+                                                                                                                                                                                                                                                                         "required":  [
+                                                                                                                                                                                                                                                                                          "text"
+                                                                                                                                                                                                                                                                                      ]
+                                                                                                                                                                                                                                                                     }
+                                                                                                                                                                                                                                                       }
+                                                                                                                                                                                                                                         }
+                                                                                                                                                                                                                      }
+                                                                                                                                                                                                      }
+                                                                                                                                                                                   }
+                                                                                                                                                                     }
+                                                                                                                                                  }
+                                                                                                                               }
+                                                                                                                }
+                                                                                                 },
+                                                                            "Parse_JSON_Body_Parse_JSON_Error":  {
+                                                                                                                     "runAfter":  {
+                                                                                                                                      "Parse_JSON_Error":  [
+                                                                                                                                                               "Succeeded"
+                                                                                                                                                           ]
+                                                                                                                                  },
+                                                                                                                     "metadata":  {
+                                                                                                                                      "operationMetadataId":  "90013138-451a-4023-926a-2592afa7d846"
+                                                                                                                                  },
+                                                                                                                     "type":  "Compose",
+                                                                                                                     "inputs":  "@body(\u0027Parse_JSON_Error\u0027)"
+                                                                                                                 },
+                                                                            "Set_variable_varResponse_Error":  {
+                                                                                                                   "runAfter":  {
+                                                                                                                                    "Set_variable_varStatusCode_error":  [
+                                                                                                                                                                             "Succeeded"
+                                                                                                                                                                         ]
+                                                                                                                                },
+                                                                                                                   "metadata":  {
+                                                                                                                                    "operationMetadataId":  "7c0baa3e-1cc8-4a71-b988-ddb2d97ca63f"
+                                                                                                                                },
+                                                                                                                   "type":  "SetVariable",
+                                                                                                                   "inputs":  {
+                                                                                                                                  "name":  "varResponse",
+                                                                                                                                  "value":  "@{outputs(\u0027Parse_JSON_Body_Parse_JSON_Error\u0027)?[\u0027body\u0027]?[\u0027candidates\u0027][0]?[\u0027content\u0027]?[\u0027parts\u0027][0]?[\u0027text\u0027]}"
+                                                                                                                              }
+                                                                                                               },
+                                                                            "Set_variable_varStatusCode_error":  {
+                                                                                                                     "runAfter":  {
+                                                                                                                                      "Parse_JSON_Body_Parse_JSON_Error":  [
+                                                                                                                                                                               "Succeeded"
+                                                                                                                                                                           ]
+                                                                                                                                  },
+                                                                                                                     "type":  "SetVariable",
+                                                                                                                     "inputs":  {
+                                                                                                                                    "name":  "varStatusCode",
+                                                                                                                                    "value":  400
+                                                                                                                                }
+                                                                                                                 }
+                                                                        },
+                                                            "runAfter":  {
+                                                                             "HTTP_Request_to_AI_API":  [
+                                                                                                            "Failed",
+                                                                                                            "Skipped",
+                                                                                                            "TimedOut"
+                                                                                                        ]
+                                                                         },
+                                                            "metadata":  {
+                                                                             "operationMetadataId":  "f1d6c8c2-fffc-452f-9038-b2083582060c"
+                                                                         },
+                                                            "type":  "Scope"
+                                                        },
+                                       "HTTP_Body_1":  {
+                                                           "runAfter":  {
+                                                                            "Get_email_(V2)":  [
+                                                                                                   "Succeeded"
+                                                                                               ]
+                                                                        },
+                                                           "metadata":  {
+                                                                            "operationMetadataId":  "4dde675c-558e-49fa-8eac-fa11a4e6dd31"
+                                                                        },
+                                                           "type":  "Compose",
+                                                           "inputs":  {
+                                                                          "contents":  [
+                                                                                           {
+                                                                                               "parts":  [
+                                                                                                             {
+                                                                                                                 "text":  "From the following customer service email, extract the key actionable details.\n\n- Ignore all disclaimers, footers, signatures, or forwarded/internal content (e.g., \"DG Office\", \"Customer Service\").\n- Focus only on the original sender’s intent.\n- Summarize concisely, in plain text.\n\nReturn the result strictly in valid JSON, using the following schema:\n\n{\n  \"Subject\": \"[Original subject line]\",\n  \"From\": {\n    \"Name\": \"[Sender\u0027s Name]\",\n    \"Organization\": \"[Organization if present]\"\n  },\n  \"Summary\": \"[One-sentence summary of the request/purpose]\",\n  \"ActionRequired\": \"[Short actionable statement of what is requested]\",\n  \"RecommendedAction\": \"[Suggested next step for DG/CEO Office]\",\n  \"Department\": \"[Best-fit NITDA department]\",\n  \"Attachments\": [\"List\", \"of\", \"attachment names if any\"]\n}\n\nEmail Content:\n---\n"
+                                                                                                             }
+                                                                                                         ]
+                                                                                           }
+                                                                                       ]
+                                                                      }
+                                                       },
+                                       "HTTP_Body_2":  {
+                                                           "runAfter":  {
+                                                                            "HTTP_Body_1":  [
+                                                                                                "Succeeded"
+                                                                                            ]
+                                                                        },
+                                                           "metadata":  {
+                                                                            "operationMetadataId":  "2c38e419-47bd-4f53-bbe9-54668f530014"
+                                                                        },
+                                                           "type":  "Compose",
+                                                           "inputs":  {
+                                                                          "contents":  [
+                                                                                           {
+                                                                                               "parts":  [
+                                                                                                             {
+                                                                                                                 "text":  "From the following customer service email, extract the key actionable details.\n\n- Ignore all disclaimers, footers, signatures, or forwarded/internal content (e.g., \"DG Office\", \"Customer Service\").\n- Focus only on the original sender’s intent.\n- Summarize concisely, in plain text.\n\nReturn the result strictly in valid JSON, using the following schema:\n\n{\n  \"Subject\": \"[Original subject line]\",\n  \"From\": {\n    \"Name\": \"[Sender\u0027s Name]\",\n    \"Organization\": \"[Organization if present]\"\n  },\n  \"Summary\": \"[One-sentence summary of the request/purpose]\",\n  \"ActionRequired\": \"[Short actionable statement of what is requested]\",\n  \"RecommendedAction\": \"[Suggested next step for DG/CEO Office]\",\n  \"Department\": \"[Best-fit NITDA department]\",\n  \"Attachments\": [\"List\", \"of\", \"attachment names if any\"]\n}\n\nEmail Content:\n---\n"
+                                                                                                             }
+                                                                                                         ]
+                                                                                           }
+                                                                                       ]
+                                                                      }
+                                                       },
+                                       "HTTP_Body_HTML":  {
+                                                              "runAfter":  {
+                                                                               "HTTP_Body_2":  [
+                                                                                                   "Succeeded"
+                                                                                               ]
+                                                                           },
+                                                              "metadata":  {
+                                                                               "operationMetadataId":  "381575eb-6f1d-4edb-b850-36f0d9e36e85"
+                                                                           },
+                                                              "type":  "Compose",
+                                                              "inputs":  {
+                                                                             "contents":  [
+                                                                                              {
+                                                                                                  "parts":  [
+                                                                                                                {
+                                                                                                                    "text":  "From the following customer service email, extract the key actionable details. \n\n- Ignore all disclaimers, footers, signatures, or forwarded/internal content (e.g., \"DG Office\", \"Customer Service\").\n- Focus only on the original sender’s intent.\n\nGenerate the output by populating the following HTML template with the extracted information. Use the most relevant and concise information for each field, ensuring the output is **only** the HTML block.\n\n\nHTML Template:\n---\n\u003cdiv style=\"font-size:14.5px; color:#2d3748; line-height:1.6; font-family:Segoe UI, Roboto, Arial, sans-serif;\"\u003e\n  \n  \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#f0f7f4; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #3182ce;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e📧 From\u003c/div\u003e\n    \u003cdiv style=\"color:#2d3748;\"\u003e{{SenderName}}, {{SenderOrg}}\u003c/div\u003e\n  \u003c/div\u003e\n\n  \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#edf2f7; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #4a5568;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e📝 Summary\u003c/div\u003e\n    \u003cdiv style=\"color:#2d3748;\"\u003e{{Summary}}\u003c/div\u003e\n  \u003c/div\u003e\n\n  \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#fef2f2; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #e53e3e;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e⚠️ Action Required\u003c/div\u003e\n    \u003cdiv style=\"color:#c53030; font-weight:500;\"\u003e{{ActionRequired}}\u003c/div\u003e\n  \u003c/div\u003e\n\n  \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#f0fdf4; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #38a169;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e✅ Recommended Action\u003c/div\u003e\n    \u003cdiv style=\"color:#2f855a; font-weight:500;\"\u003e{{RecommendedAction}}\u003c/div\u003e\n  \u003c/div\u003e\n\n  \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#f0f7f4; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #2f855a;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e🏢 Department\u003c/div\u003e\n    \u003cdiv style=\"color:#2d3748;\"\u003e{{Department}}\u003c/div\u003e\n  \u003c/div\u003e\n\n\u003c/div\u003e\n---\n\nEmail Content:\n---\n"
+                                                                                                                }
+                                                                                                            ]
+                                                                                              }
+                                                                                          ]
+                                                                         }
+                                                          },
+                                       "HTTP_Body":  {
+                                                         "runAfter":  {
+                                                                          "HTTP_Body_HTML":  [
+                                                                                                 "Succeeded"
+                                                                                             ]
+                                                                      },
+                                                         "metadata":  {
+                                                                          "operationMetadataId":  "4dde675c-558e-49fa-8eac-fa11a4e6dd31"
+                                                                      },
+                                                         "type":  "Compose",
+                                                         "inputs":  {
+                                                                        "contents":  [
+                                                                                         {
+                                                                                             "role":  "user",
+                                                                                             "parts":  [
+                                                                                                           {
+                                                                                                               "text":  "You are an expert AI assistant tasked with summarizing emails for the DGCEO office. Your goal is to extract key information from a provided email body and present it in a clean, structured JSON format.\n\nThe summary must include the following fields:\n\n- **Subject**: The full subject line of the email.\n- **SenderName**: The name of the person or organization that sent the email.\n- **SenderOrg**: The organization associated with the sender. If the organization is not explicitly mentioned, use the domain from the sender\u0027s email address (e.g., nitda.gov.ng, or a more relevant company name if available).\n- **Department**: The most relevant department within NITDA for handling this email. If a specific department is not clear, use a general term like \"DGCEO Office.\"\n- **Summary**: A concise summary of the email\u0027s purpose, key details (event names, locations, dates, deadlines), and any important context.\n- **ActionRequired**: A clear, concise statement on what is required from the DGCEO office, based on the email\u0027s content.\n- **RecommendedAction**: An actionable recommendation for the DGCEO office (e.g., \"Delegate to relevant department,\" \"For DGCEO\u0027s attention,\" \"Respond to sender\").\n- **Priority**: A priority level for the email. Infer this based on deadlines or urgency (e.g., \"High,\" \"Medium,\" \"Low\"). If no urgency is mentioned, default to \"Medium.\"\n- **Status**: The current status of the task. Default this to \"Pending Review.\"\n- **DueDate**: A specific date if a deadline is mentioned in the email (e.g., \"22nd Sept. 2025\"). If no due date is provided, state \"N/A.\"\n- **Attachments**: State whether the email contains attachments (\"Yes\") or not (\"No\") based on any explicit mentions or headers.\n\nYour output must be a single JSON object. Do not include any text before or after the JSON.\n\nHere is the email to summarize:\n\nEMAIL CONTENT:\n@{body(\u0027Get_email_(V2)\u0027)}"
+                                                                                                           }
+                                                                                                       ]
+                                                                                         }
+                                                                                     ],
+                                                                        "generationConfig":  {
+                                                                                                 "temperature":  0.2,
+                                                                                                 "topK":  1,
+                                                                                                 "topP":  1,
+                                                                                                 "candidateCount":  1
+                                                                                             }
+                                                                    }
+                                                     },
+                                       "HTTP_Body_4":  {
+                                                           "runAfter":  {
+                                                                            "HTTP_Body":  [
+                                                                                              "Succeeded"
+                                                                                          ]
+                                                                        },
+                                                           "metadata":  {
+                                                                            "operationMetadataId":  "4dde675c-558e-49fa-8eac-fa11a4e6dd31"
+                                                                        },
+                                                           "type":  "Compose",
+                                                           "inputs":  {
+                                                                          "contents":  [
+                                                                                           {
+                                                                                               "role":  "user",
+                                                                                               "parts":  [
+                                                                                                             {
+                                                                                                                 "text":  "You are an expert AI assistant tasked with summarizing emails for the DGCEO office. Your goal is to extract key information from a provided email body and present it in a clean, structured JSON format.\n\nThe summary must include the following fields:\n\n- **Subject**: The full subject line of the email.\n- **SenderName**: The name of the person or organization that sent the email.\n- **SenderOrg**: The organization associated with the sender. If the organization is not explicitly mentioned, use the domain from the sender\u0027s email address (e.g., nitda.gov.ng, or a more relevant company name if available).\n- **Department**: The most relevant department within NITDA for handling this email. If a specific department is not clear, use a general term like \"DGCEO Office.\"\n- **Summary**: A concise summary of the email\u0027s purpose, key details (event names, locations, dates, deadlines), and any important context.\n- **ActionRequired**: A clear, concise statement on what is required from the DGCEO office, based on the email\u0027s content.\n- **RecommendedAction**: An actionable recommendation for the DGCEO office (e.g., \"Delegate to relevant department,\" \"For DGCEO\u0027s attention,\" \"Respond to sender\").\n- **Priority**: A priority level for the email. Infer this based on deadlines or urgency (e.g., \"High,\" \"Medium,\" \"Low\"). If no urgency is mentioned, default to \"Medium.\"\n- **Status**: The current status of the task. Default this to \"Pending Review.\"\n- **DueDate**: A specific date if a deadline is mentioned in the email (e.g., \"22nd Sept. 2025\"). If no due date is provided, state \"N/A.\"\n- **Attachments**: State whether the email contains attachments (\"Yes\") or not (\"No\") based on any explicit mentions or headers.\n\nYour output must be a single JSON object. Do not include any text before or after the JSON.\n\nHere is the email to summarize:\n\n@{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/body\u0027]}"
+                                                                                                             }
+                                                                                                         ]
+                                                                                           }
+                                                                                       ],
+                                                                          "generationConfig":  {
+                                                                                                   "temperature":  0.2,
+                                                                                                   "topK":  1,
+                                                                                                   "topP":  1,
+                                                                                                   "candidateCount":  1
+                                                                                               }
+                                                                      }
+                                                       },
+                                       "Get_email_(V2)":  {
+                                                              "runAfter":  {
+                                                                               "Append_to_string_variable":  [
+                                                                                                                 "Succeeded"
+                                                                                                             ]
+                                                                           },
+                                                              "metadata":  {
+                                                                               "operationMetadataId":  "4e369c03-d9a1-4a60-a995-4f54ece4ff64"
+                                                                           },
+                                                              "type":  "OpenApiConnection",
+                                                              "inputs":  {
+                                                                             "parameters":  {
+                                                                                                "messageId":  "@variables(\u0027emailId\u0027)",
+                                                                                                "includeAttachments":  true
+                                                                                            },
+                                                                             "host":  {
+                                                                                          "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                          "operationId":  "GetEmailV2",
+                                                                                          "connectionName":  "shared_office365"
+                                                                                      }
+                                                                         }
+                                                          },
+                                       "HTTP_Body_Copilot":  {
+                                                                 "runAfter":  {
+                                                                                  "HTTP_Body_3":  [
+                                                                                                      "Succeeded"
+                                                                                                  ]
+                                                                              },
+                                                                 "metadata":  {
+                                                                                  "operationMetadataId":  "717ee2eb-7933-4a12-81b7-d18d35172392"
+                                                                              },
+                                                                 "type":  "Compose",
+                                                                 "inputs":  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent{\n  \"contents\": [\n    {\n      \"role\": \"user\",\n      \"parts\": [\n        {\n          \"text\": \"You are an expert AI assistant tasked with summarizing emails for the DGCEO office. Your goal is to extract key information from a provided email body and present it in a clean, structured JSON format.\\n\\nThe summary must include the following fields:\\n\\n- **Subject**: The full subject line of the email.\\n- **SenderName**: The name of the person or organization that sent the email.\\n- **SenderOrg**: The organization associated with the sender. If the organization is not explicitly mentioned, use the domain from the sender\u0027s email address (e.g., nitda.gov.ng, or a more relevant company name if available).\\n- **Department**: The most relevant department within NITDA for handling this email. If a specific department is not clear, use a general term like \\\"DGCEO Office.\\\"\\n- **Summary**: A concise summary of the email\u0027s purpose, key details (event names, locations, dates, deadlines), and any important context.\\n- **ActionRequired**: A clear, concise statement on what is required from the DGCEO office, based on the email\u0027s content.\\n- **RecommendedAction**: An actionable recommendation for the DGCEO office (e.g., \\\"Delegate to relevant department,\\\" \\\"For DGCEO\u0027s attention,\\\" \\\"Respond to sender\\\").\\n- **Priority**: A priority level for the email. Infer this based on deadlines or urgency (e.g., \\\"High,\\\" \\\"Medium,\\\" \\\"Low\\\"). If no urgency is mentioned, default to \\\"Medium.\\\"\\n- **Status**: The current status of the task. Default this to \\\"Pending Review.\\\"\\n- **DueDate**: A specific date if a deadline is mentioned in the email (e.g., \\\"22nd Sept. 2025\\\"). If no due date is provided, state \\\"N/A.\\\"\\n- **Attachments**: State whether the email contains attachments (\\\"Yes\\\") or not (\\\"No\\\") based on any explicit mentions or headers.\\n\\nYour output must be a single JSON object. Do not include any text before or after the JSON.\\n\\nHere is the email to summarize:\\n\\nFrom: @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/from\u0027]},To: @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/toRecipients\u0027]}  ,CC: @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/ccRecipients\u0027]}Bcc: @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/bccRecipients\u0027]}, Subject: @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/subject\u0027]}, Received Date: @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/receivedDateTime\u0027]}, @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/importance\u0027]},Body:@{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/body\u0027]}\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"temperature\": 0.2,\n    \"topK\": 1,\n    \"topP\": 1,\n    \"candidateCount\": 1\n  }\n}"
+                                                             },
+                                       "Compose_2":  {
+                                                         "runAfter":  {
+                                                                          "HTTP_Body_Copilot":  [
+                                                                                                    "Succeeded"
+                                                                                                ]
+                                                                      },
+                                                         "metadata":  {
+                                                                          "operationMetadataId":  "27f1b3b6-19bd-43af-8cec-e8fd7e8db9ae"
+                                                                      },
+                                                         "type":  "Compose",
+                                                         "inputs":  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+                                                     },
+                                       "Compose_3":  {
+                                                         "runAfter":  {
+                                                                          "Compose_2":  [
+                                                                                            "Succeeded"
+                                                                                        ]
+                                                                      },
+                                                         "metadata":  {
+                                                                          "operationMetadataId":  "c70fe52c-34b4-468d-befb-5e967cc93d0e"
+                                                                      },
+                                                         "type":  "Compose",
+                                                         "inputs":  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent"
+                                                     },
+                                       "Compose_API_KEY_HK_GEMINI_2":  {
+                                                                           "runAfter":  {
+                                                                                            "Compose_Email_MessageID":  [
+                                                                                                                            "Succeeded"
+                                                                                                                        ]
+                                                                                        },
+                                                                           "metadata":  {
+                                                                                            "operationMetadataId":  "18f661ca-0dc0-443a-8c90-8a21acf7cd41"
+                                                                                        },
+                                                                           "type":  "Compose",
+                                                                           "inputs":  "REDACTED-GOOGLE-API-KEY"
+                                                                       },
+                                       "Compose_API_KEY_HK_GEMINI_1":  {
+                                                                           "runAfter":  {
+                                                                                            "Compose_API_KEY_HK_GEMINI_2":  [
+                                                                                                                                "Succeeded"
+                                                                                                                            ]
+                                                                                        },
+                                                                           "metadata":  {
+                                                                                            "operationMetadataId":  "5109fd9a-b1f5-4545-8489-140648d3c6d9"
+                                                                                        },
+                                                                           "type":  "Compose",
+                                                                           "inputs":  "REDACTED-GOOGLE-API-KEY"
+                                                                       },
+                                       "Initialize_variable_varAttachmentsHTML":  {
+                                                                                      "runAfter":  {
+                                                                                                       "Initialize_variable_varData":  [
+                                                                                                                                           "Succeeded"
+                                                                                                                                       ]
+                                                                                                   },
+                                                                                      "metadata":  {
+                                                                                                       "operationMetadataId":  "dd37f690-190d-4d3e-8723-4d7bb39ca45f"
+                                                                                                   },
+                                                                                      "type":  "InitializeVariable",
+                                                                                      "inputs":  {
+                                                                                                     "variables":  [
+                                                                                                                       {
+                                                                                                                           "name":  "varAttachmentsHTML",
+                                                                                                                           "type":  "boolean"
+                                                                                                                       }
+                                                                                                                   ]
+                                                                                                 }
+                                                                                  },
+                                       "Scope_Successful":  {
+                                                                "actions":  {
+                                                                                "Parse_JSON_Succesful":  {
+                                                                                                             "metadata":  {
+                                                                                                                              "operationMetadataId":  "1e42fa00-1592-4a78-bee2-158382e10af8"
+                                                                                                                          },
+                                                                                                             "type":  "ParseJson",
+                                                                                                             "inputs":  {
+                                                                                                                            "content":  "@body(\u0027HTTP_Request_to_AI_API\u0027)",
+                                                                                                                            "schema":  {
+                                                                                                                                           "type":  "object",
+                                                                                                                                           "properties":  {
+                                                                                                                                                              "statusCode":  {
+                                                                                                                                                                                 "type":  "integer"
+                                                                                                                                                                             },
+                                                                                                                                                              "headers":  {
+                                                                                                                                                                              "type":  "object",
+                                                                                                                                                                              "properties":  {
+                                                                                                                                                                                                 "Vary":  {
+                                                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                                                          },
+                                                                                                                                                                                                 "Date":  {
+                                                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                                                          },
+                                                                                                                                                                                                 "Server":  {
+                                                                                                                                                                                                                "type":  "string"
+                                                                                                                                                                                                            },
+                                                                                                                                                                                                 "X-XSS-Protection":  {
+                                                                                                                                                                                                                          "type":  "string"
+                                                                                                                                                                                                                      },
+                                                                                                                                                                                                 "X-Frame-Options":  {
+                                                                                                                                                                                                                         "type":  "string"
+                                                                                                                                                                                                                     },
+                                                                                                                                                                                                 "X-Content-Type-Options":  {
+                                                                                                                                                                                                                                "type":  "string"
+                                                                                                                                                                                                                            },
+                                                                                                                                                                                                 "Server-Timing":  {
+                                                                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                                                                   },
+                                                                                                                                                                                                 "Alt-Svc":  {
+                                                                                                                                                                                                                 "type":  "string"
+                                                                                                                                                                                                             },
+                                                                                                                                                                                                 "Transfer-Encoding":  {
+                                                                                                                                                                                                                           "type":  "string"
+                                                                                                                                                                                                                       },
+                                                                                                                                                                                                 "Content-Type":  {
+                                                                                                                                                                                                                      "type":  "string"
+                                                                                                                                                                                                                  },
+                                                                                                                                                                                                 "Content-Length":  {
+                                                                                                                                                                                                                        "type":  "string"
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                             }
+                                                                                                                                                                          },
+                                                                                                                                                              "body":  {
+                                                                                                                                                                           "type":  "object",
+                                                                                                                                                                           "properties":  {
+                                                                                                                                                                                              "candidates":  {
+                                                                                                                                                                                                                 "type":  "array",
+                                                                                                                                                                                                                 "items":  {
+                                                                                                                                                                                                                               "type":  "object",
+                                                                                                                                                                                                                               "properties":  {
+                                                                                                                                                                                                                                                  "content":  {
+                                                                                                                                                                                                                                                                  "type":  "object",
+                                                                                                                                                                                                                                                                  "properties":  {
+                                                                                                                                                                                                                                                                                     "parts":  {
+                                                                                                                                                                                                                                                                                                   "type":  "array",
+                                                                                                                                                                                                                                                                                                   "items":  {
+                                                                                                                                                                                                                                                                                                                 "type":  "object",
+                                                                                                                                                                                                                                                                                                                 "properties":  {
+                                                                                                                                                                                                                                                                                                                                    "text":  {
+                                                                                                                                                                                                                                                                                                                                                 "type":  "string"
+                                                                                                                                                                                                                                                                                                                                             }
+                                                                                                                                                                                                                                                                                                                                },
+                                                                                                                                                                                                                                                                                                                 "required":  [
+                                                                                                                                                                                                                                                                                                                                  "text"
+                                                                                                                                                                                                                                                                                                                              ]
+                                                                                                                                                                                                                                                                                                             }
+                                                                                                                                                                                                                                                                                               },
+                                                                                                                                                                                                                                                                                     "role":  {
+                                                                                                                                                                                                                                                                                                  "type":  "string"
+                                                                                                                                                                                                                                                                                              }
+                                                                                                                                                                                                                                                                                 }
+                                                                                                                                                                                                                                                              },
+                                                                                                                                                                                                                                                  "finishReason":  {
+                                                                                                                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                                                                                                                   },
+                                                                                                                                                                                                                                                  "index":  {
+                                                                                                                                                                                                                                                                "type":  "integer"
+                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                              },
+                                                                                                                                                                                                                               "required":  [
+                                                                                                                                                                                                                                                "content",
+                                                                                                                                                                                                                                                "finishReason",
+                                                                                                                                                                                                                                                "index"
+                                                                                                                                                                                                                                            ]
+                                                                                                                                                                                                                           }
+                                                                                                                                                                                                             },
+                                                                                                                                                                                              "usageMetadata":  {
+                                                                                                                                                                                                                    "type":  "object",
+                                                                                                                                                                                                                    "properties":  {
+                                                                                                                                                                                                                                       "promptTokenCount":  {
+                                                                                                                                                                                                                                                                "type":  "integer"
+                                                                                                                                                                                                                                                            },
+                                                                                                                                                                                                                                       "candidatesTokenCount":  {
+                                                                                                                                                                                                                                                                    "type":  "integer"
+                                                                                                                                                                                                                                                                },
+                                                                                                                                                                                                                                       "totalTokenCount":  {
+                                                                                                                                                                                                                                                               "type":  "integer"
+                                                                                                                                                                                                                                                           },
+                                                                                                                                                                                                                                       "promptTokensDetails":  {
+                                                                                                                                                                                                                                                                   "type":  "array",
+                                                                                                                                                                                                                                                                   "items":  {
+                                                                                                                                                                                                                                                                                 "type":  "object",
+                                                                                                                                                                                                                                                                                 "properties":  {
+                                                                                                                                                                                                                                                                                                    "modality":  {
+                                                                                                                                                                                                                                                                                                                     "type":  "string"
+                                                                                                                                                                                                                                                                                                                 },
+                                                                                                                                                                                                                                                                                                    "tokenCount":  {
+                                                                                                                                                                                                                                                                                                                       "type":  "integer"
+                                                                                                                                                                                                                                                                                                                   }
+                                                                                                                                                                                                                                                                                                },
+                                                                                                                                                                                                                                                                                 "required":  [
+                                                                                                                                                                                                                                                                                                  "modality",
+                                                                                                                                                                                                                                                                                                  "tokenCount"
+                                                                                                                                                                                                                                                                                              ]
+                                                                                                                                                                                                                                                                             }
+                                                                                                                                                                                                                                                               },
+                                                                                                                                                                                                                                       "thoughtsTokenCount":  {
+                                                                                                                                                                                                                                                                  "type":  "integer"
+                                                                                                                                                                                                                                                              }
+                                                                                                                                                                                                                                   }
+                                                                                                                                                                                                                },
+                                                                                                                                                                                              "modelVersion":  {
+                                                                                                                                                                                                                   "type":  "string"
+                                                                                                                                                                                                               },
+                                                                                                                                                                                              "responseId":  {
+                                                                                                                                                                                                                 "type":  "string"
+                                                                                                                                                                                                             }
+                                                                                                                                                                                          }
+                                                                                                                                                                       }
+                                                                                                                                                          }
+                                                                                                                                       }
+                                                                                                                        }
+                                                                                                         },
+                                                                                "Parse_JSON":  {
+                                                                                                   "runAfter":  {
+                                                                                                                    "Clean_Parse_JSON_Successful_Text":  [
+                                                                                                                                                             "Succeeded"
+                                                                                                                                                         ]
+                                                                                                                },
+                                                                                                   "metadata":  {
+                                                                                                                    "operationMetadataId":  "1e42fa00-1592-4a78-bee2-158382e10af8"
+                                                                                                                },
+                                                                                                   "type":  "ParseJson",
+                                                                                                   "inputs":  {
+                                                                                                                  "content":  "@outputs(\u0027Clean_Parse_JSON_Successful_Text\u0027)",
+                                                                                                                  "schema":  {
+                                                                                                                                 "type":  "object",
+                                                                                                                                 "properties":  {
+                                                                                                                                                    "Subject":  {
+                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                },
+                                                                                                                                                    "SenderName":  {
+                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                   },
+                                                                                                                                                    "SenderOrg":  {
+                                                                                                                                                                      "type":  "string"
+                                                                                                                                                                  },
+                                                                                                                                                    "Department":  {
+                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                   },
+                                                                                                                                                    "Summary":  {
+                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                },
+                                                                                                                                                    "ActionRequired":  {
+                                                                                                                                                                           "type":  "string"
+                                                                                                                                                                       },
+                                                                                                                                                    "RecommendedAction":  {
+                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                          },
+                                                                                                                                                    "Priority":  {
+                                                                                                                                                                     "type":  "string"
+                                                                                                                                                                 },
+                                                                                                                                                    "Status":  {
+                                                                                                                                                                   "type":  "string"
+                                                                                                                                                               },
+                                                                                                                                                    "DueDate":  {
+                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                },
+                                                                                                                                                    "Attachments":  {
+                                                                                                                                                                        "type":  "string"
+                                                                                                                                                                    }
+                                                                                                                                                }
+                                                                                                                             }
+                                                                                                              }
+                                                                                               },
+                                                                                "Set_variable_varResponse_Successful":  {
+                                                                                                                            "runAfter":  {
+                                                                                                                                             "Set_variable_varStatusCode_successful":  [
+                                                                                                                                                                                           "Succeeded"
+                                                                                                                                                                                       ]
+                                                                                                                                         },
+                                                                                                                            "metadata":  {
+                                                                                                                                             "operationMetadataId":  "34587155-bf9e-4e34-b728-06f909864d0e"
+                                                                                                                                         },
+                                                                                                                            "type":  "SetVariable",
+                                                                                                                            "inputs":  {
+                                                                                                                                           "name":  "varResponse",
+                                                                                                                                           "value":  "@outputs(\u0027Compose_Response\u0027)"
+                                                                                                                                       }
+                                                                                                                        },
+                                                                                "HTML_Values":  {
+                                                                                                    "runAfter":  {
+                                                                                                                     "Extract_Values_JSON":  [
+                                                                                                                                                 "Succeeded"
+                                                                                                                                             ]
+                                                                                                                 },
+                                                                                                    "metadata":  {
+                                                                                                                     "operationMetadataId":  "2e51723d-d6bb-42c8-b68c-eda53747c80d"
+                                                                                                                 },
+                                                                                                    "type":  "Compose",
+                                                                                                    "inputs":  "\u003cdiv style=\"font-size:14.5px; color:#2d3748; line-height:1.6; font-family:Segoe UI, Roboto, Arial, sans-serif;\"\u003e\n \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#f0f7f4; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #3182ce;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e📧 From\u003c/div\u003e\n    \u003cdiv style=\"color:#2d3748;\"\u003e@{body(\u0027Parse_JSON\u0027)?[\u0027SenderName\u0027]}, @{body(\u0027Parse_JSON\u0027)?[\u0027SenderOrg\u0027]}\u003c/div\u003e\n  \u003c/div\u003e\n \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#edf2f7; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #4a5568;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e📝 Summary\u003c/div\u003e\n    \u003cdiv style=\"color:#2d3748;\"\u003e@{body(\u0027Parse_JSON\u0027)?[\u0027Summary\u0027]}\u003c/div\u003e\n  \u003c/div\u003e\n \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#fef2f2; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #e53e3e;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e⚠️ Action Required\u003c/div\u003e\n    \u003cdiv style=\"color:#c53030; font-weight:500;\"\u003e@{body(\u0027Parse_JSON\u0027)?[\u0027ActionRequired\u0027]}\u003c/div\u003e\n  \u003c/div\u003e\n \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#f0fdf4; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #38a169;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e✅ Recommended Action\u003c/div\u003e\n    \u003cdiv style=\"color:#2f855a; font-weight:500;\"\u003e@{body(\u0027Parse_JSON\u0027)?[\u0027RecommendedAction\u0027]}\u003c/div\u003e\n  \u003c/div\u003e\n \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#f0f7f4; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #2f855a;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e🏢 Department\u003c/div\u003e\n    \u003cdiv style=\"color:#2d3748;\"\u003e@{body(\u0027Parse_JSON\u0027)?[\u0027Department\u0027]}\u003c/div\u003e\n  \u003c/div\u003e\n \n\u003c/div\u003e"
+                                                                                                },
+                                                                                "Extract_Values_JSON":  {
+                                                                                                            "runAfter":  {
+                                                                                                                             "Parse_JSON":  [
+                                                                                                                                                "Succeeded"
+                                                                                                                                            ]
+                                                                                                                         },
+                                                                                                            "metadata":  {
+                                                                                                                             "operationMetadataId":  "4dde675c-558e-49fa-8eac-fa11a4e6dd31"
+                                                                                                                         },
+                                                                                                            "type":  "Compose",
+                                                                                                            "inputs":  {
+                                                                                                                           "Subject":  "Example Subject@{body(\u0027Parse_JSON\u0027)?[\u0027Subject\u0027]}",
+                                                                                                                           "SenderName":  "Example Sender@{body(\u0027Parse_JSON\u0027)?[\u0027SenderName\u0027]}",
+                                                                                                                           "SenderOrg":  "@{body(\u0027Parse_JSON\u0027)?[\u0027SenderOrg\u0027]}",
+                                                                                                                           "Department":  "",
+                                                                                                                           "Summary":  "@{body(\u0027Parse_JSON\u0027)?[\u0027Summary\u0027]}",
+                                                                                                                           "ActionRequired":  "@{body(\u0027Parse_JSON\u0027)?[\u0027ActionRequired\u0027]}",
+                                                                                                                           "RecommendedAction":  "@{body(\u0027Parse_JSON\u0027)?[\u0027RecommendedAction\u0027]}",
+                                                                                                                           "Priority":  "@{body(\u0027Parse_JSON\u0027)?[\u0027Priority\u0027]}",
+                                                                                                                           "Status":  "@{body(\u0027Parse_JSON\u0027)?[\u0027Status\u0027]}",
+                                                                                                                           "DueDate":  "@{body(\u0027Parse_JSON\u0027)?[\u0027DueDate\u0027]}",
+                                                                                                                           "Attachments":  "@{body(\u0027Parse_JSON\u0027)?[\u0027Attachments\u0027]}"
+                                                                                                                       }
+                                                                                                        },
+                                                                                "Parse_JSON_Successful_Text":  {
+                                                                                                                   "runAfter":  {
+                                                                                                                                    "Parse_JSON_Succesful":  [
+                                                                                                                                                                 "Succeeded"
+                                                                                                                                                             ]
+                                                                                                                                },
+                                                                                                                   "metadata":  {
+                                                                                                                                    "operationMetadataId":  "54348230-e3e0-44cf-90e9-9650e5c86365"
+                                                                                                                                },
+                                                                                                                   "type":  "Compose",
+                                                                                                                   "inputs":  "@body(\u0027Parse_JSON_Succesful\u0027)[\u0027candidates\u0027][0][\u0027content\u0027][\u0027parts\u0027][0][\u0027text\u0027]"
+                                                                                                               },
+                                                                                "Clean_Parse_JSON_Successful_Text":  {
+                                                                                                                         "runAfter":  {
+                                                                                                                                          "Parse_JSON_Successful_Text":  [
+                                                                                                                                                                             "Succeeded"
+                                                                                                                                                                         ]
+                                                                                                                                      },
+                                                                                                                         "metadata":  {
+                                                                                                                                          "operationMetadataId":  "ac216c04-e583-4998-8273-04fb3f2c4f4d"
+                                                                                                                                      },
+                                                                                                                         "type":  "Compose",
+                                                                                                                         "inputs":  "@replace(replace(outputs(\u0027Parse_JSON_Successful_Text\u0027), \u0027```json\u0027, \u0027\u0027), \u0027```\u0027, \u0027\u0027)"
+                                                                                                                     },
+                                                                                "Compose_Response":  {
+                                                                                                         "runAfter":  {
+                                                                                                                          "HTML_with_Attachments":  [
+                                                                                                                                                        "Succeeded"
+                                                                                                                                                    ]
+                                                                                                                      },
+                                                                                                         "type":  "Compose",
+                                                                                                         "inputs":  {
+                                                                                                                        "summary":  "@{body(\u0027Parse_JSON\u0027)?[\u0027Summary\u0027]}.",
+                                                                                                                        "actionRequired":  ".@{body(\u0027Parse_JSON\u0027)?[\u0027ActionRequired\u0027]}",
+                                                                                                                        "recommendedAction":  "@{body(\u0027Parse_JSON\u0027)?[\u0027RecommendedAction\u0027]}",
+                                                                                                                        "suggestedCategoryCode":  "@{body(\u0027Parse_JSON\u0027)?[\u0027Department\u0027]}",
+                                                                                                                        "suggestedPriority":  "@{body(\u0027Parse_JSON\u0027)?[\u0027Priority\u0027]}",
+                                                                                                                        "suggestedAssigneeEmail":  ""
+                                                                                                                    }
+                                                                                                     },
+                                                                                "HTML_with_Attachments":  {
+                                                                                                              "runAfter":  {
+                                                                                                                               "HTML_Values":  [
+                                                                                                                                                   "Succeeded"
+                                                                                                                                               ]
+                                                                                                                           },
+                                                                                                              "metadata":  {
+                                                                                                                               "operationMetadataId":  "1b007d9c-b606-4fc6-900d-79e616c9d91c"
+                                                                                                                           },
+                                                                                                              "type":  "Compose",
+                                                                                                              "inputs":  "\u003cdiv style=\"margin-bottom:10px; padding:12px; background:#edf2f7; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #4a5568;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e📝 Summary\u003c/div\u003e\n    \u003cdiv style=\"color:#2d3748;\"\u003e@{body(\u0027Parse_JSON\u0027)?[\u0027Summary\u0027]}\u003c/div\u003e\n  \u003c/div\u003e\n \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#fef2f2; border-radius:8px; border:1px solid #dce53e; border-left:6px solid #e53e3e;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e⚠️ Action Required\u003c/div\u003e\n    \u003cdiv style=\"color:#c53030; font-weight:500;\"\u003e@{body(\u0027Parse_JSON\u0027)?[\u0027ActionRequired\u0027]}\u003c/div\u003e\n  \u003c/div\u003e\n \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#f0fdf4; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #38a169;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e✅ Recommended Action\u003c/div\u003e\n    \u003cdiv style=\"color:#2f855a; font-weight:500;\"\u003e@{body(\u0027Parse_JSON\u0027)?[\u0027RecommendedAction\u0027]}\u003c/div\u003e\n  \u003c/div\u003e\n \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#f0f7f4; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #2f855a;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e🏢 Department\u003c/div\u003e\n    \u003cdiv style=\"color:#2d3748;\"\u003e@{body(\u0027Parse_JSON\u0027)?[\u0027Department\u0027]}\u003c/div\u003e\n  \u003c/div\u003e\n \n  \u003cdiv style=\"margin-bottom:10px; padding:12px; background:#e8f4fd; border-radius:8px; border:1px solid #dce5dd; border-left:6px solid #007bff;\"\u003e\n    \u003cdiv style=\"font-weight:600; color:#1a202c; margin-bottom:4px;\"\u003e📎 Attachments\u003c/div\u003e\n    \u003cdiv style=\"color:#2d3748;\"\u003e\n      @{variables(\u0027varAttachmentsHTML\u0027)}\n    \u003c/div\u003e\n  \u003c/div\u003e\n\u003c/div\u003e\n\n"
+                                                                                                          },
+                                                                                "Set_variable_varStatusCode_successful":  {
+                                                                                                                              "runAfter":  {
+                                                                                                                                               "Compose_Response":  [
+                                                                                                                                                                        "Succeeded"
+                                                                                                                                                                    ]
+                                                                                                                                           },
+                                                                                                                              "type":  "SetVariable",
+                                                                                                                              "inputs":  {
+                                                                                                                                             "name":  "varStatusCode",
+                                                                                                                                             "value":  200
+                                                                                                                                         }
+                                                                                                                          },
+                                                                                "Set_variable_varAttachmentsHTML":  {
+                                                                                                                        "runAfter":  {
+                                                                                                                                         "Set_variable_varResponse_Successful":  [
+                                                                                                                                                                                     "Succeeded"
+                                                                                                                                                                                 ]
+                                                                                                                                     },
+                                                                                                                        "metadata":  {
+                                                                                                                                         "operationMetadataId":  "34587155-bf9e-4e34-b728-06f909864d0e"
+                                                                                                                                     },
+                                                                                                                        "type":  "SetVariable",
+                                                                                                                        "inputs":  {
+                                                                                                                                       "name":  "varAttachmentsHTML",
+                                                                                                                                       "value":  "@outputs(\u0027HTML_with_Attachments\u0027)"
+                                                                                                                                   }
+                                                                                                                    }
+                                                                            },
+                                                                "runAfter":  {
+                                                                                 "HTTP_Request_to_AI_API":  [
+                                                                                                                "Succeeded"
+                                                                                                            ]
+                                                                             },
+                                                                "metadata":  {
+                                                                                 "operationMetadataId":  "d8bc1693-1be0-41c1-8d49-544a1dc2759f"
+                                                                             },
+                                                                "type":  "Scope"
+                                                            },
+                                       "HTTP_Body_3":  {
+                                                           "runAfter":  {
+                                                                            "HTTP_Body_4":  [
+                                                                                                "Succeeded"
+                                                                                            ]
+                                                                        },
+                                                           "metadata":  {
+                                                                            "operationMetadataId":  "4dde675c-558e-49fa-8eac-fa11a4e6dd31"
+                                                                        },
+                                                           "type":  "Compose",
+                                                           "inputs":  {
+                                                                          "contents":  [
+                                                                                           {
+                                                                                               "role":  "user",
+                                                                                               "parts":  [
+                                                                                                             {
+                                                                                                                 "text":  "You are an expert AI assistant tasked with summarizing emails for the DGCEO office. Your goal is to extract key information from a provided email body and present it in a clean, structured JSON format.\n\nThe summary must include the following fields:\n\n- **Subject**: The full subject line of the email.\n- **SenderName**: The name of the person or organization that sent the email.\n- **SenderOrg**: The organization associated with the sender. If the organization is not explicitly mentioned, use the domain from the sender\u0027s email address (e.g., nitda.gov.ng, or a more relevant company name if available).\n- **Department**: The most relevant department within NITDA for handling this email. If a specific department is not clear, use a general term like \"DGCEO Office.\"\n- **Summary**: A concise summary of the email\u0027s purpose, key details (event names, locations, dates, deadlines), and any important context.\n- **ActionRequired**: A clear, concise statement on what is required from the DGCEO office, based on the email\u0027s content.\n- **RecommendedAction**: An actionable recommendation for the DGCEO office (e.g., \"Delegate to relevant department,\" \"For DGCEO\u0027s attention,\" \"Respond to sender\").\n- **Priority**: A priority level for the email. Infer this based on deadlines or urgency (e.g., \"High,\" \"Medium,\" \"Low\"). If no urgency is mentioned, default to \"Medium.\"\n- **Status**: The current status of the task. Default this to \"Pending Review.\"\n- **DueDate**: A specific date if a deadline is mentioned in the email (e.g., \"22nd Sept. 2025\"). If no due date is provided, state \"N/A.\"\n- **Attachments**: State whether the email contains attachments (\"Yes\") or not (\"No\") based on any explicit mentions or headers.\n\nYour output must be a single JSON object. Do not include any text before or after the JSON.\n\nHere is the email to summarize:\n\nFrom: @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/from\u0027]},To: @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/toRecipients\u0027]}  ,CC: @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/ccRecipients\u0027]}Bcc: @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/bccRecipients\u0027]}, Subject: @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/subject\u0027]}, Received Date: @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/receivedDateTime\u0027]}, @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/importance\u0027]},Body:@{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/body\u0027]}"
+                                                                                                             }
+                                                                                                         ]
+                                                                                           }
+                                                                                       ],
+                                                                          "generationConfig":  {
+                                                                                                   "temperature":  0.2,
+                                                                                                   "topK":  1,
+                                                                                                   "topP":  1,
+                                                                                                   "candidateCount":  1
+                                                                                               }
+                                                                      }
+                                                       },
+                                       "Compose_Email_MessageID":  {
+                                                                       "runAfter":  {
+
+                                                                                    },
+                                                                       "type":  "Compose",
+                                                                       "inputs":  "@triggerBody()?[\u0027emailId\u0027]"
+                                                                   },
+                                       "Compose._HTTP_Body":  {
+                                                                  "runAfter":  {
+                                                                                   "Compose_3":  [
+                                                                                                     "Succeeded"
+                                                                                                 ]
+                                                                               },
+                                                                  "type":  "Compose",
+                                                                  "inputs":  {
+                                                                                 "Subject":  "Example Subject@{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/subject\u0027]}",
+                                                                                 "SenderName":  "Example Sender@{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/from\u0027]}",
+                                                                                 "SenderOrg":  "",
+                                                                                 "Department":  "",
+                                                                                 "Summary":  "",
+                                                                                 "ActionRequired":  "",
+                                                                                 "RecommendedAction":  "",
+                                                                                 "Priority":  "",
+                                                                                 "Status":  "@{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/isRead\u0027]}",
+                                                                                 "DueDate":  "@{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/receivedDateTime\u0027]}",
+                                                                                 "Attachments":  "@{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/hasAttachments\u0027]}"
+                                                                             }
+                                                              },
+                                       "Compose_API_KEY_HK_GEMINI_3":  {
+                                                                           "runAfter":  {
+                                                                                            "Compose_API_KEY_HK_GEMINI_1":  [
+                                                                                                                                "Succeeded"
+                                                                                                                            ]
+                                                                                        },
+                                                                           "type":  "Compose",
+                                                                           "inputs":  "REDACTED-GOOGLE-API-KEY"
+                                                                       },
+                                       "Initialize_variable_varAPIKey":  {
+                                                                             "runAfter":  {
+                                                                                              "Initialize_variable_varAttachmentsHTML":  [
+                                                                                                                                             "Succeeded"
+                                                                                                                                         ]
+                                                                                          },
+                                                                             "metadata":  {
+                                                                                              "operationMetadataId":  "dd37f690-190d-4d3e-8723-4d7bb39ca45f"
+                                                                                          },
+                                                                             "type":  "InitializeVariable",
+                                                                             "inputs":  {
+                                                                                            "variables":  [
+                                                                                                              {
+                                                                                                                  "name":  "varAPIKey",
+                                                                                                                  "type":  "string"
+                                                                                                              }
+                                                                                                          ]
+                                                                                        }
+                                                                         },
+                                       "Initialize_variable_emailId":  {
+                                                                           "runAfter":  {
+                                                                                            "Initialize_variable_varResponse":  [
+                                                                                                                                    "Succeeded"
+                                                                                                                                ]
+                                                                                        },
+                                                                           "metadata":  {
+                                                                                            "operationMetadataId":  "9939ee16-ff04-4b41-93c0-70bffcb2fce8"
+                                                                                        },
+                                                                           "type":  "InitializeVariable",
+                                                                           "inputs":  {
+                                                                                          "variables":  [
+                                                                                                            {
+                                                                                                                "name":  "emailId",
+                                                                                                                "type":  "string"
+                                                                                                            }
+                                                                                                        ]
+                                                                                      }
+                                                                       },
+                                       "Set_variable_varEmailID":  {
+                                                                       "runAfter":  {
+                                                                                        "Initialize_variable_varStatusCode":  [
+                                                                                                                                  "Succeeded"
+                                                                                                                              ]
+                                                                                    },
+                                                                       "type":  "SetVariable",
+                                                                       "inputs":  {
+                                                                                      "name":  "emailId",
+                                                                                      "value":  "@outputs(\u0027Compose_Email_MessageID\u0027)"
+                                                                                  }
+                                                                   },
+                                       "Append_to_string_variable":  {
+                                                                         "runAfter":  {
+                                                                                          "Set_variable_varEmailID":  [
+                                                                                                                          "Succeeded"
+                                                                                                                      ]
+                                                                                      },
+                                                                         "type":  "AppendToStringVariable",
+                                                                         "inputs":  {
+                                                                                        "name":  "varAPIKey",
+                                                                                        "value":  "@outputs(\u0027Compose_API_KEY_HK_GEMINI_2\u0027)"
+                                                                                    }
+                                                                     },
+                                       "Initialize_variable_varStatusCode":  {
+                                                                                 "runAfter":  {
+                                                                                                  "Initialize_variable_emailId":  [
+                                                                                                                                      "Succeeded"
+                                                                                                                                  ]
+                                                                                              },
+                                                                                 "metadata":  {
+                                                                                                  "operationMetadataId":  "9939ee16-ff04-4b41-93c0-70bffcb2fce8"
+                                                                                              },
+                                                                                 "type":  "InitializeVariable",
+                                                                                 "inputs":  {
+                                                                                                "variables":  [
+                                                                                                                  {
+                                                                                                                      "name":  "varStatusCode",
+                                                                                                                      "type":  "integer"
+                                                                                                                  }
+                                                                                                              ]
+                                                                                            }
+                                                                             },
+                                       "Scope":  {
+                                                     "actions":  {
+                                                                     "Send_an_email_notification_(V3)":  {
+                                                                                                             "type":  "OpenApiConnection",
+                                                                                                             "inputs":  {
+                                                                                                                            "parameters":  {
+                                                                                                                                               "request/to":  "dgsRegistry@nitda.gov.ng",
+                                                                                                                                               "request/subject":  "Email AI Assist Response- @{outputs(\u0027Get_email_(V2)\u0027)?[\u0027body/subject\u0027]}",
+                                                                                                                                               "request/text":  "\u003cp class=\"editor-paragraph\"\u003e\u003c/p\u003e"
+                                                                                                                                           },
+                                                                                                                            "host":  {
+                                                                                                                                         "apiId":  "/providers/Microsoft.PowerApps/apis/shared_sendmail",
+                                                                                                                                         "operationId":  "SendEmailV3",
+                                                                                                                                         "connectionName":  "shared_sendmail"
+                                                                                                                                     }
+                                                                                                                        }
+                                                                                                         },
+                                                                     "Response":  {
+                                                                                      "type":  "Response",
+                                                                                      "kind":  "Http",
+                                                                                      "inputs":  {
+                                                                                                     "statusCode":  "@variables(\u0027varStatusCode\u0027)",
+                                                                                                     "headers":  {
+                                                                                                                     "Access-Control-Allow-Origin":  "*",
+                                                                                                                     "Access-Control-Allow-Methods":  "GET, POST, OPTIONS",
+                                                                                                                     "Access-Control-Allow-Headers":  "Content-Type",
+                                                                                                                     "Content-Type":  "application/json"
+                                                                                                                 }
+                                                                                                 }
+                                                                                  }
+                                                                 },
+                                                     "runAfter":  {
+                                                                      "Scope_Errror":  [
+                                                                                           "Succeeded",
+                                                                                           "Failed",
+                                                                                           "Skipped",
+                                                                                           "TimedOut"
+                                                                                       ],
+                                                                      "Scope_Successful":  [
+                                                                                               "Succeeded",
+                                                                                               "Failed",
+                                                                                               "Skipped",
+                                                                                               "TimedOut"
+                                                                                           ]
+                                                                  },
+                                                     "type":  "Scope"
+                                                 },
+                                       "Initialize_variable_varFailed":  {
+                                                                             "runAfter":  {
+                                                                                              "Compose_API_KEY_HK_GEMINI_3":  [
+                                                                                                                                  "Succeeded"
+                                                                                                                              ]
+                                                                                          },
+                                                                             "type":  "InitializeVariable",
+                                                                             "inputs":  {
+                                                                                            "variables":  [
+                                                                                                              {
+                                                                                                                  "name":  "varFailed",
+                                                                                                                  "type":  "integer"
+                                                                                                              }
+                                                                                                          ]
+                                                                                        }
+                                                                         },
+                                       "Initialize_variable_varRequestId":  {
+                                                                                "runAfter":  {
+                                                                                                 "Initialize_variable_varFailed":  [
+                                                                                                                                       "Succeeded"
+                                                                                                                                   ]
+                                                                                             },
+                                                                                "type":  "InitializeVariable",
+                                                                                "inputs":  {
+                                                                                               "variables":  [
+                                                                                                                 {
+                                                                                                                     "name":  "varRequestId",
+                                                                                                                     "type":  "string",
+                                                                                                                     "value":  "@coalesce(triggerBody()?[\u0027requestId\u0027], guid())"
+                                                                                                                 }
+                                                                                                             ]
+                                                                                           }
+                                                                            },
+                                       "Initialize_variable_varReceivedAtUtc":  {
+                                                                                    "runAfter":  {
+                                                                                                     "Initialize_variable_varRequestId":  [
+                                                                                                                                              "Succeeded"
+                                                                                                                                          ]
+                                                                                                 },
+                                                                                    "type":  "InitializeVariable",
+                                                                                    "inputs":  {
+                                                                                                   "variables":  [
+                                                                                                                     {
+                                                                                                                         "name":  "varReceivedAtUtc",
+                                                                                                                         "type":  "string",
+                                                                                                                         "value":  "@utcNow()"
+                                                                                                                     }
+                                                                                                                 ]
+                                                                                               }
+                                                                                },
+                                       "Initialize_variable_varStartTicks":  {
+                                                                                 "runAfter":  {
+                                                                                                  "Initialize_variable_varReceivedAtUtc":  [
+                                                                                                                                               "Succeeded"
+                                                                                                                                           ]
+                                                                                              },
+                                                                                 "type":  "InitializeVariable",
+                                                                                 "inputs":  {
+                                                                                                "variables":  [
+                                                                                                                  {
+                                                                                                                      "name":  "varStartTicks",
+                                                                                                                      "type":  "integer"
+                                                                                                                  }
+                                                                                                              ]
+                                                                                            }
+                                                                             },
+                                       "Initialize_variable_varResults":  {
+                                                                              "runAfter":  {
+                                                                                               "Initialize_variable_varStartTicks":  [
+                                                                                                                                         "Succeeded"
+                                                                                                                                     ]
+                                                                                           },
+                                                                              "type":  "InitializeVariable",
+                                                                              "inputs":  {
+                                                                                             "variables":  [
+                                                                                                               {
+                                                                                                                   "name":  "varResults",
+                                                                                                                   "type":  "array",
+                                                                                                                   "value":  [
+
+                                                                                                                             ]
+                                                                                                               }
+                                                                                                           ]
+                                                                                         }
+                                                                          },
+                                       "Initialize_variable_varErrors":  {
+                                                                             "runAfter":  {
+                                                                                              "Initialize_variable_varResults":  [
+                                                                                                                                     "Succeeded"
+                                                                                                                                 ]
+                                                                                          },
+                                                                             "type":  "InitializeVariable",
+                                                                             "inputs":  {
+                                                                                            "variables":  [
+                                                                                                              {
+                                                                                                                  "name":  "varErrors",
+                                                                                                                  "type":  "array",
+                                                                                                                  "value":  [
+
+                                                                                                                            ]
+                                                                                                              }
+                                                                                                          ]
+                                                                                        }
+                                                                         },
+                                       "Initialize_variable_varData":  {
+                                                                           "runAfter":  {
+                                                                                            "Initialize_variable_varErrors":  [
+                                                                                                                                  "Succeeded"
+                                                                                                                              ]
+                                                                                        },
+                                                                           "type":  "InitializeVariable",
+                                                                           "inputs":  {
+                                                                                          "variables":  [
+                                                                                                            {
+                                                                                                                "name":  "varData",
+                                                                                                                "type":  "object"
+                                                                                                            }
+                                                                                                        ]
+                                                                                      }
+                                                                       }
+                                   },
+                       "outputs":  {
+
+                                   },
+                       "description":  "Add a new items into a SharePoint list and then send an email when a button or link in Power Apps is selected."
+                   }
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "nitda-connection-verification/v1",
+  "environment": null,
+  "verifiedAtUtc": null,
+  "verifiedBy": null,
+  "outlook": {
+    "connectionReference": null,
+    "authenticatedAccount": null,
+    "approvedServiceMailbox": "dgsregistry@nitda.gov.ng",
+    "sendAsVerified": false,
+    "sendOnBehalfVerified": false,
+    "internalTestMessageTraceId": null,
+    "externalTestMessageTraceId": null,
+    "rejectionTestEvidence": null
+  },
+  "sharePointConnectionsVerified": false,
+  "status": "NOT_VERIFIED"
+}

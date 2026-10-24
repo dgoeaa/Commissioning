@@ -1,6 +1,6 @@
 import json, os, subprocess
 
-ROOT = "/home/user/Commissioning"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOOK = os.path.join(ROOT, ".claude", "hooks", "branch_lock.py")
 BR = "claude/isolated-code-session-scope-bghduo"
 env = dict(os.environ, CLAUDE_PROJECT_DIR=ROOT)

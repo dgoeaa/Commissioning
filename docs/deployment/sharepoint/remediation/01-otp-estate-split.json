@@ -1,0 +1,813 @@
+{
+  "remediationId": "01-otp-estate-split",
+  "closes": "An anonymous public endpoint writing into the internal operations system of record.",
+  "appliesTo": [
+    {
+      "flow": "Portal_Verify",
+      "internalName": "86897b2f-9770-4efa-8486-2642f24bb947"
+    },
+    {
+      "flow": "Portal_Verify_Confirm",
+      "internalName": "3b69aa71-ffed-4956-9d20-2aa3021a8da0"
+    }
+  ],
+  "doNotChange": [
+    {
+      "flow": "Web - OTP Generate",
+      "internalName": "a03d0ae8-a106-4aee-9985-d73ea7997653",
+      "why": "Internal sign-in. OTP_Transactions is its correct home; separating the two estates is the whole point of this change."
+    },
+    {
+      "flow": "Web - OTP Verify",
+      "internalName": "3e201620-f1e8-4c17-a90a-4d95b94a24c2",
+      "why": "Same."
+    }
+  ],
+  "from": {
+    "dataset": "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+    "table": "9421d473-8906-43b7-a41f-a213046683c1",
+    "list": "OTP_Transactions",
+    "site": "NITDADGO-EAAACTIVITYTRACKING"
+  },
+  "to": {
+    "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+    "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+    "list": "Portal OTP Codes",
+    "site": "Global_Digital_Documents_Centre"
+  },
+  "columnMapping": [
+    {
+      "from": "Title",
+      "to": "Title",
+      "note": "Native column. Holds the lower-cased email, unchanged."
+    },
+    {
+      "from": "OTP_Code",
+      "to": "OTP_Code",
+      "note": "Same name, already live on the target. No change to the expression."
+    },
+    {
+      "from": "Expires_At",
+      "to": "Expires_At",
+      "note": "Same name, already live on the target. No change to the expression."
+    },
+    {
+      "from": "Is_Verified",
+      "to": "Consumed",
+      "note": "RENAMED. Every item/Is_Verified becomes item/Consumed, and every $filter 'Is_Verified eq 0' becomes 'Consumed eq 0'."
+    },
+    {
+      "from": null,
+      "to": "Email",
+      "note": "NEW, indexed. Set it to the same value as Title. The index is what keeps the $filter correct past the 5,000-item view threshold rather than merely faster below it."
+    },
+    {
+      "from": null,
+      "to": "Attempts",
+      "note": "NEW. Initialise to 0 on mint; increment on every wrong code. Without it there is no cap and a code can be guessed without limit."
+    },
+    {
+      "from": null,
+      "to": "SourceIp",
+      "note": "NEW. The caller's address, for rate limiting and forensics."
+    },
+    {
+      "from": null,
+      "to": "CreatedAtUtc",
+      "note": "NEW. utcNow() at mint."
+    }
+  ],
+  "actions": {
+    "Portal_Verify / Create_item_OTP_Record": {
+      "path": "Scope_Global/Switch/case:Case_Generate/Create_item_OTP_Record",
+      "replaceParametersWith": {
+        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+        "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+        "item/Title": "@toLower(trim(coalesce(triggerBody()?['email'],'')))",
+        "item/Email": "@toLower(trim(coalesce(triggerBody()?['email'],'')))",
+        "item/OTP_Code": "@variables('varRandomOTP')",
+        "item/Expires_At": "@outputs('Compose_OTP_Expiry')",
+        "item/Attempts": 0,
+        "item/Consumed": false,
+        "item/CreatedAtUtc": "@utcNow()",
+        "item/SourceIp": "@coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'')"
+      }
+    },
+    "Portal_Verify / Get_items": {
+      "path": "Scope_Global/Switch/case:Case_Verify/Get_items",
+      "replaceParametersWith": {
+        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+        "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+        "$filter": "Email eq '@{toLower(trim(coalesce(triggerBody()?['email'],'')))}' and Consumed eq 0",
+        "$orderby": "Created desc",
+        "$top": 1
+      }
+    },
+    "Portal_Verify / Update_item": {
+      "path": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/Update_item",
+      "replaceParametersWith": {
+        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+        "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+        "id": "@first(outputs('Get_items')?['body/value'])?['ID']",
+        "item/Consumed": true
+      },
+      "alsoFixes": "The deployed expression is first(outputs('Get_items')?['body/value']?['ID']), which indexes the ID of the array rather than taking the ID of the first item. Corrected here."
+    },
+    "Portal_Verify_Confirm / Get_items_OTP_Verify": {
+      "path": "Scope_Global/Switch/case:Case_Verify/Get_items_OTP_Verify",
+      "replaceParametersWith": {
+        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+        "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+        "$filter": "Email eq '@{toLower(trim(coalesce(triggerBody()?['email'],'')))}' and Consumed eq 0",
+        "$orderby": "Created desc",
+        "$top": 1
+      },
+      "alsoFixes": "The deployed filter matches on OTP_Code alone, so a code is accepted for whichever address minted it last rather than for the address presenting it. Filtering by Email and comparing the code inside the flow binds the two."
+    },
+    "Portal_Verify_Confirm / Get_item_OTP_Record": {
+      "path": "Scope_Global/Switch/case:Case_Verify/Condition/else/Get_item_OTP_Record",
+      "replaceParametersWith": {
+        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+        "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+        "id": "@first(outputs('Get_items_OTP_Verify')?['body/value'])?['ID']"
+      }
+    },
+    "Portal_Verify_Confirm / Update_item": {
+      "path": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/Update_item",
+      "replaceParametersWith": {
+        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+        "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+        "id": "@outputs('Get_item_OTP_Record')?['body/ID']",
+        "item/Consumed": true
+      }
+    },
+    "Portal_Verify_Confirm / Create_item_OTP_Record": {
+      "path": "Scope_Global/Switch/case:Case_Generate/Create_item_OTP_Record",
+      "replaceParametersWith": {
+        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+        "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+        "item/Title": "@toLower(trim(coalesce(triggerBody()?['email'],'')))",
+        "item/Email": "@toLower(trim(coalesce(triggerBody()?['email'],'')))",
+        "item/OTP_Code": "@variables('varRandomOTP')",
+        "item/Expires_At": "@outputs('Compose_OTP_Expiry')",
+        "item/Attempts": 0,
+        "item/Consumed": false,
+        "item/CreatedAtUtc": "@utcNow()",
+        "item/SourceIp": "@coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'')"
+      }
+    },
+    "Portal_Verify_Confirm / Create_item_OTP_Record_1": {
+      "path": "Scope_VERIFY_Complete_No_Trigger/Condition_Verify_Email_Required/else/Create_item_OTP_Record_1",
+      "replaceParametersWith": {
+        "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+        "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+        "item/Title": "@toLower(trim(coalesce(outputs('Compose_Verify_Identifier'),'')))",
+        "item/Email": "@toLower(trim(coalesce(outputs('Compose_Verify_Identifier'),'')))",
+        "item/OTP_Code": "@outputs('Compose_Random_OTP')",
+        "item/Expires_At": "@outputs('Compose_OTP_Expiry')",
+        "item/Attempts": 0,
+        "item/Consumed": false,
+        "item/CreatedAtUtc": "@utcNow()",
+        "item/SourceIp": "@coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'')"
+      }
+    }
+  },
+  "newActionsRequired": [
+    {
+      "name": "Increment_Attempts",
+      "where": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1 - on the ELSE branch, where the presented code does not match",
+      "type": "OpenApiConnection",
+      "operationId": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+          "id": "@outputs('Get_item_OTP_Record')?['body/ID']",
+          "item/Attempts": "@add(coalesce(outputs('Get_item_OTP_Record')?['body/Attempts'],0),1)"
+        }
+      },
+      "why": "Without a counter there is no cap, and a six-digit code with no cap is guessable by a script in under a minute. Consume the code once Attempts reaches 5.",
+      "flow": "Portal_Verify_Confirm",
+      "place": {
+        "parent": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/Condition_Code_Matches/else",
+        "first": true
+      }
+    },
+    {
+      "name": "Consume_Expired_Challenge",
+      "where": "Scope_Global/Switch/case:Case_Verify/Condition/else - on the branch taken when Expires_At is in the past",
+      "type": "OpenApiConnection",
+      "operationId": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+          "id": "@outputs('Get_item_OTP_Record')?['body/ID']",
+          "item/Consumed": true
+        }
+      },
+      "why": "An expired code that stays unconsumed keeps matching the $filter and is returned again on the next attempt.",
+      "flow": "Portal_Verify_Confirm",
+      "place": {
+        "parent": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/else",
+        "after": "Append_to_string_variable__OTP_Invalid_or_Expired"
+      }
+    },
+    {
+      "name": "Get_Rate_Limit_Verify_Source",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "GetItems",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetItems"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "$filter": "Title eq '@{outputs('Compose_Bucket_Verify_Source')}'",
+          "$top": 1
+        }
+      },
+      "why": "D5 - rate limiting is done in the same visit rather than a later pass. VERIFY mails a code to any address supplied, so an unlimited caller is a mail relay.",
+      "flow": "Portal_Verify",
+      "where": "Scope_Global, first action, before the Switch - immediately after Compose_Bucket_Verify_Source",
+      "place": {
+        "parent": "Scope_Global",
+        "after": "Compose_Bucket_Verify_Source"
+      }
+    },
+    {
+      "name": "Update_Rate_Limit_Verify_Source",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "id": "@first(outputs('Get_Rate_Limit_Verify_Source')?['body/value'])?['ID']",
+          "item/RequestCount": "@if(greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Verify_Source')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')), ticks(addHours(utcNow(),-1))), add(coalesce(first(outputs('Get_Rate_Limit_Verify_Source')?['body/value'])?['RequestCount'],0),1), 1)",
+          "item/UpdatedAtUtc": "@utcNow()",
+          "item/WindowStartUtc": "@if(greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Verify_Source')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')), ticks(addHours(utcNow(),-1))), coalesce(first(outputs('Get_Rate_Limit_Verify_Source')?['body/value'])?['WindowStartUtc'], utcNow()), utcNow())"
+        }
+      },
+      "why": "D8 - a row whose window has expired is reset here rather than left while a second row with the same Title is created. Two rows for one bucket and a $top 1 read is a limit that forgets.",
+      "flow": "Portal_Verify",
+      "where": "Scope_Global/Condition_Rate_Bucket_Exists - the IF YES branch",
+      "place": {
+        "parent": "Scope_Global/Condition_Rate_Bucket_Exists",
+        "first": true
+      }
+    },
+    {
+      "name": "Create_Rate_Limit_Verify_Source",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "item/Title": "@outputs('Compose_Bucket_Verify_Source')",
+          "item/WindowStartUtc": "@utcNow()",
+          "item/UpdatedAtUtc": "@utcNow()",
+          "item/RequestCount": 1
+        }
+      },
+      "why": "Only when absent or the window has rolled over.",
+      "flow": "Portal_Verify",
+      "where": "Scope_Global/Condition_Rate_Bucket_Exists - the IF NO branch",
+      "place": {
+        "parent": "Scope_Global/Condition_Rate_Bucket_Exists/else",
+        "first": true
+      }
+    },
+    {
+      "name": "Create_Outbox_Receipt_Verify",
+      "type": "OpenApiConnection",
+      "list": "Portal Outbox Receipts",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "88a81ca1-319a-45f5-8409-f91a24538ffa",
+          "item/Title": "@toLower(trim(coalesce(triggerBody()?['email'],'')))",
+          "item/MessageType": "verification-code",
+          "item/RecipientEmail": "@toLower(trim(coalesce(triggerBody()?['email'],'')))",
+          "item/Reference": "",
+          "item/SentAtUtc": "@utcNow()",
+          "item/Status": "sent",
+          "item/Attempts": 1,
+          "item/LastError": ""
+        }
+      },
+      "why": "D2 - after the mail action in Portal_Verify. Records that a code was sent, never the code itself.",
+      "flow": "Portal_Verify",
+      "where": "Scope_Global/Switch/case:Case_Generate - immediately after Send_an_email_(V2)",
+      "place": {
+        "parent": "Scope_Global/Switch/case:Case_Generate",
+        "after": "Send_an_email_(V2)"
+      }
+    },
+    {
+      "name": "Get_Rate_Limit_Verify_Confirm_Source",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "GetItems",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "GetItems"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "$filter": "Title eq '@{outputs('Compose_Bucket_Verify_Confirm_Source')}'",
+          "$top": 1
+        }
+      },
+      "why": "D5 - VERIFY_CONFIRM is where a code is guessed. The attempt cap protects one code; this bucket protects the address space.",
+      "flow": "Portal_Verify_Confirm",
+      "where": "Scope_Global, first action, before the Switch - immediately after Compose_Bucket_Verify_Confirm_Source",
+      "place": {
+        "parent": "Scope_Global",
+        "after": "Compose_Bucket_Verify_Confirm_Source"
+      }
+    },
+    {
+      "name": "Update_Rate_Limit_Verify_Confirm_Source",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "id": "@first(outputs('Get_Rate_Limit_Verify_Confirm_Source')?['body/value'])?['ID']",
+          "item/RequestCount": "@if(greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Verify_Confirm_Source')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')), ticks(addHours(utcNow(),-1))), add(coalesce(first(outputs('Get_Rate_Limit_Verify_Confirm_Source')?['body/value'])?['RequestCount'],0),1), 1)",
+          "item/UpdatedAtUtc": "@utcNow()",
+          "item/WindowStartUtc": "@if(greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Verify_Confirm_Source')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')), ticks(addHours(utcNow(),-1))), coalesce(first(outputs('Get_Rate_Limit_Verify_Confirm_Source')?['body/value'])?['WindowStartUtc'], utcNow()), utcNow())"
+        }
+      },
+      "why": "D8 - a row whose window has expired is reset here rather than left while a second row with the same Title is created. Two rows for one bucket and a $top 1 read is a limit that forgets.",
+      "flow": "Portal_Verify_Confirm",
+      "where": "Scope_Global/Condition_Rate_Bucket_Exists - the IF YES branch",
+      "place": {
+        "parent": "Scope_Global/Condition_Rate_Bucket_Exists",
+        "first": true
+      }
+    },
+    {
+      "name": "Create_Rate_Limit_Verify_Confirm_Source",
+      "type": "OpenApiConnection",
+      "list": "Portal Rate Limits",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "d6b97198-489c-4bd7-8647-1133c55efdf9",
+          "item/Title": "@outputs('Compose_Bucket_Verify_Confirm_Source')",
+          "item/WindowStartUtc": "@utcNow()",
+          "item/UpdatedAtUtc": "@utcNow()",
+          "item/RequestCount": 1
+        }
+      },
+      "why": "Only when absent or the window has rolled over.",
+      "flow": "Portal_Verify_Confirm",
+      "where": "Scope_Global/Condition_Rate_Bucket_Exists - the IF NO branch",
+      "place": {
+        "parent": "Scope_Global/Condition_Rate_Bucket_Exists/else",
+        "first": true
+      }
+    },
+    {
+      "name": "Create_Verification_Proof",
+      "type": "OpenApiConnection",
+      "list": "Portal Verification Proofs",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "f5c9698e-4b6c-4ec7-97ee-dc540efab8a9",
+          "item/Title": "@concat(replace(guid(),'-',''), replace(guid(),'-',''))",
+          "item/Email": "@toLower(trim(coalesce(triggerBody()?['email'],'')))",
+          "item/Purpose": "portal-verification",
+          "item/ExpiresAtUtc": "@addMinutes(utcNow(),15)",
+          "item/CreatedAtUtc": "@utcNow()",
+          "item/Consumed": false
+        }
+      },
+      "why": "In Portal_Verify_Confirm, on the branch where the presented code matches. THE DEPLOYED FLOW DOES NOT DO THIS - it flips a verified flag and returns, minting nothing. Without the proof, C1 never completes and SUBMISSION and STATUS have nothing to redeem, so the whole verification circle is decorative. Title is the opaque token returned to the caller: two concatenated guids with hyphens stripped.",
+      "flow": "Portal_Verify_Confirm",
+      "where": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1 - the IF YES branch, where the presented code matches",
+      "place": {
+        "parent": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/Condition_Code_Matches",
+        "after": "Append_to_string_variable_Verification_Successful"
+      }
+    },
+    {
+      "name": "Consume_Challenge_Attempts_Exceeded",
+      "type": "OpenApiConnection",
+      "list": "Portal OTP Codes",
+      "operation": "PatchItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PatchItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "3f85213c-1fdc-4be0-8c0c-e28aa77fbe56",
+          "id": "@outputs('Get_item_OTP_Record')?['body/ID']",
+          "item/Consumed": true
+        }
+      },
+      "why": "On the branch where Attempts has reached 5. Consume rather than leave it matching the filter, or the cap is advisory.",
+      "flow": "Portal_Verify_Confirm",
+      "where": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/else - after Increment_Attempts, on the branch where Attempts has reached 5",
+      "place": {
+        "parent": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/Condition_Code_Matches/else/Condition_Attempts_Exceeded",
+        "first": true
+      }
+    },
+    {
+      "name": "Create_Flow_Telemetry",
+      "type": "OpenApiConnection",
+      "list": "Portal Flow Telemetry",
+      "operation": "PostItem",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+          "connectionName": "shared_sharepointonline",
+          "operationId": "PostItem"
+        },
+        "parameters": {
+          "dataset": "https://nitdanigeria.sharepoint.com/sites/Global_Digital_Documents_Centre",
+          "table": "726c210d-09d5-45d9-952d-7a506b644b13",
+          "item/Title": "@coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])",
+          "item/Flow": "@coalesce(workflow()?['tags']?['flowDisplayName'], workflow()?['name'])",
+          "item/RunId": "@workflow()?['run']?['name']",
+          "item/StartedAtUtc": "@variables('varReceivedAtUtc')",
+          "item/CompletedAtUtc": "@variables('varCompletedAtUtc')",
+          "item/Outcome": "@if(less(variables('varStatusCode'),400),'Succeeded','Failed')",
+          "item/DurationMs": "@variables('varDurationMs')",
+          "item/ErrorMessage": "@string(variables('varErrors'))"
+        }
+      },
+      "why": "HOUSE STANDARD. Place inside Scope_Flow_Data_Capture, beside the existing Compose_Flow_Run_Record - not on the request path. The values are the standard variable set the skeleton already initialises; if this flow has no Scope_Flow_Data_Capture, add the scope first, because that is the conformance gap rather than this action.",
+      "flow": "BOTH",
+      "where": "Scope_Flow_Data_Capture, after Compose_Flow_Run_Record and before Compose_Telemetry_Attachments - add one in each of the two flows",
+      "place": {
+        "parent": "Scope_Flow_Data_Capture",
+        "after": "Compose_Flow_Run_Record"
+      }
+    }
+  ],
+  "verification": [
+    "node scripts/flow-list-sweep.mjs <the re-exported definition>   # its footprint should name Portal OTP Codes and not OTP_Transactions",
+    "npm run wiring                                                  # VERIFY and VERIFY_CONFIRM crossings should fall from 12 to 0",
+    "npm run wiring   # VERIFY moves from 0/7 to 7/7 and VERIFY_CONFIRM from 0/6 to 6/6; all twelve crossings on these two flows clear",
+    "Mint a code end to end and confirm the row lands in Portal OTP Codes on GDDC, with Attempts 0 and Consumed false"
+  ],
+  "residualRisk": "OTP_Code is stored in plaintext on both estates. SPOT correction SC-003 records why - Workflow Definition Language has no bitwise operators, so SHA-256 cannot be computed natively, and the estate carries no external dependency in which to compute it. The code is protected by its lifecycle instead: short expiry, single use, attempt cap. This split does not change that, and the claim that codes are hashed should not be made anywhere.",
+  "visit": 1,
+  "endpoint": "VERIFY, VERIFY_CONFIRM",
+  "composeFirst": [
+    {
+      "name": "Compose_Bucket_Verify_Source",
+      "inputs": "@concat('VERIFY_IP:', coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown'))"
+    },
+    {
+      "name": "Compose_Bucket_Verify_Confirm_Source",
+      "inputs": "@concat('VERIFY_CONFIRM_IP:', coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown'))"
+    }
+  ],
+  "buildStandard": {
+    "conformTo": "docs/deployment/sharepoint/flow-standard.json",
+    "placement": "Work in Scope_<Purpose> under Scope_Global; failure path in the catch scope; answer through Compose__Standard_Response_Revised then Response; run record in Scope_Flow_Data_Capture.",
+    "check": "node scripts/verify-flow-standard.mjs --portal"
+  },
+  "standardConformance": {
+    "decision": "D7 - the standard work rides along with each visit rather than waiting for a sixth pass. The flow is already open, and adding a catch scope to a flow whose actions you have just rewritten costs a fraction of coming back to it.",
+    "standard": "docs/deployment/sharepoint/flow-standard.json",
+    "order": "Do the standard work FIRST, before the SharePoint actions in Step B. The variables and Scope_Global have to exist before an action can reference them, and moving actions into a scope afterwards is where things get dropped.",
+    "perFlow": [
+      {
+        "flow": "Portal_Verify",
+        "conformanceBefore": "78% by rule count",
+        "conforms": false,
+        "missing": [
+          {
+            "check": "redaction.headers",
+            "title": "Redact headers before capture",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Headers, running after Compose_Redacted_Queries.",
+            "inputs": "@setProperty(\n  setProperty(\n    setProperty(\n      setProperty(\n        coalesce(triggerOutputs()?['headers'], json('{}')),\n        'Authorization',\n        '***REDACTED***'\n      ),\n      'Cookie',\n      '***REDACTED***'\n    ),\n    'x-api-key',\n    '***REDACTED***'\n  ),\n  'Ocp-Apim-Subscription-Key',\n  '***REDACTED***'\n)",
+            "why": "Without it the observability harness becomes the leak.",
+            "wireInto": {
+              "action": "Compose_Flow_Run_Record",
+              "underKey": "request",
+              "pair": {
+                "key": "headers_redacted",
+                "value": "@coalesce(outputs('Compose_Redacted_Headers'), json('{}'))"
+              },
+              "note": "Same: an unconsumed Compose redacts nothing. Compose_Flow_Run_Record must also be moved to run after Compose_Redacted_Headers, or it composes before the value exists."
+            }
+          },
+          {
+            "check": "redaction.queries",
+            "title": "Redact the query string before capture",
+            "how": "Inside Scope_Flow_Data_Capture, add a Compose named Compose_Redacted_Queries. Place it first in that scope, immediately after Get_Flow_Definition.",
+            "inputs": "@setProperty(\n  setProperty(\n    coalesce(triggerOutputs()?['queries'], json('{}')),\n    'sig',\n    '***REDACTED***'\n  ),\n  'code',\n  '***REDACTED***'\n)",
+            "why": "sig is the trigger credential and code is the one-time password. On the verification flows this is the difference between telemetry and a log of every OTP issued.",
+            "wireInto": {
+              "action": "Compose_Flow_Run_Record",
+              "underKey": "request",
+              "pair": {
+                "key": "queries_redacted",
+                "value": "@coalesce(outputs('Compose_Redacted_Queries'), json('{}'))"
+              },
+              "note": "Adding the Compose without this leaves it inert: the run record captures no query string at all, and the conformance check still passes. The rule is about what reaches telemetry, not about an action existing."
+            }
+          }
+        ]
+      },
+      {
+        "flow": "Portal_Verify_Confirm",
+        "conformanceBefore": "100% by rule count",
+        "conforms": true,
+        "missing": []
+      }
+    ],
+    "check": "node scripts/verify-flow-standard.mjs --portal",
+    "measuredFrom": "scripts/verify-flow-standard.mjs, at generation time",
+    "generatedBy": "scripts/build-remediation-standard.mjs"
+  },
+  "rateLimitGate": {
+    "decision": "D8",
+    "window": "60 minutes, fixed, from WindowStartUtc",
+    "limits": {
+      "VERIFY": 5,
+      "VERIFY_CONFIRM": 10
+    },
+    "refusal": "HTTP 429 through the standard response envelope",
+    "mechanism": "Repoint the existing Switch from @triggerBody()?['action'] to a Compose that returns 'rate-limited' when over the limit, and add a Case_Rate_Limited. Nothing is dragged and the refusal returns through the same envelope and telemetry scope as every other outcome.",
+    "perFlow": [
+      {
+        "flow": "Portal_Verify",
+        "limitPerHour": 5,
+        "add": [
+          {
+            "name": "Compose_Switch_Key",
+            "type": "Compose",
+            "where": "Scope_Global, immediately after Condition_Rate_Bucket_Exists and before the Switch",
+            "inputs": "@if(and(greater(length(coalesce(outputs('Get_Rate_Limit_Verify_Source')?['body/value'], json('[]'))),0), greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Verify_Source')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')), ticks(addHours(utcNow(),-1))), greaterOrEquals(coalesce(first(outputs('Get_Rate_Limit_Verify_Source')?['body/value'])?['RequestCount'],0),5)), 'rate-limited', coalesce(triggerBody()?['action'],''))",
+            "place": {
+              "parent": "Scope_Global",
+              "after": "Condition_Rate_Bucket_Exists"
+            }
+          },
+          {
+            "name": "Condition_Rate_Bucket_Exists",
+            "type": "If",
+            "where": "Scope_Global, immediately after Get_Rate_Limit_Verify_Source",
+            "expression": "@greater(length(coalesce(outputs('Get_Rate_Limit_Verify_Source')?['body/value'], json('[]'))),0)",
+            "ifYes": "Update_Rate_Limit_Verify_Source",
+            "ifNo": "Create_Rate_Limit_Verify_Source",
+            "place": {
+              "parent": "Scope_Global",
+              "after": "Get_Rate_Limit_Verify_Source"
+            }
+          },
+          {
+            "name": "Case_Rate_Limited",
+            "type": "SwitchCase",
+            "caseValue": "rate-limited",
+            "where": "a new case on the existing Switch",
+            "actions": [
+              {
+                "name": "Set_variable_varStatusCode_Rate_Limited",
+                "value": 429
+              },
+              {
+                "name": "Append_to_string_variable_varResponse_Rate_Limited",
+                "value": "Too many requests from this source. Try again later."
+              }
+            ],
+            "place": {
+              "switch": "Scope_Global/Switch"
+            }
+          }
+        ],
+        "repoint": {
+          "action": "Switch",
+          "expressionFrom": "@triggerBody()?['action']",
+          "expressionTo": "@outputs('Compose_Switch_Key')"
+        },
+        "composeBucket": {
+          "name": "Compose_Bucket_Verify_Source",
+          "place": {
+            "parent": "Scope_Global",
+            "first": true
+          },
+          "inputs": "@concat('VERIFY_IP:', coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown'))"
+        }
+      },
+      {
+        "flow": "Portal_Verify_Confirm",
+        "limitPerHour": 10,
+        "add": [
+          {
+            "name": "Compose_Switch_Key",
+            "type": "Compose",
+            "where": "Scope_Global, immediately after Condition_Rate_Bucket_Exists and before the Switch",
+            "inputs": "@if(and(greater(length(coalesce(outputs('Get_Rate_Limit_Verify_Confirm_Source')?['body/value'], json('[]'))),0), greater(ticks(coalesce(first(outputs('Get_Rate_Limit_Verify_Confirm_Source')?['body/value'])?['WindowStartUtc'],'1900-01-01T00:00:00Z')), ticks(addHours(utcNow(),-1))), greaterOrEquals(coalesce(first(outputs('Get_Rate_Limit_Verify_Confirm_Source')?['body/value'])?['RequestCount'],0),10)), 'rate-limited', coalesce(triggerBody()?['action'],''))",
+            "place": {
+              "parent": "Scope_Global",
+              "after": "Condition_Rate_Bucket_Exists"
+            }
+          },
+          {
+            "name": "Condition_Rate_Bucket_Exists",
+            "type": "If",
+            "where": "Scope_Global, immediately after Get_Rate_Limit_Verify_Confirm_Source",
+            "expression": "@greater(length(coalesce(outputs('Get_Rate_Limit_Verify_Confirm_Source')?['body/value'], json('[]'))),0)",
+            "ifYes": "Update_Rate_Limit_Verify_Confirm_Source",
+            "ifNo": "Create_Rate_Limit_Verify_Confirm_Source",
+            "place": {
+              "parent": "Scope_Global",
+              "after": "Get_Rate_Limit_Verify_Confirm_Source"
+            }
+          },
+          {
+            "name": "Case_Rate_Limited",
+            "type": "SwitchCase",
+            "caseValue": "rate-limited",
+            "where": "a new case on the existing Switch",
+            "actions": [
+              {
+                "name": "Set_variable_varStatusCode_Rate_Limited",
+                "value": 429
+              },
+              {
+                "name": "Append_to_string_variable_varResponse_Rate_Limited",
+                "value": "Too many requests from this source. Try again later."
+              }
+            ],
+            "place": {
+              "switch": "Scope_Global/Switch"
+            }
+          }
+        ],
+        "repoint": {
+          "action": "Switch",
+          "expressionFrom": "@triggerBody()?['action']",
+          "expressionTo": "@outputs('Compose_Switch_Key')"
+        },
+        "composeBucket": {
+          "name": "Compose_Bucket_Verify_Confirm_Source",
+          "place": {
+            "parent": "Scope_Global",
+            "first": true
+          },
+          "inputs": "@concat('VERIFY_CONFIRM_IP:', coalesce(triggerOutputs()?['headers']?['X-Forwarded-For'],'unknown'))"
+        }
+      }
+    ],
+    "prerequisite": {
+      "action": "Scope_Finalize_Response_State/Set_variable_varStatusCode",
+      "appliesTo": [
+        "Portal_Verify",
+        "Portal_Verify_Confirm"
+      ],
+      "replaceValueFrom": "@if(or(greater(variables('varFailedCount'), 0), greater(length(coalesce(variables('varErrors'), json('[]'))), 0)), 400, 200)",
+      "replaceValueWith": "@if(greaterOrEquals(coalesce(outputs('Compose_Branch_Status'), 0), 400), outputs('Compose_Branch_Status'), if(or(greater(variables('varFailedCount'), 0), greater(length(coalesce(variables('varErrors'), json('[]'))), 0)), 400, 200))",
+      "why": "D8. Response returns @variables('varStatusCode') as the HTTP status, and this action overwrites it unconditionally, so no case can return its own code. It also means a wrong one-time code returns HTTP 200 today and document-portal/js/core.js:442 reports it as verified. An explicitly set failure code now wins; everything else is unchanged.",
+      "clientImpact": "None needed. core.js already handles 429 at line 425 and non-2xx at 426 and 442.",
+      "addFirst": {
+        "name": "Compose_Branch_Status",
+        "type": "Compose",
+        "where": "Inside Scope_Finalize_Response_State, as its FIRST action - Set_variable_varStatusCode then runs after it",
+        "inputs": "@coalesce(variables('varStatusCode'), 0)",
+        "why": "Logic Apps refuses a Set variable whose value reads the variable it is setting - WorkflowRunActionInputsInvalidProperty, 'Self reference is not supported'. The branch's own code is captured into a Compose first, and the Set reads the Compose.",
+        "place": {
+          "parent": "Scope_Global/Scope_Finalize_Response_State",
+          "first": true
+        }
+      },
+      "path": "Scope_Global/Scope_Finalize_Response_State/Set_variable_varStatusCode"
+    }
+  },
+  "residualRisk_additional": [
+    "Response sends Access-Control-Allow-Origin: https://your-host, a literal placeholder. A browser will refuse every response from the real portal origin. Out of scope for visit 1, but it must be set before the portal is pointed at these endpoints."
+  ],
+  "codeComparison": {
+    "decision": "D9",
+    "flow": "Portal_Verify_Confirm",
+    "problem": "Condition_1 tests expiry only. The only comparison of the presented code to the stored code is the $filter on Get_items_OTP_Verify, which this visit replaces with an Email filter. Applied without this block, any code value verifies.",
+    "add": {
+      "name": "Condition_Code_Matches",
+      "type": "If",
+      "where": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1 - wraps the existing yes branch",
+      "expression": {
+        "and": [
+          {
+            "equals": [
+              "@trim(string(coalesce(triggerBody()?['code'],'')))",
+              "@string(coalesce(outputs('Get_item_OTP_Record')?['body/OTP_Code'],''))"
+            ]
+          }
+        ]
+      },
+      "moveIntoIfYes": [
+        "Update_item",
+        "Set_variable_Verification_Successful",
+        "Append_to_string_variable_Verification_Successful"
+      ],
+      "thenAppendIfYes": [
+        "Create_Verification_Proof"
+      ],
+      "ifNo": [
+        "Increment_Attempts",
+        "Condition_Attempts_Exceeded"
+      ],
+      "place": {
+        "parent": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1",
+        "replaceBranchOf": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1"
+      }
+    },
+    "expiredBranch": {
+      "path": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/else",
+      "add": [
+        "Consume_Expired_Challenge"
+      ],
+      "note": "Condition_1 keeps testing expiry, so its else branch is still the expired path."
+    },
+    "attemptsCap": {
+      "name": "Condition_Attempts_Exceeded",
+      "type": "If",
+      "where": "inside Condition_Code_Matches/else, after Increment_Attempts",
+      "expression": {
+        "and": [
+          {
+            "greaterOrEquals": [
+              "@add(coalesce(outputs('Get_item_OTP_Record')?['body/Attempts'],0),1)",
+              5
+            ]
+          }
+        ]
+      },
+      "ifYes": [
+        "Consume_Challenge_Attempts_Exceeded"
+      ],
+      "place": {
+        "parent": "Scope_Global/Switch/case:Case_Verify/Condition/else/Condition_1/Condition_Code_Matches/else",
+        "after": "Increment_Attempts"
+      }
+    }
+  }
+}

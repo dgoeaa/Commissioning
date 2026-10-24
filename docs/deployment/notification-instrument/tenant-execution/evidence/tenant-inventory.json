@@ -1,0 +1,12 @@
+{
+  "schema": "nitda-tenant-inventory/v1",
+  "environment": null,
+  "capturedAtUtc": null,
+  "capturedBy": null,
+  "authoritativeCommit": null,
+  "flows": [],
+  "endpoints": [],
+  "connections": [],
+  "duplicateOrOrphanFlows": [],
+  "evidenceStatus": "NOT_CAPTURED"
+}

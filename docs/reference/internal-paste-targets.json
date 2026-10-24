@@ -1,0 +1,108 @@
+{
+  "capturedUtc": "2026-09-01",
+  "purpose": "Which deployed Power Automate flow each internal package is pasted into. Derived by joining docs/reference/internal-flow-register.json to the built FLOW_CATALOGUE.json on the 32-hex workflow id, then reading the flow name the catalogue records for it.",
+  "credentialPolicy": "Workflow ids and flow names only. A signed trigger URL is a bearer credential and appears nowhere here, though the catalogue this was derived from holds them.",
+  "packages": [
+    {
+      "package": "DGO_OTP",
+      "targets": [
+        {
+          "contractKey": "OTP_GENERATE",
+          "workflowId": "314aaf27593147089b38322e5ca25936",
+          "flow": "OTP generate / send",
+          "evidenceTier": 1
+        },
+        {
+          "contractKey": "OTP_VERIFY",
+          "workflowId": "43879c5165de439680055ab4258b3f27",
+          "flow": "OTP verify",
+          "evidenceTier": 1
+        }
+      ]
+    },
+    {
+      "package": "DGO_FETCH_ALL",
+      "targets": [
+        {
+          "contractKey": "FETCH_ALL",
+          "workflowId": "31e02518075940d2bcfa9bdb0e9b0b8d",
+          "flow": "get all data",
+          "evidenceTier": 2
+        }
+      ]
+    },
+    {
+      "package": "DGO_REFERENCE_DATA",
+      "targets": [
+        {
+          "contractKey": "REFERENCE_DATA",
+          "workflowId": "ff455c68e9ac493e858fb984bcfd01fb",
+          "flow": "GET REFERENCES / LOOKUPS (users, categories, departments)",
+          "evidenceTier": 1
+        }
+      ]
+    },
+    {
+      "package": "DGO_GET_DOCS",
+      "targets": [
+        {
+          "contractKey": "GET_DOCS",
+          "workflowId": "818ec4053f1e4f0b87845114241d8b74",
+          "flow": "GET DOCS",
+          "evidenceTier": 1
+        }
+      ]
+    },
+    {
+      "package": "DGO_SINGLE_ASSIGNMENT",
+      "targets": [
+        {
+          "contractKey": "SINGLE_ASSIGNMENT",
+          "workflowId": "f71397ff3ca145059dc8f78c04923e9f",
+          "flow": "SINGLE ASSIGN / create task and update activity",
+          "evidenceTier": 1
+        }
+      ]
+    },
+    {
+      "package": "DGO_BULK_ASSIGNMENT",
+      "targets": [
+        {
+          "contractKey": "BULK_ASSIGNMENT",
+          "workflowId": "1154b50e1d17420dadb3b012e7e2a02c",
+          "flow": "optimized bulk assign",
+          "evidenceTier": 2
+        },
+        {
+          "contractKey": "BULK_ASSIGNMENT_DIRECT",
+          "workflowId": "7e71fffe770a45ccb93bf216bb53786e",
+          "flow": "BULK ASSIGN (hybrid single or bulk)",
+          "evidenceTier": 1
+        }
+      ]
+    },
+    {
+      "package": "DGO_DYNAMIC_GLOBAL_ACTIONS",
+      "targets": [
+        {
+          "contractKey": "DYNAMIC_ACTIONS + EMAIL",
+          "workflowId": "bc83d98acf474a088832d78f50085388",
+          "flow": "DYNAMIC GLOBAL ENDPOINT INTERFACE",
+          "evidenceTier": 1
+        }
+      ]
+    },
+    {
+      "package": "DGO_SEND_EMAIL",
+      "targets": [
+        {
+          "contractKey": "EMAIL",
+          "workflowId": null,
+          "flow": "**UNRESOLVED — read it off the configured URL before pasting.** Open the `EMAIL` entry in `config/config.local.js` and take its `workflows/<32-hex>/` segment; that is the flow.",
+          "evidenceTier": 3,
+          "evidence": "Two attributions exist in this repository and they disagree. docs/reference/flow-list-map.json maps EMAIL to the Universal Dynamic Multi-Actions Executor (workflow bc83d98acf474a088832d78f50085388) because config/endpoints.config.js gives the contract sourceKey \"DYNAMIC_GLOBAL_ACTIONS\". But EndpointUrls.EMAIL is its own separately configured URL, and the only deployed flow whose body dispatches mail is Web - Send Email (internal name e5e2c6a2-52ea-2ba8-b0b3-60f25d43387f, three SendEmailV2 actions), whose id is recorded against no endpoint key. Neither reading is settled by evidence held here; the URL the operator has configured settles it and nothing else can."
+        }
+      ]
+    }
+  ]
+}

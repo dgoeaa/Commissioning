@@ -1,0 +1,192 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:23Z",
+    "workflow_identity":  {
+                              "internal_name":  "89925df0-276f-da78-1cba-5847cf24c7d9",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "DGO_AI_Assist",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+                                                                        "operationMetadataId":  "dcd3b109-eed3-4799-beaa-eac49a3bdaca"
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "PowerAppV2",
+                                                       "inputs":  {
+                                                                      "schema":  {
+                                                                                     "type":  "object",
+                                                                                     "properties":  {
+                                                                                                        "text":  {
+                                                                                                                     "title":  "prompt",
+                                                                                                                     "type":  "string",
+                                                                                                                     "x-ms-dynamically-added":  true,
+                                                                                                                     "description":  "Please enter your input",
+                                                                                                                     "x-ms-content-hint":  "TEXT"
+                                                                                                                 },
+                                                                                                        "text_1":  {
+                                                                                                                       "title":  "emailSubject",
+                                                                                                                       "type":  "string",
+                                                                                                                       "x-ms-dynamically-added":  true,
+                                                                                                                       "description":  "Please enter your input",
+                                                                                                                       "x-ms-content-hint":  "TEXT"
+                                                                                                                   },
+                                                                                                        "text_2":  {
+                                                                                                                       "title":  "emailBody",
+                                                                                                                       "type":  "string",
+                                                                                                                       "x-ms-dynamically-added":  true,
+                                                                                                                       "description":  "Please enter your input",
+                                                                                                                       "x-ms-content-hint":  "TEXT"
+                                                                                                                   }
+                                                                                                    },
+                                                                                     "required":  [
+                                                                                                      "text",
+                                                                                                      "text_1",
+                                                                                                      "text_2"
+                                                                                                  ]
+                                                                                 }
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Compose_Full_Prompt":  {
+                                                                   "runAfter":  {
+                                                                                    "Parse_JSON":  [
+                                                                                                       "Succeeded"
+                                                                                                   ]
+                                                                                },
+                                                                   "metadata":  {
+                                                                                    "operationMetadataId":  "a09e6a4c-bfd9-49db-b65d-48cd2a7ca88f"
+                                                                                },
+                                                                   "type":  "Compose",
+                                                                   "inputs":  "Compose_Full_Prompt\n\nhttps://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=@{variables(\u0027varApiKey\u0027)}\n\n\nFlow Name: DGO_AI_Assist Flow Type: Instant cloud flow Trigger: PowerApps (V2) 1. Trigger Action: PowerApps (V2) Add three (3) Inputs to the trigger: Name: prompt (Type: Text) Name: emailSubject (Type: Text) Name: emailBody (Type: Text) 2. Initialize Gemini API Key Action: Initialize variable Name: varApiKey Type: String Value: [PASTE_YOUR_GEMINI_API_KEY_HERE] 3. Initialize Gemini API URL Action: Initialize variable Name: varApiUrl Type: String Value: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=@{variables(\u0027varApiKey\u0027)} 4. Compose Full Prompt Action: Compose Name: Compose_Full_Prompt Inputs: (Use expressions to get the trigger inputs) --- TASK --- @{triggerBody()[\u0027text\u0027]} --- EMAIL CONTEXT --- Subject: @{triggerBody()[\u0027text_1\u0027]} Body: @{triggerBody()[\u0027text_2\u0027]} 5. Compose JSON Request Body Action: Compose Name: Compose_JSON_Request Inputs: { \"contents\": [ { \"parts\": [ { \"text\": \"\" } ] } ] } 6. Call Gemini API Action: HTTP Method: POST URI: @{variables(\u0027varApiUrl\u0027)} Headers: Content-Type | application/json Body: @{outputs(\u0027Compose_JSON_Request\u0027)} 7. Parse JSON Response Action: Parse JSON Content: Body (from the \"Call Gemini API\" step) Schema: (Click \"Generate from sample\" and paste this in) { \"candidates\": [ { \"content\": { \"parts\": [ { \"text\": \"sample text\" } ], \"role\": \"model\" } } ] } 8. Respond to Power App Action: Respond to a PowerApp or flow Add one (1) Output: Type: Text Name: ai_response Value: (Use an expression to get the text from the parsed JSON) @{body(\u0027Parse_JSON\u0027)?[\u0027candidates\u0027]?[0]?[\u0027content\u0027]?[\u0027parts\u0027]?[0]?[\u0027text\u0027]} 9. (Optional) Add Error Handling Add a \"Configure run after\" setting to the Respond to Power App step. Make sure it runs even if the Parse JSON or HTTP step \"has failed\". In the ai_response output, set the value to: if(empty(body(\u0027Parse_JSON\u0027)?[\u0027candidates\u0027]), \"Error: The AI response was empty or failed.\", body(\u0027Parse_JSON\u0027)?[\u0027candidates\u0027]?[0]?[\u0027content\u0027]?[\u0027parts\u0027]?[0]?[\u0027text\u0027])"
+                                                               },
+                                       "Initialize_variable_varApiKey":  {
+                                                                             "runAfter":  {
+
+                                                                                          },
+                                                                             "metadata":  {
+                                                                                              "operationMetadataId":  "4982899a-0213-4a2b-998d-374002158aa5"
+                                                                                          },
+                                                                             "type":  "InitializeVariable",
+                                                                             "inputs":  {
+                                                                                            "variables":  [
+                                                                                                              {
+                                                                                                                  "name":  "varApiKey",
+                                                                                                                  "type":  "string"
+                                                                                                              }
+                                                                                                          ]
+                                                                                        }
+                                                                         },
+                                       "Initialize_variable_varApiUrl":  {
+                                                                             "runAfter":  {
+                                                                                              "Initialize_variable_varApiKey":  [
+                                                                                                                                    "Succeeded"
+                                                                                                                                ]
+                                                                                          },
+                                                                             "metadata":  {
+                                                                                              "operationMetadataId":  "2893a6b0-9a2e-4701-8688-9c3a7717364e"
+                                                                                          },
+                                                                             "type":  "InitializeVariable",
+                                                                             "inputs":  {
+                                                                                            "variables":  [
+                                                                                                              {
+                                                                                                                  "name":  "varApiUrl",
+                                                                                                                  "type":  "string"
+                                                                                                              }
+                                                                                                          ]
+                                                                                        }
+                                                                         },
+                                       "Compose_Full_Prompt_2":  {
+                                                                     "runAfter":  {
+                                                                                      "Compose_Full_Prompt":  [
+                                                                                                                  "Succeeded"
+                                                                                                              ]
+                                                                                  },
+                                                                     "metadata":  {
+                                                                                      "operationMetadataId":  "d3a527dc-04ca-4352-b787-6f41f2fa9d47"
+                                                                                  },
+                                                                     "type":  "Compose",
+                                                                     "inputs":  "Compose_Full_Prompt\n\nhttps://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=@{variables(\u0027varApiKey\u0027)}\n\n\nFlow Name: DGO_AI_Assist Flow Type: Instant cloud flow Trigger: PowerApps (V2) 1. Trigger Action: PowerApps (V2) Add three (3) Inputs to the trigger: Name: prompt (Type: Text) Name: emailSubject (Type: Text) Name: emailBody (Type: Text) 2. Initialize Gemini API Key Action: Initialize variable Name: varApiKey Type: String Value: [PASTE_YOUR_GEMINI_API_KEY_HERE] 3. Initialize Gemini API URL Action: Initialize variable Name: varApiUrl Type: String Value: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=@{variables(\u0027varApiKey\u0027)} 4. Compose Full Prompt Action: Compose Name: Compose_Full_Prompt Inputs: (Use expressions to get the trigger inputs) --- TASK --- @{triggerBody()[\u0027text\u0027]} --- EMAIL CONTEXT --- Subject: @{triggerBody()[\u0027text_1\u0027]} Body: @{triggerBody()[\u0027text_2\u0027]} 5. Compose JSON Request Body Action: Compose Name: Compose_JSON_Request Inputs: { \"contents\": [ { \"parts\": [ { \"text\": \"@{outputs(\u0027Compose_Full_Prompt\u0027)}\" } ] } ] } 6. Call Gemini API Action: HTTP Method: POST URI: @{variables(\u0027varApiUrl\u0027)} Headers: Content-Type | application/json Body: @{outputs(\u0027Compose_JSON_Request\u0027)} 7. Parse JSON Response Action: Parse JSON Content: Body (from the \"Call Gemini API\" step) Schema: (Click \"Generate from sample\" and paste this in) { \"candidates\": [ { \"content\": { \"parts\": [ { \"text\": \"sample text\" } ], \"role\": \"model\" } } ] } 8. Respond to Power App Action: Respond to a PowerApp or flow Add one (1) Output: Type: Text Name: ai_response Value: (Use an expression to get the text from the parsed JSON) @{body(\u0027Parse_JSON\u0027)?[\u0027candidates\u0027]?[0]?[\u0027content\u0027]?[\u0027parts\u0027]?[0]?[\u0027text\u0027]} 9. (Optional) Add Error Handling Add a \"Configure run after\" setting to the Respond to Power App step. Make sure it runs even if the Parse JSON or HTTP step \"has failed\". In the ai_response output, set the value to: if(empty(body(\u0027Parse_JSON\u0027)?[\u0027candidates\u0027]), \"Error: The AI response was empty or failed.\", body(\u0027Parse_JSON\u0027)?[\u0027candidates\u0027]?[0]?[\u0027content\u0027]?[\u0027parts\u0027]?[0]?[\u0027text\u0027])"
+                                                                 },
+                                       "Compose_JSON_Request":  {
+                                                                    "runAfter":  {
+                                                                                     "Initialize_variable_varApiUrl":  [
+                                                                                                                           "Succeeded"
+                                                                                                                       ]
+                                                                                 },
+                                                                    "metadata":  {
+                                                                                     "operationMetadataId":  "e978fb01-9349-4a20-b556-fe9a73db15d8"
+                                                                                 },
+                                                                    "type":  "Compose",
+                                                                    "inputs":  "xxxx"
+                                                                },
+                                       "Parse_JSON":  {
+                                                          "runAfter":  {
+                                                                           "Compose_JSON_Request":  [
+                                                                                                        "Succeeded"
+                                                                                                    ]
+                                                                       },
+                                                          "metadata":  {
+                                                                           "operationMetadataId":  "a2a4ef55-4cfe-4230-9231-cbe6e66ba3a5"
+                                                                       },
+                                                          "type":  "Compose",
+                                                          "inputs":  "xxxx"
+                                                      },
+                                       "Respond_to_a_Power_App_or_flow":  {
+                                                                              "runAfter":  {
+                                                                                               "ai_response":  [
+                                                                                                                   "Succeeded"
+                                                                                                               ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "777d4fe5-2404-4a55-9cc8-a848981fb15f"
+                                                                                           },
+                                                                              "type":  "Response",
+                                                                              "kind":  "PowerApp",
+                                                                              "inputs":  {
+                                                                                             "statusCode":  200,
+                                                                                             "body":  {
+                                                                                                          "ai_response":  "@{outputs(\u0027ai_response\u0027)}"
+                                                                                                      },
+                                                                                             "schema":  {
+                                                                                                            "type":  "object",
+                                                                                                            "properties":  {
+                                                                                                                               "ai_response":  {
+                                                                                                                                                   "title":  "ai response",
+                                                                                                                                                   "x-ms-dynamically-added":  true,
+                                                                                                                                                   "type":  "string"
+                                                                                                                                               }
+                                                                                                                           }
+                                                                                                        }
+                                                                                         }
+                                                                          },
+                                       "ai_response":  {
+                                                           "runAfter":  {
+                                                                            "Compose_Full_Prompt_2":  [
+                                                                                                          "Succeeded"
+                                                                                                      ]
+                                                                        },
+                                                           "metadata":  {
+                                                                            "operationMetadataId":  "23a2958f-36c2-4eb7-ae71-c3db5873f55f"
+                                                                        },
+                                                           "type":  "Compose",
+                                                           "inputs":  "xxxx"
+                                                       }
+                                   }
+                   }
+}

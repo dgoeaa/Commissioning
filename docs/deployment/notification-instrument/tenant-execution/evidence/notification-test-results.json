@@ -1,0 +1,15 @@
+{
+  "schema": "nitda-notification-test-results/v1",
+  "environment": null,
+  "releaseId": "notification-remediation/1.0.0",
+  "executedAtUtc": null,
+  "executedBy": null,
+  "results": [],
+  "summary": {
+    "required": 39,
+    "passed": 0,
+    "failed": 0,
+    "blocked": 39,
+    "riskAccepted": 0
+  }
+}

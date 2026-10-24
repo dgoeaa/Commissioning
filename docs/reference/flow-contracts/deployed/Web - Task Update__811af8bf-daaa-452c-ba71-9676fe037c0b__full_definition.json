@@ -1,0 +1,373 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:16Z",
+    "workflow_identity":  {
+                              "internal_name":  "811af8bf-daaa-452c-ba71-9676fe037c0b",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "Web - Task Update",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              },
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "Http",
+                                                       "inputs":  {
+                                                                      "schema":  {
+                                                                                     "type":  "object",
+                                                                                     "properties":  {
+                                                                                                        "action":  {
+                                                                                                                       "type":  "string"
+                                                                                                                   },
+                                                                                                        "taskName":  {
+                                                                                                                         "type":  "string"
+                                                                                                                     },
+                                                                                                        "status":  {
+                                                                                                                       "type":  "string",
+                                                                                                                       "enum":  [
+                                                                                                                                    "Completed"
+                                                                                                                                ]
+                                                                                                                   },
+                                                                                                        "TaskId":  {
+                                                                                                                       "type":  "string"
+                                                                                                                   },
+                                                                                                        "comment":  {
+                                                                                                                        "type":  "string"
+                                                                                                                    }
+                                                                                                    }
+                                                                                 },
+                                                                      "method":  "POST",
+                                                                      "triggerAuthenticationType":  "All"
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Condition":  {
+                                                         "actions":  {
+                                                                         "Scope":  {
+                                                                                       "actions":  {
+                                                                                                       "Set_variable_varstatuscode":  {
+                                                                                                                                          "runAfter":  {
+                                                                                                                                                           "Set_variable":  [
+                                                                                                                                                                                "Succeeded"
+                                                                                                                                                                            ]
+                                                                                                                                                       },
+                                                                                                                                          "type":  "SetVariable",
+                                                                                                                                          "inputs":  {
+                                                                                                                                                         "name":  "varstatuscode",
+                                                                                                                                                         "value":  "@int(200)"
+                                                                                                                                                     }
+                                                                                                                                      },
+                                                                                                       "Set_variable_varmessage":  {
+                                                                                                                                       "runAfter":  {
+                                                                                                                                                        "Set_variable_varstatus":  [
+                                                                                                                                                                                       "Succeeded"
+                                                                                                                                                                                   ]
+                                                                                                                                                    },
+                                                                                                                                       "type":  "SetVariable",
+                                                                                                                                       "inputs":  {
+                                                                                                                                                      "name":  "varmessage",
+                                                                                                                                                      "value":  "Document archived successfully"
+                                                                                                                                                  }
+                                                                                                                                   },
+                                                                                                       "Set_variable_varstatus":  {
+                                                                                                                                      "runAfter":  {
+                                                                                                                                                       "Set_variable_varstatuscode":  [
+                                                                                                                                                                                          "Succeeded"
+                                                                                                                                                                                      ]
+                                                                                                                                                   },
+                                                                                                                                      "type":  "SetVariable",
+                                                                                                                                      "inputs":  {
+                                                                                                                                                     "name":  "varstatus",
+                                                                                                                                                     "value":  "Success"
+                                                                                                                                                 }
+                                                                                                                                  },
+                                                                                                       "Set_variable":  {
+                                                                                                                            "type":  "SetVariable",
+                                                                                                                            "inputs":  {
+                                                                                                                                           "name":  "vardocId",
+                                                                                                                                           "value":  "@outputs(\u0027Update_item\u0027)?[\u0027body/ID\u0027]"
+                                                                                                                                       }
+                                                                                                                        }
+                                                                                                   },
+                                                                                       "runAfter":  {
+                                                                                                        "Update_item":  [
+                                                                                                                            "Succeeded"
+                                                                                                                        ]
+                                                                                                    },
+                                                                                       "type":  "Scope"
+                                                                                   },
+                                                                         "Update_item":  {
+                                                                                             "runAfter":  {
+                                                                                                              "Compose_Item_Reference":  [
+                                                                                                                                             "Succeeded"
+                                                                                                                                         ]
+                                                                                                          },
+                                                                                             "type":  "OpenApiConnection",
+                                                                                             "inputs":  {
+                                                                                                            "parameters":  {
+                                                                                                                               "dataset":  "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                                                                                                               "table":  "90dda8e2-5b62-4ab9-a766-d1dc95deb000",
+                                                                                                                               "id":  "@outputs(\u0027Compose_Item_Reference\u0027)",
+                                                                                                                               "item/Title":  "@triggerBody()?[\u0027taskName\u0027]",
+                                                                                                                               "item/Status/Value":  "@triggerBody()?[\u0027status\u0027]",
+                                                                                                                               "item/DG_Instruction":  "\u003cp class=\"editor-paragraph\"\u003e@{triggerBody()?[\u0027comment\u0027]}\u003c/p\u003e"
+                                                                                                                           },
+                                                                                                            "host":  {
+                                                                                                                         "apiId":  "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                                                                                         "connectionName":  "shared_sharepointonline",
+                                                                                                                         "operationId":  "PatchItem"
+                                                                                                                     },
+                                                                                                            "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                                                        }
+                                                                                         },
+                                                                         "Get_items":  {
+                                                                                           "type":  "OpenApiConnection",
+                                                                                           "inputs":  {
+                                                                                                          "parameters":  {
+                                                                                                                             "dataset":  "https://nitdanigeria.sharepoint.com/sites/NEDMS",
+                                                                                                                             "table":  "90dda8e2-5b62-4ab9-a766-d1dc95deb000",
+                                                                                                                             "$filter":  "Title eq \u0027Minute: @{triggerBody()?[\u0027taskName\u0027]}\u0027"
+                                                                                                                         },
+                                                                                                          "host":  {
+                                                                                                                       "apiId":  "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                                                                                       "connectionName":  "shared_sharepointonline",
+                                                                                                                       "operationId":  "GetItems"
+                                                                                                                   },
+                                                                                                          "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                                                      }
+                                                                                       },
+                                                                         "Compose_Item_Reference":  {
+                                                                                                        "runAfter":  {
+                                                                                                                         "Get_items":  [
+                                                                                                                                           "Succeeded"
+                                                                                                                                       ]
+                                                                                                                     },
+                                                                                                        "type":  "Compose",
+                                                                                                        "inputs":  "@first(outputs(\u0027Get_items\u0027)?[\u0027body/value\u0027])?[\u0027ID\u0027]"
+                                                                                                    }
+                                                                     },
+                                                         "runAfter":  {
+                                                                          "Initialize_variable_varmessage":  [
+                                                                                                                 "Succeeded"
+                                                                                                             ]
+                                                                      },
+                                                         "else":  {
+                                                                      "actions":  {
+                                                                                      "Scope_1":  {
+                                                                                                      "actions":  {
+                                                                                                                      "Set_variable_varstatuscode_1":  {
+                                                                                                                                                           "runAfter":  {
+                                                                                                                                                                            "Set_variable_1":  [
+                                                                                                                                                                                                   "Succeeded"
+                                                                                                                                                                                               ]
+                                                                                                                                                                        },
+                                                                                                                                                           "type":  "SetVariable",
+                                                                                                                                                           "inputs":  {
+                                                                                                                                                                          "name":  "varstatuscode",
+                                                                                                                                                                          "value":  "@int(400)"
+                                                                                                                                                                      }
+                                                                                                                                                       },
+                                                                                                                      "Set_variable_varmessage_1":  {
+                                                                                                                                                        "runAfter":  {
+                                                                                                                                                                         "Set_variable_varstatus_1":  [
+                                                                                                                                                                                                          "Succeeded"
+                                                                                                                                                                                                      ]
+                                                                                                                                                                     },
+                                                                                                                                                        "type":  "SetVariable",
+                                                                                                                                                        "inputs":  {
+                                                                                                                                                                       "name":  "varmessage",
+                                                                                                                                                                       "value":  "Upload no sucessful"
+                                                                                                                                                                   }
+                                                                                                                                                    },
+                                                                                                                      "Set_variable_varstatus_1":  {
+                                                                                                                                                       "runAfter":  {
+                                                                                                                                                                        "Set_variable_varstatuscode_1":  [
+                                                                                                                                                                                                             "Succeeded"
+                                                                                                                                                                                                         ]
+                                                                                                                                                                    },
+                                                                                                                                                       "type":  "SetVariable",
+                                                                                                                                                       "inputs":  {
+                                                                                                                                                                      "name":  "varstatus",
+                                                                                                                                                                      "value":  "Error"
+                                                                                                                                                                  }
+                                                                                                                                                   },
+                                                                                                                      "Set_variable_1":  {
+                                                                                                                                             "type":  "SetVariable",
+                                                                                                                                             "inputs":  {
+                                                                                                                                                            "name":  "vardocId",
+                                                                                                                                                            "value":  0
+                                                                                                                                                        }
+                                                                                                                                         }
+                                                                                                                  },
+                                                                                                      "type":  "Scope"
+                                                                                                  }
+                                                                                  }
+                                                                  },
+                                                         "expression":  {
+                                                                            "and":  [
+                                                                                        {
+                                                                                            "equals":  [
+                                                                                                           "@triggerBody()?[\u0027fileName\u0027]",
+                                                                                                           "@triggerBody()?[\u0027fileName\u0027]"
+                                                                                                       ]
+                                                                                        }
+                                                                                    ]
+                                                                        },
+                                                         "type":  "If"
+                                                     },
+                                       "Response":  {
+                                                        "runAfter":  {
+                                                                         "Compose_Response":  [
+                                                                                                  "Succeeded"
+                                                                                              ]
+                                                                     },
+                                                        "type":  "Response",
+                                                        "kind":  "Http",
+                                                        "inputs":  {
+                                                                       "statusCode":  "@variables(\u0027varstatuscode\u0027)",
+                                                                       "body":  "@outputs(\u0027Compose_Response\u0027)"
+                                                                   }
+                                                    },
+                                       "Initialize_variable_varResponse":  {
+                                                                               "runAfter":  {
+
+                                                                                            },
+                                                                               "type":  "InitializeVariable",
+                                                                               "inputs":  {
+                                                                                              "variables":  [
+                                                                                                                {
+                                                                                                                    "name":  "varResponse",
+                                                                                                                    "type":  "string"
+                                                                                                                }
+                                                                                                            ]
+                                                                                          }
+                                                                           },
+                                       "Initialize_variable_varstatuscode":  {
+                                                                                 "runAfter":  {
+                                                                                                  "Initialize_variable_varResponse":  [
+                                                                                                                                          "Succeeded"
+                                                                                                                                      ]
+                                                                                              },
+                                                                                 "type":  "InitializeVariable",
+                                                                                 "inputs":  {
+                                                                                                "variables":  [
+                                                                                                                  {
+                                                                                                                      "name":  "varstatuscode",
+                                                                                                                      "type":  "integer"
+                                                                                                                  }
+                                                                                                              ]
+                                                                                            }
+                                                                             },
+                                       "Initialize_variable_varStatus":  {
+                                                                             "runAfter":  {
+                                                                                              "Initialize_variable_varstatuscode":  [
+                                                                                                                                        "Succeeded"
+                                                                                                                                    ]
+                                                                                          },
+                                                                             "type":  "InitializeVariable",
+                                                                             "inputs":  {
+                                                                                            "variables":  [
+                                                                                                              {
+                                                                                                                  "name":  "varstatus",
+                                                                                                                  "type":  "string"
+                                                                                                              }
+                                                                                                          ]
+                                                                                        }
+                                                                         },
+                                       "Initialize_variable_vardocId":  {
+                                                                            "runAfter":  {
+                                                                                             "Initialize_variable_varStatus":  [
+                                                                                                                                   "Succeeded"
+                                                                                                                               ]
+                                                                                         },
+                                                                            "type":  "InitializeVariable",
+                                                                            "inputs":  {
+                                                                                           "variables":  [
+                                                                                                             {
+                                                                                                                 "name":  "vardocId",
+                                                                                                                 "type":  "integer"
+                                                                                                             }
+                                                                                                         ]
+                                                                                       }
+                                                                        },
+                                       "Initialize_variable_varmessage":  {
+                                                                              "runAfter":  {
+                                                                                               "Initialize_variable_vardocId":  [
+                                                                                                                                    "Succeeded"
+                                                                                                                                ]
+                                                                                           },
+                                                                              "type":  "InitializeVariable",
+                                                                              "inputs":  {
+                                                                                             "variables":  [
+                                                                                                               {
+                                                                                                                   "name":  "varmessage",
+                                                                                                                   "type":  "string"
+                                                                                                               }
+                                                                                                           ]
+                                                                                         }
+                                                                          },
+                                       "Compose_Response":  {
+                                                                "runAfter":  {
+                                                                                 "Condition":  [
+                                                                                                   "Succeeded",
+                                                                                                   "TimedOut",
+                                                                                                   "Skipped",
+                                                                                                   "Failed"
+                                                                                               ]
+                                                                             },
+                                                                "type":  "Compose",
+                                                                "inputs":  {
+                                                                               "Status":  "Task Updated Successfully",
+                                                                               "taskId":  "@{triggerBody()?[\u0027TaskId\u0027]}"
+                                                                           }
+                                                            },
+                                       "Send_an_email_(V2)":  {
+                                                                  "runAfter":  {
+                                                                                   "Response":  [
+                                                                                                    "Succeeded"
+                                                                                                ]
+                                                                               },
+                                                                  "type":  "OpenApiConnection",
+                                                                  "inputs":  {
+                                                                                 "parameters":  {
+                                                                                                    "emailMessage/To":  "hkani@nitda.gov.ng",
+                                                                                                    "emailMessage/Subject":  "New Glass Pane Portal submission",
+                                                                                                    "emailMessage/Body":  "\u003cbr\u003e\u003cbr\u003e\u003cp class=\"editor-paragraph\"\u003e@{outputs(\u0027Compose_Response\u0027)}\u003c/p\u003e",
+                                                                                                    "emailMessage/Importance":  "Normal"
+                                                                                                },
+                                                                                 "host":  {
+                                                                                              "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                              "connectionName":  "shared_office365",
+                                                                                              "operationId":  "SendEmailV2"
+                                                                                          },
+                                                                                 "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                             }
+                                                              }
+                                   },
+                       "outputs":  {
+
+                                   }
+                   }
+}

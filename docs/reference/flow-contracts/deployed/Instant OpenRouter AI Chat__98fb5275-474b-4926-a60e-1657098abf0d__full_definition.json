@@ -1,0 +1,491 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:26Z",
+    "workflow_identity":  {
+                              "internal_name":  "98fb5275-474b-4926-a60e-1657098abf0d",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "Instant OpenRouter AI Chat",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "undefined",
+                       "parameters":  {
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           },
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+                                                                        "operationMetadataId":  "d9f1bcc8-0aaa-4f0b-8397-2dacf18ac5ee"
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "Button",
+                                                       "inputs":  {
+                                                                      "schema":  {
+                                                                                     "type":  "object",
+                                                                                     "properties":  {
+                                                                                                        "text":  {
+                                                                                                                     "title":  "ModelID",
+                                                                                                                     "type":  "string",
+                                                                                                                     "x-ms-dynamically-added":  true,
+                                                                                                                     "description":  "Please enter your input",
+                                                                                                                     "x-ms-content-hint":  "TEXT"
+                                                                                                                 },
+                                                                                                        "text_1":  {
+                                                                                                                       "title":  "Prompt",
+                                                                                                                       "type":  "string",
+                                                                                                                       "x-ms-dynamically-added":  true,
+                                                                                                                       "description":  "Please enter your input",
+                                                                                                                       "x-ms-content-hint":  "TEXT"
+                                                                                                                   },
+                                                                                                        "text_2":  {
+                                                                                                                       "title":  "SpecifyModel",
+                                                                                                                       "type":  "string",
+                                                                                                                       "x-ms-dynamically-added":  true,
+                                                                                                                       "description":  "Please enter your input",
+                                                                                                                       "x-ms-content-hint":  "TEXT"
+                                                                                                                   }
+                                                                                                    },
+                                                                                     "required":  [
+
+                                                                                                  ]
+                                                                                 }
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Compose_Prompt":  {
+                                                              "runAfter":  {
+                                                                               "Initialize_variable_varContent":  [
+                                                                                                                      "Succeeded"
+                                                                                                                  ]
+                                                                           },
+                                                              "metadata":  {
+                                                                               "operationMetadataId":  "9e359910-2923-424b-8c7a-0a0e7eb345f1"
+                                                                           },
+                                                              "type":  "Compose",
+                                                              "inputs":  "who is the current Nigerian President"
+                                                          },
+                                       "HTTP":  {
+                                                    "runAfter":  {
+                                                                     "Set_variable":  [
+                                                                                          "Succeeded"
+                                                                                      ]
+                                                                 },
+                                                    "metadata":  {
+                                                                     "operationMetadataId":  "6bb16d72-e3b7-426c-94a2-1aa36ac99b2a"
+                                                                 },
+                                                    "type":  "Http",
+                                                    "inputs":  {
+                                                                   "method":  "POST",
+                                                                   "uri":  "https://openrouter.ai/api/v1/chat/completions",
+                                                                   "headers":  {
+                                                                                   "Content-Type":  "application/json",
+                                                                                   "Authorization":  "Bearer REDACTED-OPENROUTER-API-KEY",
+                                                                                   "HTTP-Referer":  "https://make.powerautomate.com",
+                                                                                   "X-Title":  "Power Automate OpenRouter"
+                                                                               },
+                                                                   "body":  {
+                                                                                "model":  "@{variables(\u0027varSelectedModel\u0027)}",
+                                                                                "messages":  [
+                                                                                                 {
+                                                                                                     "role":  "system",
+                                                                                                     "content":  "You are a helpful assistant that answers clearly and concisely. Always stay on topic, and follow formatting instructions when provided."
+                                                                                                 },
+                                                                                                 {
+                                                                                                     "role":  "user",
+                                                                                                     "content":  "@{variables(\u0027varPrompt\u0027)}"
+                                                                                                 }
+                                                                                             ],
+                                                                                "temperature":  0.2
+                                                                            }
+                                                               },
+                                                    "runtimeConfiguration":  {
+                                                                                 "contentTransfer":  {
+                                                                                                         "transferMode":  "Chunked"
+                                                                                                     }
+                                                                             }
+                                                },
+                                       "Parse_JSON":  {
+                                                          "runAfter":  {
+                                                                           "HTTP":  [
+                                                                                        "Succeeded"
+                                                                                    ]
+                                                                       },
+                                                          "metadata":  {
+                                                                           "operationMetadataId":  "06a26ad2-479c-46e3-9d9c-78ccda57727a"
+                                                                       },
+                                                          "type":  "ParseJson",
+                                                          "inputs":  {
+                                                                         "content":  "@body(\u0027HTTP\u0027)",
+                                                                         "schema":  {
+                                                                                        "type":  "object",
+                                                                                        "properties":  {
+                                                                                                           "id":  {
+                                                                                                                      "type":  "string"
+                                                                                                                  },
+                                                                                                           "object":  {
+                                                                                                                          "type":  "string"
+                                                                                                                      },
+                                                                                                           "created":  {
+                                                                                                                           "type":  "number"
+                                                                                                                       },
+                                                                                                           "choices":  {
+                                                                                                                           "type":  "array",
+                                                                                                                           "items":  {
+                                                                                                                                         "type":  "object",
+                                                                                                                                         "properties":  {
+                                                                                                                                                            "message":  {
+                                                                                                                                                                            "type":  "object",
+                                                                                                                                                                            "properties":  {
+                                                                                                                                                                                               "role":  {
+                                                                                                                                                                                                            "type":  "string"
+                                                                                                                                                                                                        },
+                                                                                                                                                                                               "content":  {
+                                                                                                                                                                                                               "type":  "string"
+                                                                                                                                                                                                           }
+                                                                                                                                                                                           }
+                                                                                                                                                                        }
+                                                                                                                                                        }
+                                                                                                                                     }
+                                                                                                                       }
+                                                                                                       }
+                                                                                    }
+                                                                     }
+                                                      },
+                                       "Compose_Response":  {
+                                                                "runAfter":  {
+                                                                                 "Parse_JSON":  [
+                                                                                                    "Succeeded"
+                                                                                                ]
+                                                                             },
+                                                                "metadata":  {
+                                                                                 "operationMetadataId":  "01cc1b3f-8c66-4a8b-aa84-13ef2d53243b"
+                                                                             },
+                                                                "type":  "Compose",
+                                                                "inputs":  "@first(body(\u0027Parse_JSON\u0027)?[\u0027choices\u0027])?[\u0027message\u0027]?[\u0027content\u0027]"
+                                                            },
+                                       "Initialize_variable_varPrompt":  {
+                                                                             "runAfter":  {
+                                                                                              "Initialize_variable_varSelectedModel":  [
+                                                                                                                                           "Succeeded"
+                                                                                                                                       ]
+                                                                                          },
+                                                                             "metadata":  {
+                                                                                              "operationMetadataId":  "d8032443-6fe1-4b9a-a1f4-22d1fbceeb41"
+                                                                                          },
+                                                                             "type":  "InitializeVariable",
+                                                                             "inputs":  {
+                                                                                            "variables":  [
+                                                                                                              {
+                                                                                                                  "name":  "varPrompt",
+                                                                                                                  "type":  "string"
+                                                                                                              }
+                                                                                                          ]
+                                                                                        }
+                                                                         },
+                                       "Initialize_variable_varModelID":  {
+                                                                              "runAfter":  {
+                                                                                               "Send_an_email_(V2)":  [
+                                                                                                                          "Succeeded"
+                                                                                                                      ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "d8032443-6fe1-4b9a-a1f4-22d1fbceeb41"
+                                                                                           },
+                                                                              "type":  "InitializeVariable",
+                                                                              "inputs":  {
+                                                                                             "variables":  [
+                                                                                                               {
+                                                                                                                   "name":  "varModelID",
+                                                                                                                   "type":  "integer"
+                                                                                                               }
+                                                                                                           ]
+                                                                                         }
+                                                                          },
+                                       "Initialize_variable_varSelectedModel":  {
+                                                                                    "runAfter":  {
+                                                                                                     "Initialize_variable_varModelID":  [
+                                                                                                                                            "Succeeded"
+                                                                                                                                        ]
+                                                                                                 },
+                                                                                    "metadata":  {
+                                                                                                     "operationMetadataId":  "d8032443-6fe1-4b9a-a1f4-22d1fbceeb41"
+                                                                                                 },
+                                                                                    "type":  "InitializeVariable",
+                                                                                    "inputs":  {
+                                                                                                   "variables":  [
+                                                                                                                     {
+                                                                                                                         "name":  "varSelectedModel",
+                                                                                                                         "type":  "string"
+                                                                                                                     }
+                                                                                                                 ]
+                                                                                               }
+                                                                                },
+                                       "Initialize_variable_varText":  {
+                                                                           "runAfter":  {
+                                                                                            "Initialize_variable_varPrompt":  [
+                                                                                                                                  "Succeeded"
+                                                                                                                              ]
+                                                                                        },
+                                                                           "metadata":  {
+                                                                                            "operationMetadataId":  "4528304d-0853-4c38-9b75-82afcbba2407"
+                                                                                        },
+                                                                           "type":  "InitializeVariable",
+                                                                           "inputs":  {
+                                                                                          "variables":  [
+                                                                                                            {
+                                                                                                                "name":  "varText",
+                                                                                                                "type":  "string"
+                                                                                                            }
+                                                                                                        ]
+                                                                                      }
+                                                                       },
+                                       "Set_variable_4":  {
+                                                              "runAfter":  {
+                                                                               "Compose_Model_ID":  [
+                                                                                                        "Succeeded"
+                                                                                                    ]
+                                                                           },
+                                                              "metadata":  {
+                                                                               "operationMetadataId":  "9bbc5cfe-7977-45a2-803e-dd806be22251"
+                                                                           },
+                                                              "type":  "SetVariable",
+                                                              "inputs":  {
+                                                                             "name":  "varModelID",
+                                                                             "value":  "@int(triggerBody()[\u0027text\u0027])"
+                                                                         }
+                                                          },
+                                       "Set_variable_5":  {
+                                                              "runAfter":  {
+                                                                               "Set_variable_4":  [
+                                                                                                      "Succeeded"
+                                                                                                  ]
+                                                                           },
+                                                              "metadata":  {
+                                                                               "operationMetadataId":  "9bbc5cfe-7977-45a2-803e-dd806be22251"
+                                                                           },
+                                                              "type":  "SetVariable",
+                                                              "inputs":  {
+                                                                             "name":  "varSelectedModel",
+                                                                             "value":  "@{if(equals(variables(\u0027varModelID\u0027), 1), \u0027deepseek/deepseek-r1:free\u0027, if(equals(variables(\u0027varModelID\u0027), 2), \u0027moonshotai/kimi-dev-72b:free\u0027, if(equals(variables(\u0027varModelID\u0027), 3), \u0027meta-llama/llama-3.1-70b-instruct:free\u0027, if(equals(variables(\u0027varModelID\u0027), 4), \u0027openchat/openchat-3.5:free\u0027, if(equals(variables(\u0027varModelID\u0027), 5), \u0027google/gemma-7b-it:free\u0027, if(equals(variables(\u0027varModelID\u0027), 6), \u0027mistralai/mistral-7b-instruct:free\u0027, if(equals(variables(\u0027varModelID\u0027), 7), \u0027anthropic/claude-3-sonnet:free\u0027, if(equals(variables(\u0027varModelID\u0027), 8), \u0027openai/gpt-oss-120b:fireworks-ai\u0027, if(equals(variables(\u0027varModelID\u0027), 9), \u0027Gemini 2.5 Pro\u0027, \u0027unknown-model\u0027)))))))))}"
+                                                                         }
+                                                          },
+                                       "Set_variable":  {
+                                                            "runAfter":  {
+                                                                             "Set_variable_5":  [
+                                                                                                    "Succeeded"
+                                                                                                ]
+                                                                         },
+                                                            "metadata":  {
+                                                                             "operationMetadataId":  "9bbc5cfe-7977-45a2-803e-dd806be22251"
+                                                                         },
+                                                            "type":  "SetVariable",
+                                                            "inputs":  {
+                                                                           "name":  "varPrompt",
+                                                                           "value":  "@{outputs(\u0027Compose_Prompt\u0027)}"
+                                                                       }
+                                                        },
+                                       "Compose_Model_ID":  {
+                                                                "runAfter":  {
+                                                                                 "Compose_Prompt":  [
+                                                                                                        "Succeeded"
+                                                                                                    ]
+                                                                             },
+                                                                "metadata":  {
+                                                                                 "operationMetadataId":  "bc6169c4-a3fe-4346-af1d-0d8fae3418cb"
+                                                                             },
+                                                                "type":  "Compose",
+                                                                "inputs":  "@if(empty(trim(triggerBody()[\u0027text\u0027])), \u0027Gemini 2.5 Pro\u0027, triggerBody()[\u0027text\u0027])"
+                                                            },
+                                       "Send_an_email_(V2)_4":  {
+                                                                    "runAfter":  {
+                                                                                     "Compose_HTML_Response_Template":  [
+                                                                                                                            "Succeeded"
+                                                                                                                        ]
+                                                                                 },
+                                                                    "metadata":  {
+                                                                                     "operationMetadataId":  "a55056dd-fa2e-47bd-aab4-6460e5edea2a"
+                                                                                 },
+                                                                    "type":  "OpenApiConnection",
+                                                                    "inputs":  {
+                                                                                   "host":  {
+                                                                                                "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                                "connectionName":  "shared_office365",
+                                                                                                "operationId":  "SendEmailV2"
+                                                                                            },
+                                                                                   "parameters":  {
+                                                                                                      "emailMessage/To":  "dgsRegistry@nitda.gov.ng",
+                                                                                                      "emailMessage/Subject":  "Result--Hugging Face --",
+                                                                                                      "emailMessage/Body":  "@concat(\u0027\u003chtml\u003e\u003cbody style=\"font-family:Arial, sans-serif;\"\u003e\u0027, \u0027\u003ch2\u003eAPI Response\u003c/h2\u003e\u0027, \u0027\u003cp\u003e\u003cstrong\u003eRole:\u003c/strong\u003e \u0027, outputs(\u0027HTTP\u0027)?[\u0027body\u0027]?[\u0027choices\u0027]?[0]?[\u0027message\u0027]?[\u0027role\u0027], \u0027\u003c/p\u003e\u0027, \u0027\u003cp\u003e\u003cstrong\u003eContent:\u003c/strong\u003e\u003c/p\u003e\u0027, \u0027\u003cdiv style=\"white-space:pre-wrap;\"\u003e\u0027, outputs(\u0027HTTP\u0027)?[\u0027body\u0027]?[\u0027choices\u0027]?[0]?[\u0027message\u0027]?[\u0027content\u0027], \u0027\u003c/div\u003e\u0027, \u0027\u003cp\u003e\u003cstrong\u003eFinish Reason:\u003c/strong\u003e \u0027, outputs(\u0027HTTP\u0027)?[\u0027body\u0027]?[\u0027choices\u0027]?[0]?[\u0027finish_reason\u0027], \u0027\u003c/p\u003e\u0027, \u0027\u003cp\u003e\u003cstrong\u003eModel:\u003c/strong\u003e \u0027, outputs(\u0027HTTP\u0027)?[\u0027body\u0027]?[\u0027model\u0027], \u0027\u003c/p\u003e\u0027, \u0027\u003c/body\u003e\u003c/html\u003e\u0027)",
+                                                                                                      "emailMessage/Importance":  "Normal"
+                                                                                                  },
+                                                                                   "authentication":  {
+                                                                                                          "value":  "@json(decodeBase64(triggerOutputs().headers[\u0027X-MS-APIM-Tokens\u0027]))[\u0027$ConnectionKey\u0027]",
+                                                                                                          "type":  "Raw"
+                                                                                                      }
+                                                                               }
+                                                                },
+                                       "Apply_to_each_Parse_JSON_choices":  {
+                                                                                "foreach":  "@body(\u0027Parse_JSON\u0027)?[\u0027choices\u0027]",
+                                                                                "actions":  {
+                                                                                                "Compose_message":  {
+                                                                                                                        "runAfter":  {
+
+                                                                                                                                     },
+                                                                                                                        "metadata":  {
+                                                                                                                                         "operationMetadataId":  "bc6169c4-a3fe-4346-af1d-0d8fae3418cb"
+                                                                                                                                     },
+                                                                                                                        "type":  "Compose",
+                                                                                                                        "inputs":  "  @{items(\u0027Apply_to_each_Parse_JSON_choices\u0027)?[\u0027message\u0027]}"
+                                                                                                                    },
+                                                                                                "Append_to_string_variable_varText":  {
+                                                                                                                                          "runAfter":  {
+                                                                                                                                                           "Compose_message":  [
+                                                                                                                                                                                   "Succeeded"
+                                                                                                                                                                               ]
+                                                                                                                                                       },
+                                                                                                                                          "metadata":  {
+                                                                                                                                                           "operationMetadataId":  "d0dfce83-2035-49b5-a0d2-c6bb2b73a36e"
+                                                                                                                                                       },
+                                                                                                                                          "type":  "AppendToStringVariable",
+                                                                                                                                          "inputs":  {
+                                                                                                                                                         "name":  "varText",
+                                                                                                                                                         "value":  "@outputs(\u0027Compose_message\u0027)"
+                                                                                                                                                     }
+                                                                                                                                      },
+                                                                                                "Compose_content_2":  {
+                                                                                                                          "runAfter":  {
+                                                                                                                                           "Append_to_string_variable_varText":  [
+                                                                                                                                                                                     "Succeeded"
+                                                                                                                                                                                 ]
+                                                                                                                                       },
+                                                                                                                          "metadata":  {
+                                                                                                                                           "operationMetadataId":  "6390cfbe-67c3-411e-81ab-2601d4f4228b"
+                                                                                                                                       },
+                                                                                                                          "type":  "Compose",
+                                                                                                                          "inputs":  "@items(\u0027Apply_to_each_Parse_JSON_choices\u0027)?[\u0027message\u0027]?[\u0027content\u0027]"
+                                                                                                                      },
+                                                                                                "Append_to_string_variable_varContent":  {
+                                                                                                                                             "runAfter":  {
+                                                                                                                                                              "Compose_content_2":  [
+                                                                                                                                                                                        "Succeeded"
+                                                                                                                                                                                    ]
+                                                                                                                                                          },
+                                                                                                                                             "metadata":  {
+                                                                                                                                                              "operationMetadataId":  "e2591202-6b81-4acc-b4d0-0fa4f9fb0e5f"
+                                                                                                                                                          },
+                                                                                                                                             "type":  "AppendToStringVariable",
+                                                                                                                                             "inputs":  {
+                                                                                                                                                            "name":  "varContent",
+                                                                                                                                                            "value":  "@outputs(\u0027Compose_content_2\u0027)"
+                                                                                                                                                        }
+                                                                                                                                         }
+                                                                                            },
+                                                                                "runAfter":  {
+                                                                                                 "Compose_Response":  [
+                                                                                                                          "Succeeded"
+                                                                                                                      ]
+                                                                                             },
+                                                                                "metadata":  {
+                                                                                                 "operationMetadataId":  "83b03ea3-f218-4432-96aa-deb48100f019"
+                                                                                             },
+                                                                                "type":  "Foreach"
+                                                                            },
+                                       "Compose_HTML_Response_Template":  {
+                                                                              "runAfter":  {
+                                                                                               "Apply_to_each__content":  [
+                                                                                                                              "Succeeded"
+                                                                                                                          ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "bc6169c4-a3fe-4346-af1d-0d8fae3418cb"
+                                                                                           },
+                                                                              "type":  "Compose",
+                                                                              "inputs":  "i\u0027m \u003cdiv style=\"font-family:Arial, sans-serif; padding:15px; background-color:#f9f9f9; border:1px solid #ddd; border-radius:8px; max-width:600px; margin:auto;\"\u003e\n  \u003ch2 style=\"color:#333; border-bottom:2px solid #4CAF50; padding-bottom:5px; word-wrap:break-word;\"\u003e🤖 Hugging Face AI Response\u003c/h2\u003e\n  @{variables(\u0027varText\u0027)}\n  \u003cp style=\"margin-top:15px; font-size:16px;\"\u003e\u003cstrong style=\"color:#4CAF50;\"\u003ePrompt:\u003c/strong\u003e\u003c/p\u003e\n  \u003cdiv style=\"background-color:#fff; border:1px solid #ccc; padding:10px; border-radius:5px; margin-bottom:15px; font-size:15px; line-height:1.5; word-wrap:break-word;\"\u003e\n    \n  \u003c/div\u003e\n  \n  \u003cp style=\"margin-top:15px; font-size:16px;\"\u003e\u003cstrong style=\"color:#4CAF50;\"\u003eAI Response:\u003c/strong\u003e\u003c/p\u003e\n  \u003cdiv style=\"background-color:#fff; border:1px solid #ccc; padding:10px; border-radius:5px; font-size:15px; line-height:1.5; word-wrap:break-word;\"\u003e\n    @{variables(\u0027varContent\u0027)}\n  \u003c/div\u003e\n  \n  \u003chr style=\"margin:20px 0;\"/\u003e\n  \u003cp style=\"font-size:12px; color:#777; word-wrap:break-word;\"\u003e\n    🕒 Generated at: @{utcNow()}\u003cbr/\u003e\n    📄 Request ID: @{workflow()?[\u0027run\u0027][\u0027name\u0027]}\n  \u003c/p\u003e\n\u003c/div\u003e"
+                                                                          },
+                                       "Initialize_variable_varContent":  {
+                                                                              "runAfter":  {
+                                                                                               "Initialize_variable_varText":  [
+                                                                                                                                   "Succeeded"
+                                                                                                                               ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "4528304d-0853-4c38-9b75-82afcbba2407"
+                                                                                           },
+                                                                              "type":  "InitializeVariable",
+                                                                              "inputs":  {
+                                                                                             "variables":  [
+                                                                                                               {
+                                                                                                                   "name":  "varContent",
+                                                                                                                   "type":  "string"
+                                                                                                               }
+                                                                                                           ]
+                                                                                         }
+                                                                          },
+                                       "Apply_to_each__content":  {
+                                                                      "foreach":  "@body(\u0027Parse_JSON\u0027)?[\u0027choices\u0027]",
+                                                                      "actions":  {
+                                                                                      "Compose_content":  {
+                                                                                                              "runAfter":  {
+
+                                                                                                                           },
+                                                                                                              "metadata":  {
+                                                                                                                               "operationMetadataId":  "bc6169c4-a3fe-4346-af1d-0d8fae3418cb"
+                                                                                                                           },
+                                                                                                              "type":  "Compose",
+                                                                                                              "inputs":  "@items(\u0027Apply_to_each__content\u0027)?[\u0027message\u0027]?[\u0027content\u0027]"
+                                                                                                          }
+                                                                                  },
+                                                                      "runAfter":  {
+                                                                                       "Apply_to_each_Parse_JSON_choices":  [
+                                                                                                                                "Succeeded"
+                                                                                                                            ]
+                                                                                   },
+                                                                      "metadata":  {
+                                                                                       "operationMetadataId":  "76b9502d-7c7b-4b5e-b2ec-c7f060b251bf"
+                                                                                   },
+                                                                      "type":  "Foreach"
+                                                                  },
+                                       "Send_an_email_(V2)":  {
+                                                                  "runAfter":  {
+
+                                                                               },
+                                                                  "metadata":  {
+                                                                                   "operationMetadataId":  "a55056dd-fa2e-47bd-aab4-6460e5edea2a"
+                                                                               },
+                                                                  "type":  "OpenApiConnection",
+                                                                  "inputs":  {
+                                                                                 "host":  {
+                                                                                              "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                              "connectionName":  "shared_office365",
+                                                                                              "operationId":  "SendEmailV2"
+                                                                                          },
+                                                                                 "parameters":  {
+                                                                                                    "emailMessage/To":  "dgsRegistry@nitda.gov.ng",
+                                                                                                    "emailMessage/Subject":  "Result--Hugging Face --",
+                                                                                                    "emailMessage/Body":  "\u003c!-- Negative · DGCEO · Urgent · Pending --\u003e\n\u003cdiv data-item=\"CMT-2045\" data-priority=\"Urgent\" data-status=\"Pending\" data-sentiment=\"Negative\" data-usertype=\"DGCEO\"\n  style=\"border-left:6px solid #B91C1C;background:#fff7f7;\"\u003e\n  \u003c!-- Header --\u003e\n  \u003cdiv style=\"display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid #fce2e2;\"\u003e\n    \u003cimg src=\"https://example.com/avatar1.jpg\" width=\"40\" height=\"40\" style=\"border-radius:50%;border:2px solid #B91C1C;\"/\u003e\n    \u003cdiv style=\"margin-left:12px;\"\u003e\n      \u003cdiv style=\"font-weight:600;color:#7f1d1d;\"\u003eDr. Amina Bello · DGCEO\u003c/div\u003e\n      \u003cdiv style=\"font-size:12px;color:#6b7280;\"\u003e2025-08-19T20:41:00Z\u003c/div\u003e\n    \u003c/div\u003e\n    \u003cdiv style=\"margin-left:auto;\"\u003e\n      \u003cspan style=\"background:#FFF7ED;color:#b45309;padding:6px 10px;border-radius:999px;font-size:12px;\"\u003ePending\u003c/span\u003e\n    \u003c/div\u003e\n  \u003c/div\u003e\n  \u003c!-- Body --\u003e\n  \u003cdiv style=\"padding:14px 16px;\"\u003e\n    \u003cp style=\"color:#13241a;\"\u003eThe infrastructure report lacks clarity. Revise with regional breakdowns before Friday.\u003c/p\u003e\n    \u003cdiv style=\"margin-top:12px;\"\u003e\n      \u003cspan style=\"background:#B91C1C;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;\"\u003eUrgent\u003c/span\u003e\n      \u003cspan style=\"margin-left:8px;color:#DC2626;font-size:12px;\"\u003e😠 Negative\u003c/span\u003e\n    \u003c/div\u003e\n  \u003c/div\u003e\n\u003c/div\u003e\n\n\u003c!-- Positive · Director · Medium · Reviewed --\u003e\n\u003cdiv data-item=\"CMT-2046\" data-priority=\"Medium\" data-status=\"Reviewed\" data-sentiment=\"Positive\" data-usertype=\"Director\"\n  style=\"border-left:6px solid #16A34A;background:#f0fdf4;\"\u003e\n  \u003cdiv style=\"display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid #d1fae5;\"\u003e\n    \u003cimg src=\"https://example.com/avatar2.jpg\" width=\"40\" height=\"40\" style=\"border-radius:50%;border:2px solid #16A34A;\"/\u003e\n    \u003cdiv style=\"margin-left:12px;\"\u003e\n      \u003cdiv style=\"font-weight:600;color:#065f46;\"\u003eMr. Tunde Okoro · Director\u003c/div\u003e\n      \u003cdiv style=\"font-size:12px;color:#6b7280;\"\u003e2025-08-18T15:22:00Z\u003c/div\u003e\n    \u003c/div\u003e\n    \u003cdiv style=\"margin-left:auto;\"\u003e\n      \u003cspan style=\"background:#ecfdf5;color:#065f46;padding:6px 10px;border-radius:999px;font-size:12px;\"\u003eReviewed\u003c/span\u003e\n    \u003c/div\u003e\n  \u003c/div\u003e\n  \u003cdiv style=\"padding:14px 16px;\"\u003e\n    \u003cp style=\"color:#065f46;\"\u003eExcellent work on the Q2 financials. The regional insights were especially helpful.\u003c/p\u003e\n    \u003cdiv style=\"margin-top:12px;\"\u003e\n      \u003cspan style=\"background:#16A34A;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;\"\u003eMedium\u003c/span\u003e\n      \u003cspan style=\"margin-left:8px;color:#16A34A;font-size:12px;\"\u003e😊 Positive\u003c/span\u003e\n    \u003c/div\u003e\n  \u003c/div\u003e\n\u003c/div\u003e\n\n\u003c!-- Neutral · Analyst · Low · Resolved --\u003e\n\u003cdiv data-item=\"CMT-2047\" data-priority=\"Low\" data-status=\"Resolved\" data-sentiment=\"Neutral\" data-usertype=\"Analyst\"\n  style=\"border-left:6px solid #64748B;background:#f8fafc;\"\u003e\n  \u003cdiv style=\"display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid #e2e8f0;\"\u003e\n    \u003cimg src=\"https://example.com/avatar3.jpg\" width=\"40\" height=\"40\" style=\"border-radius:50%;border:2px solid #64748B;\"/\u003e\n    \u003cdiv style=\"margin-left:12px;\"\u003e\n      \u003cdiv style=\"font-weight:600;color:#334155;\"\u003eMs. Ifeoma Nwachukwu · Analyst\u003c/div\u003e\n      \u003cdiv style=\"font-size:12px;color:#6b7280;\"\u003e2025-08-17T09:10:00Z\u003c/div\u003e\n    \u003c/div\u003e\n    \u003cdiv style=\"margin-left:auto;\"\u003e\n      \u003cspan style=\"background:#e2e8f0;color:#334155;padding:6px 10px;border-radius:999px;font-size:12px;\"\u003eResolved\u003c/span\u003e\n    \u003c/div\u003e\n  \u003c/div\u003e\n  \u003cdiv style=\"padding:14px 16px;\"\u003e\n    \u003cp style=\"color:#334155;\"\u003eThe data validation script ran successfully. No anomalies detected.\u003c/p\u003e\n    \u003cdiv style=\"margin-top:12px;\"\u003e\n      \u003cspan style=\"background:#64748B;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;\"\u003eLow\u003c/span\u003e\n      \u003cspan style=\"margin-left:8px;color:#64748B;font-size:12px;\"\u003e😐 Neutral\u003c/span\u003e\n    \u003c/div\u003e\n  \u003c/div\u003e\n\u003c/div\u003e\n\u003c!-- External · Mixed Sentiment · Compact --\u003e\n\u003cdiv data-item=\"CMT-2048\" data-priority=\"Medium\" data-status=\"Pending\" data-sentiment=\"Mixed\" data-usertype=\"External\"\n  style=\"border-left:6px solid #F59E0B;background:#fffbea;\"\u003e\n  \u003cdiv style=\"padding:12px 14px;\"\u003e\n    \u003cdiv style=\"font-weight:600;color:#78350F;\"\u003eNgozi Umeh · External Consultant\u003c/div\u003e\n    \u003cdiv style=\"font-size:12px;color:#6b7280;\"\u003e2025-08-16T11:30:00Z\u003c/div\u003e\n    \u003cp style=\"margin-top:8px;color:#78350F;\"\u003eThe dashboard is functional but lacks mobile responsiveness. Please optimize for smaller screens.\u003c/p\u003e\n    \u003cdiv style=\"margin-top:8px;\"\u003e\n      \u003cspan style=\"background:#F59E0B;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;\"\u003eMedium\u003c/span\u003e\n      \u003cspan style=\"margin-left:8px;color:#78350F;font-size:12px;\"\u003e🤔 Mixed\u003c/span\u003e\n    \u003c/div\u003e\n  \u003c/div\u003e\n\u003c/div\u003e\n\n",
+                                                                                                    "emailMessage/Importance":  "Normal"
+                                                                                                },
+                                                                                 "authentication":  {
+                                                                                                        "value":  "@json(decodeBase64(triggerOutputs().headers[\u0027X-MS-APIM-Tokens\u0027]))[\u0027$ConnectionKey\u0027]",
+                                                                                                        "type":  "Raw"
+                                                                                                    }
+                                                                             }
+                                                              }
+                                   }
+                   }
+}

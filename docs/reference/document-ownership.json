@@ -1,0 +1,149 @@
+{
+  "schema": "dgo-document-ownership/v1",
+  "purpose": "Which document owns each executable instruction, so that no procedure has two sources of truth. Guarded by tests/single-source-of-truth.test.mjs.",
+  "recordedUtc": "2026-09-10",
+  "rule": {
+    "statement": "Exactly one document may instruct a reader to run any given browser script. Every other document may name it and say where it is run, and may not restate the step.",
+    "whyItExists": "Twelve documents in this estate carried a sentence of the form 'where this document and that one differ on a command, that one is right'. Each of those sentences is an admission that two documents can carry the same command with different content, and a precedence rule is not a single source of truth — it is a tie-breaker for a conflict that should be impossible. Measured on 2026-09-10, five of sixteen instructed scripts had more than one instructing document, and provision-sharepoint-fields.browser.js had nine.",
+    "whatCountsAsInstructing": "Two consecutive lines that name a *.browser.js file AND carry an imperative to paste, copy or open it. Markdown table rows are excluded: in this estate an instruction is a numbered step or a sentence, never a cell. A paragraph-wide window was tried first and was too coarse — an audit listing script filenames in one table row and the words 'designer-paste' in another read as an instruction. A single line was too fine — an instruction split by a line wrap was missed.",
+    "enforcedBy": "tests/single-source-of-truth.test.mjs, in the npm run test:node chain",
+    "namingRule": "A document whose FILENAME claims an executable role — runbook, walkthrough, guide, brief, directive, handover, plan — must either be a declared owner above, or say in its first 16 lines what it actually is: a 'carries no commands' banner, a retired/superseded/historical marker, or a '**Status:** …' line. Scope is every markdown file under docs/ except docs/archive/. Measured on 2026-09-10 before the rule existed: docs/deployment held three files ending in RUNBOOK, three in WALKTHROUGH and three retired agent briefs — eleven documents whose names read 'execute me', of which one carried steps, and one of the three runbooks was 279 bytes of position statement. The rule was scoped to docs/deployment first and that was a guess about where people look; reference/platform-architecture-pack/ held an OPERATIONS_RUNBOOK.md and six closed handoff rounds were still named EXEC-BRIEF and EXEC-DIRECTIVE with nothing saying the workstream had ended.",
+    "stepRule": "Two kinds of step exist in this estate and both need a single source. A CONSOLE-SCRIPT step pastes a *.browser.js file and is owned by one runbook. A TENANT-ACTION step is a Power Automate click, an npm command or a configuration edit, written as a **Do** or **Steps** block. Any document carrying three or more such blocks must be a domain owner or a declared derivedStepView. Measured on 2026-09-10: ACTION_PLAN.md carried 24 **Do** blocks while its own banner said it carried no commands, because the rule only ever checked browser scripts.",
+    "artifactRule": "The rule above governs *.browser.js, and those are not the only console artifacts this estate emits. Measured on 2026-09-11: 16 *.console-apply.js snippets under docs/deployment/internal/flows/console-apply/ were named by no step-carrying document at all, and the check could not see them because it globbed scripts/*.browser.js. Every emitted console artifact that is not a domain-owned browser script is therefore recorded in consoleArtifacts below, with what emits it, which document instructs it, and why it is not a domain script. An artifact nobody instructs is recorded with the condition that would give it an owner, and must not be run before it has one — no document states the conditions under which running it is correct. An artifact that is neither owned nor recorded fails the test."
+  },
+  "domains": [
+    {
+      "id": "portal-endpoint",
+      "title": "Portal and endpoint commissioning",
+      "owner": "docs/deployment/PORTAL-TENANT-RUNBOOK.md",
+      "scripts": [
+        "provision-sharepoint-fields.browser.js",
+        "preflight-internal-flows.browser.js",
+        "acceptance-internal-endpoints.browser.js",
+        "set-content-approval.browser.js",
+        "diagnose-deployed-config.browser.js",
+        "harvest-trigger-urls.browser.js",
+        "harvest-flow-metadata.browser.js",
+        "verify-deployed-package.browser.js",
+        "otp-cutover-tests.browser.js",
+        "apply-otp-verify-patch.browser.js"
+      ],
+      "ownerNote": "EXECUTION_RUNBOOK.md was assigned this role first and it was the wrong document: it is generated one section per open item from PRODUCTION_READINESS_REGISTER.json and instructs no console script at all. PORTAL-TENANT-RUNBOOK.md already carried five of the nine, so it is the document the steps were actually in.",
+      "stepKind": "console-script"
+    },
+    {
+      "id": "governance-tenant",
+      "title": "Governance tenant remediation",
+      "owner": "docs/deployment/governance/GOVERNANCE-TENANT-RUNBOOK.md",
+      "scripts": [
+        "backup-governance-lists.browser.js",
+        "provision-governance-lists.browser.js",
+        "verify-governance-columns.browser.js",
+        "dump-governance-columns.browser.js",
+        "inspect-governance-strays.browser.js",
+        "remediate-governance-strays.browser.js",
+        "cleanup-disambiguated-columns.browser.js",
+        "compare-duplicate-governance-lists.browser.js",
+        "retire-duplicate-governance-lists.browser.js",
+        "provision-flow-registry-lists.browser.js",
+        "verify-flow-truth-provisioning.browser.js"
+      ],
+      "stepKind": "console-script"
+    },
+    {
+      "id": "notification-remediation",
+      "title": "Notification remediation",
+      "owner": "docs/deployment/NOTIFICATION-TENANT-RUNBOOK.md",
+      "stepKind": "tenant-action",
+      "scripts": [],
+      "ownerNote": "Consolidated from the four files delivered under notification-instrument/tenant-execution/runbooks/, which no commissioning document referenced. The workstream is LIVE, not stale: ITEM-48, ITEM-50 and ITEM-51 are SPECIFIED_NOT_APPLIED in closure-disposition.json, and all 19 RN identifiers those files cite are present in the live 39-identifier matrix in config/notification-matrix.config.js. The delivered four are kept in place as the source they were imported as, marked superseded-by-consolidation, exactly as docs/reference/out-of-band/ keeps its evidence."
+    }
+  ],
+  "nonExecutableRoles": {
+    "docs/deployment/governance/EXECUTION-AGENT-BRIEF.md": "scope, access, sequencing and escalation for an external agent — points into the governance runbook by section, restates no step",
+    "docs/deployment/governance/GOVERNANCE-STATUS.md": "status: what is done, blocked and outstanding — restates no step",
+    "docs/deployment/governance/WHAT-WAS-DONE.md": "record of repository-side work already completed",
+    "docs/deployment/IMPLEMENTATION_WALKTHROUGH.md": "status and traceability for the portal domain — restates no step",
+    "docs/deployment/ACTION_PLAN.md": "the open items and their closing conditions. It CARRIES STEPS — 24 **Do** blocks — but owns none of them: every one is generated from PRODUCTION_READINESS_REGISTER.json. See derivedStepViews.",
+    "docs/deployment/OPERATOR_WALKTHROUGH.md": "orientation for a first-time operator — restates no step",
+    "docs/deployment/sharepoint/OPEN_ITEMS.md": "open items against the SharePoint estate — restates no step",
+    "docs/deployment/CLEAR-THE-LAST-BLOCKER.md": "the command-line commissioning path; it instructs no browser script and is not in contention with either runbook",
+    "docs/audits/BRANCH_CONSOLIDATION_AUDIT_2026-09-05.md": "an audit. An audit records what was run; it never tells a reader to run anything",
+    "docs/deployment/EXECUTION_RUNBOOK.md": "the open-item register for the portal domain, one section per item in dependency order. It CARRIES STEPS — 48 **Steps** blocks — but owns none of them: every one is generated from PRODUCTION_READINESS_REGISTER.json. See derivedStepViews.",
+    "docs/deployment/power-automate-flows/fresh-flow/CUTOVER-D-to-F.md": "the OTP flow cutover record — what was changed and why; the console steps live in the portal runbook",
+    "docs/deployment/HOW-TO-USE-THIS-BUNDLE.md": "the single entry document: which documents carry steps, what you do with them, in what order, and what you hand back. It absorbed START-HERE.md, which was a second index — every section of the bundle README restated one or the other, so three files all read as 'start here'. Restates no step.",
+    "docs/deployment/EXECUTION_GUIDE.md": "background and rationale for the commissioning work — restates no step. It briefly owned a 'flow-build' domain because five **Procedure** blocks were buried in it, 3% of 1,925 lines. Those are now §0 of the portal runbook, where the rest of that domain's steps already were; a fourth domain existing only because five steps were filed under rationale was an artefact of where they sat, not a real division of the work."
+  },
+  "nameCollisionExemptions": {
+    "rule": "A name collision matters when a document can be asked for by its name alone. A file whose directory names the item it belongs to is asked for as 'the provenance for X', never as 'the provenance', so parallel per-item records are exempt. Each exemption is listed rather than pattern-matched, so adding one is a decision someone made.",
+    "pairs": [
+      {
+        "a": "docs/audits/repository-hygiene/00-provenance.md",
+        "b": "docs/forensic/dd2e909/00-provenance.md",
+        "reason": "Two provenance records, each named by its own investigation directory. Neither is reachable by name alone."
+      },
+      {
+        "a": "docs/reference/provisioning/flows/portal-upload-ecm-docs.md",
+        "b": "docs/reference/provisioning/packages/portal-upload-ecm-docs.md",
+        "reason": "One flow record and one package record for the same artefact, each named by its own kind directory."
+      }
+    ]
+  },
+  "derivedStepViews": {
+    "rule": "A document may render steps it does not own, provided every step is generated from a declared source and a --check fails on drift. Two renderings of one JSON are one truth; two hand-written copies are two.",
+    "views": [
+      {
+        "document": "docs/deployment/EXECUTION_RUNBOOK.md",
+        "source": "docs/deployment/PRODUCTION_READINESS_REGISTER.json",
+        "generator": "scripts/build-execution-runbook.mjs",
+        "blocks": "48 **Steps** blocks, one per open item, in dependency order"
+      },
+      {
+        "document": "docs/deployment/ACTION_PLAN.md",
+        "source": "docs/deployment/PRODUCTION_READINESS_REGISTER.json",
+        "generator": "scripts/build-action-plan.mjs",
+        "blocks": "24 **Do** blocks, one per open item, with its closing condition"
+      },
+      {
+        "document": "docs/deployment/EXTERNAL_EXECUTION.md",
+        "source": "docs/deployment/MASTER_REGISTER.json",
+        "generator": "scripts/build-external-walkthrough.mjs",
+        "blocks": "58 **Do** blocks, one per open item, grouped by who holds the access and ordered inside each group by the dependency graph the sources state",
+        "note": "Owns nothing. tests/external-execution.test.mjs asserts in both directions that every open item is a step and every step is an open item, and that each step QUOTES its item — what, actions, actor and closure criterion are compared field by field against MASTER_REGISTER.json, so a restatement fails rather than drifting."
+      }
+    ],
+    "measured": "On 2026-09-10 all 24 items with a block in both were diffed: the text differs only by list marker (- versus 1.). One source, two renderings. Both were labelled 'carries no commands', which was false — ACTION_PLAN.md carries 24 Do blocks — because the rule only ever checked *.browser.js instructions."
+  },
+  "consoleArtifacts": {
+    "rule": "One entry per emitted console artifact outside scripts/*.browser.js. `instructedBy` names the document that tells a reader to run it, or is null when none does. A null entry carries `ownedWhen`: the condition under which it stops being unassigned. Counts are asserted, so a newly emitted artifact fails the build until it is owned or recorded.",
+    "artifacts": [
+      {
+        "id": "phone-harvest-bookmarklet",
+        "path": "scripts/harvest-trigger-urls.bookmarklet.txt",
+        "generatedBy": "scripts/build-harvest-bookmarklet.mjs",
+        "instructedBy": "docs/deployment/CLEAR-THE-LAST-BLOCKER-TERMUX.md",
+        "wouldAdvance": [
+          "CFG-1",
+          "CFG-2"
+        ],
+        "sameStepAs": "docs/deployment/PORTAL-TENANT-RUNBOOK.md §3.2",
+        "whyNotADomainScript": "It is not a console paste and cannot be one: Chrome for Android has no devtools console, which is the whole reason it exists. It performs the step §3.2 of the portal runbook owns — the same two Flow API calls per flow — by a different mechanism, on a device that cannot run the owner's. §4a of the instructing document carries the phone mechanics and points at the owner for the step itself, rather than restating it."
+      },
+      {
+        "id": "console-apply-snippets",
+        "path": "docs/deployment/internal/flows/console-apply",
+        "match": "*.console-apply.js",
+        "count": 16,
+        "generatedBy": "scripts/build-console-apply.mjs",
+        "instructedBy": null,
+        "wouldAdvance": [
+          "ITEM-48",
+          "ITEM-50",
+          "ITEM-51"
+        ],
+        "whyNotADomainScript": "They automate the 16 designer pastes that would correct the notification flows — 16 of 17 packages; DGO_SCHEDULED_SWEEP has no HTTP endpoint and so has no snippet. The workstream they serve is the notification-remediation domain, whose owner declares `scripts: []` because every step it carries is a Power Automate or SharePoint action. So the snippets exist, the items they would advance are open, and no document tells anyone to run them. That is recorded here rather than resolved here: choosing the mechanism for a tenant change is the owner's decision, not this register's.",
+        "ownedWhen": "NOTIFICATION-TENANT-RUNBOOK.md — or whichever runbook takes the flow-correction step — carries the step that applies them, naming the mode, the site and the pass condition. At that point this entry moves into that domain and the snippets become owned scripts like any other."
+      }
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "remediationId": "00-fetch-activities-case-label",
+  "visit": 0,
+  "endpoint": "FETCH_ACTIVITIES",
+  "closes": "FETCH_ACTIVITIES falls to the default scope on every call.",
+  "appliesTo": [
+    {
+      "flow": "Universal Dynamic_Multi-Actions_Executor",
+      "internalName": "1abbe547-9d7e-430e-bc2d-3ed59bc738b9",
+      "note": "This is the SUBSIDIARY_ACTIONS flow. Its eighteen cases are exactly that contract's routeKeys."
+    }
+  ],
+  "change": {
+    "where": "Scope_Global/Switch_Action, the case currently labelled 'list-activities'",
+    "from": "list-activities",
+    "to": "LIST-ACTIVITIES",
+    "why": "The Switch is on @triggerBody()?['action'] and string comparison in Power Automate is case-sensitive. FETCH_ACTIVITIES sends the fixed action LIST-ACTIVITIES, so it matches nothing and falls through to Scope_Default."
+  },
+  "changeNothingElse": {
+    "why": "Sixteen further cases are sent by no contract at all - the routeKeys describe intent, the wire carries only contract.action, and INIT is a bulk data loader with no branch on payload.operation. Three of the sixteen are misspelled against the routes they were meant to serve (CREATE_TEST, UlPDATE_TASK, bulassign) and four hold zero actions. Normalising the whole Switch would make sixteen dormant paths live in one edit - none ever run against production data. Rename the one label a contract actually calls; the rest are dead code with a documented status, to be deleted or contracted deliberately.",
+    "deadCases": [
+      "REFRESH_EMAILS",
+      "LOAD_EMAIL_DETAILS",
+      "AI_ANALYSE_EMAIL",
+      "CREATE_TEST",
+      "UlPDATE_TASK",
+      "LOAD_EVENT_INFO",
+      "AI_CHAT",
+      "track",
+      "acknowledge",
+      "GET_ALL",
+      "GET_BOOTSTRAP",
+      "listDocs",
+      "getdoc",
+      "bulassign",
+      "CreateSupportRequest",
+      "getreferences"
+    ]
+  },
+  "verification": [
+    "Call FETCH_ACTIVITIES and confirm the response is the list-activities scope rather than the default scope"
+  ]
+}

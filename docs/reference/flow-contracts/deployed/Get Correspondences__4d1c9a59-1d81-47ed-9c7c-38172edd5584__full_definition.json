@@ -1,0 +1,263 @@
+{
+    "exportedBy":  "scripts/export-power-automate-flows.ps1",
+    "exportedAtUtc":  "2026-08-19T06:09:19Z",
+    "workflow_identity":  {
+                              "internal_name":  "4d1c9a59-1d81-47ed-9c7c-38172edd5584",
+                              "full_resource_id":  null,
+                              "tags":  {
+                                           "flowDisplayName":  "Get Correspondences",
+                                           "environmentName":  "Default-ca6a4b3f-9123-49bc-bcb9-27085ebbf1a1"
+                                       }
+                          },
+    "definition":  {
+                       "$schema":  "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                       "contentVersion":  "1.0.0.0",
+                       "parameters":  {
+                                          "$authentication":  {
+                                                                  "defaultValue":  {
+
+                                                                                   },
+                                                                  "type":  "SecureObject"
+                                                              },
+                                          "$connections":  {
+                                                               "defaultValue":  {
+
+                                                                                },
+                                                               "type":  "Object"
+                                                           }
+                                      },
+                       "triggers":  {
+                                        "manual":  {
+                                                       "metadata":  {
+                                                                        "operationMetadataId":  "d76ef325-d70a-4326-a1c7-0c7c47c181e2"
+                                                                    },
+                                                       "type":  "Request",
+                                                       "kind":  "Http",
+                                                       "inputs":  {
+                                                                      "method":  "POST",
+                                                                      "triggerAuthenticationType":  "All"
+                                                                  }
+                                                   }
+                                    },
+                       "actions":  {
+                                       "Response":  {
+                                                        "runAfter":  {
+                                                                         "Select_Extended":  [
+                                                                                                 "Succeeded"
+                                                                                             ]
+                                                                     },
+                                                        "metadata":  {
+                                                                         "operationMetadataId":  "e8bd10be-ddcc-43cb-94d3-1148dd82bc6c"
+                                                                     },
+                                                        "type":  "Response",
+                                                        "kind":  "Http",
+                                                        "inputs":  {
+                                                                       "statusCode":  200,
+                                                                       "headers":  {
+                                                                                       "Access-Control-Allow-Origin":  "*",
+                                                                                       "Access-Control-Allow-Methods":  "GET, POST, OPTIONS",
+                                                                                       "Access-Control-Allow-Headers":  "Content-Type",
+                                                                                       "Content-Type":  "application/json"
+                                                                                   },
+                                                                       "body":  "@body(\u0027Select_Extended\u0027)"
+                                                                   }
+                                                    },
+                                       "Initialize_variable_varResponse":  {
+                                                                               "runAfter":  {
+
+                                                                                            },
+                                                                               "metadata":  {
+                                                                                                "operationMetadataId":  "6fc48d81-c15d-42af-aacb-85c436c96c98"
+                                                                                            },
+                                                                               "type":  "InitializeVariable",
+                                                                               "inputs":  {
+                                                                                              "variables":  [
+                                                                                                                {
+                                                                                                                    "name":  "varResponse",
+                                                                                                                    "type":  "string"
+                                                                                                                }
+                                                                                                            ]
+                                                                                          }
+                                                                           },
+                                       "Initialize_variable_varstatuscode":  {
+                                                                                 "runAfter":  {
+                                                                                                  "Initialize_variable_varResponse":  [
+                                                                                                                                          "Succeeded"
+                                                                                                                                      ]
+                                                                                              },
+                                                                                 "metadata":  {
+                                                                                                  "operationMetadataId":  "c3ceddc9-7670-4cb9-9a96-94d0c5518675"
+                                                                                              },
+                                                                                 "type":  "InitializeVariable",
+                                                                                 "inputs":  {
+                                                                                                "variables":  [
+                                                                                                                  {
+                                                                                                                      "name":  "varstatuscode",
+                                                                                                                      "type":  "integer"
+                                                                                                                  }
+                                                                                                              ]
+                                                                                            }
+                                                                             },
+                                       "Initialize_variable_varStatus":  {
+                                                                             "runAfter":  {
+                                                                                              "Initialize_variable_varstatuscode":  [
+                                                                                                                                        "Succeeded"
+                                                                                                                                    ]
+                                                                                          },
+                                                                             "metadata":  {
+                                                                                              "operationMetadataId":  "265813bf-216a-4357-ae3d-a0f7237643e3"
+                                                                                          },
+                                                                             "type":  "InitializeVariable",
+                                                                             "inputs":  {
+                                                                                            "variables":  [
+                                                                                                              {
+                                                                                                                  "name":  "varstatus",
+                                                                                                                  "type":  "string"
+                                                                                                              }
+                                                                                                          ]
+                                                                                        }
+                                                                         },
+                                       "Initialize_variable_vardocId":  {
+                                                                            "runAfter":  {
+                                                                                             "Initialize_variable_varStatus":  [
+                                                                                                                                   "Succeeded"
+                                                                                                                               ]
+                                                                                         },
+                                                                            "metadata":  {
+                                                                                             "operationMetadataId":  "c59ce57d-66e0-44ea-8de6-515d35e20e41"
+                                                                                         },
+                                                                            "type":  "InitializeVariable",
+                                                                            "inputs":  {
+                                                                                           "variables":  [
+                                                                                                             {
+                                                                                                                 "name":  "vardocId",
+                                                                                                                 "type":  "integer"
+                                                                                                             }
+                                                                                                         ]
+                                                                                       }
+                                                                        },
+                                       "Initialize_variable_varmessage":  {
+                                                                              "runAfter":  {
+                                                                                               "Initialize_variable_vardocId":  [
+                                                                                                                                    "Succeeded"
+                                                                                                                                ]
+                                                                                           },
+                                                                              "metadata":  {
+                                                                                               "operationMetadataId":  "1dbd64d5-e4b9-43ce-8b78-abc5c1dbce0c"
+                                                                                           },
+                                                                              "type":  "InitializeVariable",
+                                                                              "inputs":  {
+                                                                                             "variables":  [
+                                                                                                               {
+                                                                                                                   "name":  "varmessage",
+                                                                                                                   "type":  "string"
+                                                                                                               }
+                                                                                                           ]
+                                                                                         }
+                                                                          },
+                                       "Send_an_email_(V2)":  {
+                                                                  "runAfter":  {
+                                                                                   "Response":  [
+                                                                                                    "Succeeded"
+                                                                                                ]
+                                                                               },
+                                                                  "metadata":  {
+                                                                                   "operationMetadataId":  "b3f74d02-cba7-4a66-baf0-d72dc466d092"
+                                                                               },
+                                                                  "type":  "OpenApiConnection",
+                                                                  "inputs":  {
+                                                                                 "parameters":  {
+                                                                                                    "emailMessage/To":  "hkani@nitda.gov.ng",
+                                                                                                    "emailMessage/Subject":  "NITDA_Get_Documents Glass Pane Portal submission",
+                                                                                                    "emailMessage/Body":  "\u003cbr\u003e\u003cbr\u003e\u003cp class=\"editor-paragraph\"\u003e\u003c/p\u003e",
+                                                                                                    "emailMessage/Attachments":  [
+                                                                                                                                     {
+                                                                                                                                         "Name":  "Get Correspondence Extended Output.txt",
+                                                                                                                                         "ContentBytes":  "@body(\u0027Select_Extended\u0027)"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "Name":  "Ge tCorrespondence Lean Output.txt",
+                                                                                                                                         "ContentBytes":  "@body(\u0027Select_Lean\u0027)"
+                                                                                                                                     }
+                                                                                                                                 ],
+                                                                                                    "emailMessage/Importance":  "Normal"
+                                                                                                },
+                                                                                 "host":  {
+                                                                                              "apiId":  "/providers/Microsoft.PowerApps/apis/shared_office365",
+                                                                                              "connectionName":  "shared_office365",
+                                                                                              "operationId":  "SendEmailV2"
+                                                                                          },
+                                                                                 "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                             }
+                                                              },
+                                       "Get_items_1":  {
+                                                           "runAfter":  {
+                                                                            "Initialize_variable_varmessage":  [
+                                                                                                                   "Succeeded"
+                                                                                                               ]
+                                                                        },
+                                                           "type":  "OpenApiConnection",
+                                                           "inputs":  {
+                                                                          "parameters":  {
+                                                                                             "dataset":  "https://nitdanigeria.sharepoint.com/sites/NITDADGO-EAAACTIVITYTRACKING",
+                                                                                             "table":  "1f1cb303-3fd2-43c8-8f24-c409b6c2fde3",
+                                                                                             "$orderby":  "ID desc",
+                                                                                             "$top":  100,
+                                                                                             "view":  "d486128d-ed61-48f9-9507-7bb1a33cbba1"
+                                                                                         },
+                                                                          "host":  {
+                                                                                       "apiId":  "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                                                                                       "connectionName":  "shared_sharepointonline",
+                                                                                       "operationId":  "GetItems"
+                                                                                   },
+                                                                          "authentication":  "@parameters(\u0027$authentication\u0027)"
+                                                                      }
+                                                       },
+                                       "Select_Lean":  {
+                                                           "runAfter":  {
+                                                                            "Get_items_1":  [
+                                                                                                "Succeeded"
+                                                                                            ]
+                                                                        },
+                                                           "type":  "Select",
+                                                           "inputs":  {
+                                                                          "from":  "@outputs(\u0027Get_items_1\u0027)?[\u0027body/value\u0027]",
+                                                                          "select":  {
+                                                                                         "ID":  "@item()?[\u0027ID\u0027]",
+                                                                                         "Subject":  "@item()?[\u0027Title\u0027]",
+                                                                                         "Department":  "@item()?[\u0027Category0\u0027]",
+                                                                                         "Status":  "@item()?[\u0027Status\u0027]",
+                                                                                         "Date":  "@item()?[\u0027Created\u0027]",
+                                                                                         "Deadline":  "@item()?[\u0027Modified\u0027]"
+                                                                                     }
+                                                                      }
+                                                       },
+                                       "Select_Extended":  {
+                                                               "runAfter":  {
+                                                                                "Select_Lean":  [
+                                                                                                    "Succeeded"
+                                                                                                ]
+                                                                            },
+                                                               "type":  "Select",
+                                                               "inputs":  {
+                                                                              "from":  "@outputs(\u0027Get_items_1\u0027)?[\u0027body/value\u0027]",
+                                                                              "select":  {
+                                                                                             "ID":  "@coalesce(item()?[\u0027ID\u0027], 0)",
+                                                                                             "Title":  "@coalesce(item()?[\u0027Title\u0027], \u0027Untitled\u0027)",
+                                                                                             "Description":  "@coalesce(item()?[\u0027Description\u0027], \u0027No description provided\u0027)",
+                                                                                             "Status":  "@coalesce(item()?[\u0027Status\u0027]?[\u0027Value\u0027], \u0027Unknown\u0027)",
+                                                                                             "AssignmentStatuss":  "@coalesce(item()?[\u0027AssignmentStatus\u0027]?[\u0027Value\u0027], \u0027Undefined\u0027)",
+                                                                                             "Category":  "@coalesce(item()?[\u0027Category0\u0027], item()?[\u0027Category0\u0027], \u0027Uncategorized\u0027)",
+                                                                                             "Created":  "@coalesce(item()?[\u0027Created\u0027], utcNow())",
+                                                                                             "AssignedTo":  "@coalesce(item()?[\u0027AssignedTo\u0027], \u0027Unassigned\u0027)",
+                                                                                             "Attachments":  "",
+                                                                                             "AtttachmentsLink":  "@item()?[\u0027AttachmentLink\u0027]"
+                                                                                         }
+                                                                          }
+                                                           }
+                                   },
+                       "outputs":  {
+
+                                   }
+                   }
+}

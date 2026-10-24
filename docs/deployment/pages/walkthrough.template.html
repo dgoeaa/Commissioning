@@ -1,0 +1,492 @@
+<title>Execution Walkthrough</title>
+<style>
+/* ── Tokens ───────────────────────────────────────────────────────────
+   Full light palette on bare :root so the un-stamped (system) document
+   resolves; dark redefines only tokens, once behind the media query
+   guarded against an explicit light choice, once behind the dark stamp.
+
+   Nothing loads from the network. This page is handed to someone outside
+   the organisation that built it, opened from a file path, possibly on a
+   machine with no route out — a webfont that fails to arrive would take
+   the type with it. */
+:root{
+  --ground:#F6F5F3; --surface:#FFFFFF; --surface-2:#EFEDEA; --surface-3:#E3E0DC;
+  --ink:#1B1917; --ink-soft:#67615B; --ink-faint:#968F88;
+  --rule:#DCD7D1; --rule-soft:#EBE7E2;
+  --accent:#3F4E8F; --accent-soft:#E7EAF6;
+  --done:#2F6B45; --done-soft:#E1F0E7;
+  --doing:#8A5A16; --doing-soft:#F8EEDC;
+  --blocked:#A33A2A; --blocked-soft:#F8E7E3;
+  --shadow:0 1px 2px rgba(27,25,23,.05), 0 14px 32px -22px rgba(27,25,23,.4);
+  --focus:#3F4E8F;
+  --sans:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#131211; --surface:#1B1A18; --surface-2:#242220; --surface-3:#2E2B28;
+    --ink:#ECE8E4; --ink-soft:#A8A19B; --ink-faint:#746D67;
+    --rule:#332F2B; --rule-soft:#262220;
+    --accent:#98A6E4; --accent-soft:#1D2038;
+    --done:#6FBB8E; --done-soft:#16281E;
+    --doing:#D4A852; --doing-soft:#2A2213;
+    --blocked:#E0866F; --blocked-soft:#2B1712;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 14px 32px -22px rgba(0,0,0,.9);
+    --focus:#98A6E4;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131211; --surface:#1B1A18; --surface-2:#242220; --surface-3:#2E2B28;
+  --ink:#ECE8E4; --ink-soft:#A8A19B; --ink-faint:#746D67;
+  --rule:#332F2B; --rule-soft:#262220;
+  --accent:#98A6E4; --accent-soft:#1D2038;
+  --done:#6FBB8E; --done-soft:#16281E;
+  --doing:#D4A852; --doing-soft:#2A2213;
+  --blocked:#E0866F; --blocked-soft:#2B1712;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 14px 32px -22px rgba(0,0,0,.9);
+  --focus:#98A6E4;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ground);color:var(--ink);font:400 15px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:18px}
+h1,h2,h3{font-family:var(--serif);font-weight:600;margin:0;text-wrap:balance}
+code,.mono{font-family:var(--mono);font-size:.92em}
+.num{font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+[hidden]{display:none!important}
+img{max-width:100%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+
+/* ── Masthead ─────────────────────────────────────────────────────── */
+.mast{background:var(--surface);border-bottom:1px solid var(--rule)}
+.mast .wrap{padding-block:26px 20px}
+.kick{font:600 11px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(26px,5vw,38px);line-height:1.12;letter-spacing:-.012em;margin-top:10px}
+.lede{max-width:64ch;color:var(--ink-soft);margin:10px 0 0;font-size:15px}
+
+.bar{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--surface-3);margin-top:18px}
+.bar i{display:block;height:100%}
+.bar .d{background:var(--done)} .bar .g{background:var(--doing)} .bar .b{background:var(--blocked)}
+.tally{display:flex;gap:16px;flex-wrap:wrap;margin-top:9px;font:500 12.5px/1.4 var(--mono);color:var(--ink-soft)}
+.tally b{color:var(--ink)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:99px;vertical-align:baseline;margin-right:5px;
+  border:1px solid var(--rule)}
+
+/* ── Next up ──────────────────────────────────────────────────────── */
+.next{margin-top:20px;border:1px solid var(--accent);border-radius:8px;background:var(--accent-soft);overflow:hidden;box-shadow:var(--shadow)}
+.next-h{font:600 10.5px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--accent);padding:13px 16px 0}
+.next-b{padding:7px 16px 15px}
+.next-b h2{font-size:18px;line-height:1.3}
+.next-b p{margin:5px 0 0;font-size:14px;color:var(--ink-soft);max-width:72ch}
+.next-b .where{font:500 12px/1 var(--mono);color:var(--ink-soft);display:block;margin-top:9px}
+
+/* ── Rail ─────────────────────────────────────────────────────────── */
+.rail{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--rule)}
+.rail .wrap{display:flex;gap:7px;overflow-x:auto;padding-block:9px;scrollbar-width:thin}
+.pill{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid var(--rule);
+  border-radius:7px;background:var(--surface-2);cursor:pointer;white-space:nowrap;font-size:13px}
+.pill[aria-current="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.pill b{font:600 11px/1 var(--mono);letter-spacing:.06em}
+.pill span{font:500 11px/1 var(--mono);color:var(--ink-faint)}
+
+/* ── Controls ─────────────────────────────────────────────────────── */
+.ctl{display:flex;gap:9px;flex-wrap:wrap;align-items:center;padding-block:15px}
+.ctl input[type=search],.ctl select{padding:8px 11px;border:1px solid var(--rule);border-radius:7px;background:var(--surface);min-width:0}
+.ctl input[type=search]{flex:1 1 220px}
+.tog{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid var(--rule);
+  border-radius:7px;background:var(--surface);cursor:pointer;font-size:13.5px}
+.btn{padding:8px 13px;border:1px solid var(--rule);border-radius:7px;background:var(--surface);cursor:pointer;font-size:13.5px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── Phases ───────────────────────────────────────────────────────── */
+.phase{margin-bottom:34px;scroll-margin-top:72px}
+.ph-h{display:flex;gap:12px;align-items:flex-start;padding-block:9px;border-top:2px solid var(--ink);margin-bottom:4px}
+.ph-id{flex:0 0 auto;width:34px;height:34px;border-radius:8px;background:var(--ink);color:var(--ground);
+  display:grid;place-items:center;font:600 14px/1 var(--mono)}
+.ph-t h2{font-size:21px;line-height:1.25}
+.ph-waits{font:500 12px/1.4 var(--mono);color:var(--doing);margin-top:4px}
+.ph-why{color:var(--ink-soft);font-size:14px;margin:7px 0 0;max-width:74ch}
+
+/* ── Steps ────────────────────────────────────────────────────────── */
+.step{border:1px solid var(--rule);border-radius:8px;background:var(--surface);margin-top:7px;overflow:hidden}
+.step[data-s="done"]{background:var(--done-soft);border-color:var(--done)}
+.step[data-s="doing"]{background:var(--doing-soft);border-color:var(--doing)}
+.step[data-s="blocked"]{background:var(--blocked-soft);border-color:var(--blocked)}
+.st-h{display:flex;gap:11px;align-items:flex-start;width:100%;padding:12px 14px;background:none;border:0;
+  text-align:left;cursor:pointer}
+.st-id{flex:0 0 auto;font:600 11.5px/1.5 var(--mono);color:var(--ink-soft);min-width:56px}
+.st-t{flex:1 1 auto;min-width:0}
+.st-t strong{font-weight:600;font-size:14.5px;line-height:1.35;display:block}
+.st-meta{font:500 11.5px/1.5 var(--mono);color:var(--ink-faint);margin-top:3px;display:flex;gap:9px;flex-wrap:wrap}
+.tag{display:inline-block;padding:1px 6px;border-radius:4px;background:var(--surface-3);color:var(--ink-soft);
+  font:500 10.5px/1.7 var(--mono);letter-spacing:.03em}
+.tag.gate{background:var(--blocked-soft);color:var(--blocked)}
+.tag.carry{background:var(--accent-soft);color:var(--accent)}
+.chev{flex:0 0 auto;color:var(--ink-faint);transition:transform .15s}
+.step[data-open="1"] .chev{transform:rotate(90deg)}
+
+.st-b{padding:0 14px 14px;border-top:1px solid var(--rule-soft)}
+.st-b h4{font:600 10.5px/1 var(--mono);letter-spacing:.11em;text-transform:uppercase;color:var(--ink-faint);
+  margin:14px 0 6px}
+.st-b p{margin:0;font-size:14px;color:var(--ink-soft);max-width:78ch}
+.st-b ul{margin:0;padding-left:19px;font-size:14px;color:var(--ink-soft)}
+.st-b li{margin-bottom:4px}
+.st-b pre{margin:0;padding:10px 12px;background:var(--surface-2);border:1px solid var(--rule-soft);
+  border-radius:6px;overflow-x:auto;font-family:var(--mono);font-size:12.5px}
+.carryback{border-left:3px solid var(--accent);padding:8px 0 8px 11px;background:var(--accent-soft);
+  border-radius:0 6px 6px 0;margin-top:6px}
+
+.states{display:flex;gap:6px;flex-wrap:wrap;margin-top:15px}
+.states button{padding:6px 11px;border:1px solid var(--rule);border-radius:99px;background:var(--surface);
+  cursor:pointer;font-size:12.5px}
+.states button[aria-pressed="true"]{border-color:currentColor;font-weight:600}
+.states button[data-v="done"][aria-pressed="true"]{color:var(--done);background:var(--done-soft)}
+.states button[data-v="doing"][aria-pressed="true"]{color:var(--doing);background:var(--doing-soft)}
+.states button[data-v="blocked"][aria-pressed="true"]{color:var(--blocked);background:var(--blocked-soft)}
+textarea{width:100%;margin-top:10px;padding:9px 11px;border:1px solid var(--rule);border-radius:7px;
+  background:var(--surface);min-height:62px;resize:vertical;font-size:13.5px}
+.saved{font:500 11px/1 var(--mono);color:var(--done);margin-top:6px;display:block}
+
+.track{margin-top:20px}
+.track-h{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;padding-bottom:5px;border-bottom:1px solid var(--rule)}
+.track-h h3{font-size:16px}
+.track-h .who{font:500 12px/1.4 var(--mono);color:var(--ink-soft)}
+
+.empty{padding:22px;text-align:center;color:var(--ink-faint);font-size:14px;
+  border:1px dashed var(--rule);border-radius:8px;margin-top:10px}
+
+/* ── Hand back ────────────────────────────────────────────────────── */
+.handback{background:var(--surface);border:1px solid var(--rule);border-radius:9px;padding:18px;margin-block:8px 46px}
+.handback h2{font-size:19px}
+.handback ol{margin:11px 0 0;padding-left:20px;color:var(--ink-soft);font-size:14px}
+.handback li{margin-bottom:6px}
+.report{width:100%;margin-top:13px;min-height:150px;font-family:var(--mono);font-size:12px}
+
+footer{border-top:1px solid var(--rule);padding-block:20px 34px;color:var(--ink-faint);font-size:12.5px}
+
+@media (max-width:620px){
+  .ph-h{gap:9px} .ph-id{width:28px;height:28px;font-size:12px}
+  .st-id{min-width:auto}
+  .st-h{padding:11px 12px}
+}
+@media print{
+  .rail,.ctl,.states,textarea,.next,.btn{display:none!important}
+  body{background:#fff;color:#000}
+  .step{break-inside:avoid;box-shadow:none;border-color:#999}
+  .st-b{display:block!important}
+}
+</style>
+
+<header class="mast">
+  <div class="wrap">
+    <p class="kick" id="kick">Guided walkthrough</p>
+    <h1>From the export to a cleared gate</h1>
+    <p class="lede">Every phase, in the order the entry document states, with each step's actions,
+      inputs and closing condition. Mark what you finish — this page remembers, in this browser
+      only, and nothing you type leaves it.</p>
+
+    <div class="bar" aria-hidden="true">
+      <i class="d" id="barD" style="width:0"></i><i class="g" id="barG" style="width:0"></i><i class="b" id="barB" style="width:0"></i>
+    </div>
+    <p class="tally" id="tally"></p>
+
+    <div class="next" id="next" hidden>
+      <p class="next-h">Next up</p>
+      <div class="next-b">
+        <h2 id="nextT"></h2>
+        <p id="nextD"></p>
+        <span class="where" id="nextW"></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="rail" aria-label="Phases"><div class="wrap" id="rail"></div></nav>
+
+<main class="wrap">
+  <div class="ctl">
+    <input type="search" id="q" placeholder="Search steps, actions, owners…" aria-label="Search steps">
+    <select id="who" aria-label="Filter by who can do it"><option value="">Anyone</option></select>
+    <label class="tog"><input type="checkbox" id="hide"> Hide what's done</label>
+    <button class="btn" id="expand">Expand all</button>
+    <button class="btn" id="theme" title="Switch theme">Theme</button>
+  </div>
+
+  <div id="phases"></div>
+
+  <section class="handback">
+    <h2>What you hand back</h2>
+    <ol>
+      <li><b>The relay line.</b> Every writing script prints one line of JSON between two markers.
+        Copy that line, not the table — a <code>console.table</code> copies as one unbroken string.</li>
+      <li><b>The outcome</b> for each step: <code>COMPLETE</code>, <code>PARTIAL</code>,
+        <code>BLOCKED</code> or <code>NOT ATTEMPTED</code>.</li>
+      <li><b>Any deviation</b> from what the section said would happen, quoted exactly.</li>
+      <li><b>The carry-back values</b>, as text. Not a screenshot: a value retyped from an image
+        gets retyped wrong, and these are identifiers.</li>
+    </ol>
+    <button class="btn" id="mkreport" style="margin-top:13px">Build a progress report</button>
+    <textarea class="report" id="report" hidden readonly aria-label="Progress report"></textarea>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p id="prov"></p>
+</footer>
+
+<script id="plan" type="application/json">__DATA__</script>
+<script>
+const PLAN = JSON.parse(document.getElementById('plan').textContent);
+const $ = (id) => document.getElementById(id);
+
+/* ── State ──────────────────────────────────────────────────────────────
+   localStorage only, and every access wrapped: this page is opened from a
+   file path, sometimes in a private window, sometimes on a machine that
+   blocks site data. It has to render correctly with none of it, because
+   the alternative is a walkthrough that shows nothing on the one machine
+   the operator has. */
+const KEY = 'dgo.walkthrough.v1';
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { state = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* nothing to do */ } };
+const S = (id) => state[id] || { s: 'todo', note: '' };
+
+/* Every step, flattened once, in the order a reader works them. */
+const STEPS = [];
+for (const p of PLAN.phases) {
+  if (p.kind === 'register') {
+    for (const t of p.tracks) for (const s of t.steps) STEPS.push({ ...s, phase: p.id, track: t.title, who: t.who });
+  } else {
+    for (const s of p.steps) STEPS.push({ ...s, phase: p.id, who: '' });
+  }
+}
+const inPhase = (pid) => STEPS.filter((s) => s.phase === pid);
+
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const list = (v) => (Array.isArray(v) ? v : v ? [v] : []);
+
+/* The registers and the entry document are markdown, so their sentences carry `code spans` and
+   **emphasis**. Rendering them as literal asterisks and backticks — "Power Automate **run history**"
+   — looks like a bug to a reader, because it is one. Escape first, then promote the two marks that
+   actually appear; nothing else, so this stays a formatter and not a parser. */
+const md = (s) => esc(s)
+  .replace(/`([^`]+)`/g, '<code>$1</code>')
+  .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+/* ── Filters ────────────────────────────────────────────────────────── */
+let q = '', who = '', hideDone = false, forceOpen = false;
+const haystack = (s) => [s.id, s.title, s.what, s.actor, s.who, s.track, s.closesWhen,
+  ...list(s.actions), ...list(s.inputs), s.detail].filter(Boolean).join(' ').toLowerCase();
+const visible = (s) => (!q || haystack(s).includes(q))
+  && (!who || (s.who || s.actor || '') === who)
+  && !(hideDone && S(s.id).s === 'done');
+
+/* ── Render ─────────────────────────────────────────────────────────── */
+function counts(set) {
+  const c = { done: 0, doing: 0, blocked: 0, todo: 0 };
+  for (const s of set) c[S(s.id).s ?? 'todo']++;
+  return c;
+}
+
+function renderRail() {
+  $('rail').innerHTML = PLAN.phases.map((p) => {
+    const c = counts(inPhase(p.id));
+    const n = inPhase(p.id).length;
+    return `<button class="pill" data-go="${esc(p.id)}"><b>${esc(p.id)}</b>
+      <span class="num">${c.done}/${n}</span></button>`;
+  }).join('');
+}
+
+function renderHead() {
+  const c = counts(STEPS), n = STEPS.length || 1;
+  $('barD').style.width = `${(c.done / n) * 100}%`;
+  $('barG').style.width = `${(c.doing / n) * 100}%`;
+  $('barB').style.width = `${(c.blocked / n) * 100}%`;
+  $('tally').innerHTML = [
+    `<span><i class="dot" style="background:var(--done)"></i><b class="num">${c.done}</b> done</span>`,
+    `<span><i class="dot" style="background:var(--doing)"></i><b class="num">${c.doing}</b> in progress</span>`,
+    `<span><i class="dot" style="background:var(--blocked)"></i><b class="num">${c.blocked}</b> blocked</span>`,
+    `<span><i class="dot" style="background:var(--surface-3)"></i><b class="num">${c.todo}</b> not started</span>`,
+    `<span><b class="num">${STEPS.length}</b> steps in ${PLAN.phases.length} phases</span>`,
+  ].join('');
+
+  const nx = STEPS.find((s) => S(s.id).s !== 'done' && S(s.id).s !== 'blocked');
+  $('next').hidden = !nx;
+  if (nx) {
+    const p = PLAN.phases.find((x) => x.id === nx.phase);
+    $('nextT').innerHTML = `${esc(nx.id)} — ${md(nx.title)}`;
+    $('nextD').innerHTML = md(nx.what || nx.detail || p.why || '');
+    $('nextW').textContent = `Phase ${nx.phase} · ${p.title}${nx.who ? ` · ${nx.who}` : ''}`;
+  }
+}
+
+function stepBody(s) {
+  const bits = [];
+  if (s.detail) bits.push(`<p>${md(s.detail)}</p>`);
+  if (s.what) bits.push(`<h4>What it is</h4><p>${md(s.what)}</p>`);
+  if (s.state) bits.push(`<h4>Where it stands</h4><p>${md(s.state)}</p>`);
+  if (list(s.actions).length) bits.push(`<h4>Do</h4><ul>${list(s.actions).map((a) => `<li>${md(a)}</li>`).join('')}</ul>`);
+  if (list(s.inputs).length) bits.push(`<h4>You need</h4><ul>${list(s.inputs).map((a) => `<li>${md(a)}</li>`).join('')}</ul>`);
+  if (list(s.commands).length) bits.push(`<h4>Commands</h4><pre>${list(s.commands).map(esc).join('\n')}</pre>`);
+  if (s.closesWhen) bits.push(`<h4>It closes when</h4><p>${md(s.closesWhen)}</p>`);
+  if (s.closureNotEstablished) bits.push(`<h4>No closing condition is stated</h4><p>${md(s.closureNotEstablished)}</p>`);
+  if (s.carryBack) bits.push(`<h4>Bring this back</h4><div class="carryback"><p>${md(s.carryBack)}</p></div>`);
+  if (list(s.waitsOn).length) bits.push(`<h4>Waits on</h4><p class="mono">${list(s.waitsOn).map(esc).join(', ')}</p>`);
+  if (list(s.waitedOnBy).length) bits.push(`<h4>Holds up</h4><p class="mono">${list(s.waitedOnBy).map(esc).join(', ')}</p>`);
+
+  const cur = S(s.id).s;
+  const btn = (v, label) => `<button data-set="${esc(s.id)}" data-v="${v}" aria-pressed="${cur === v}">${label}</button>`;
+  bits.push(`<div class="states">${btn('todo', 'Not started')}${btn('doing', 'In progress')}${btn('done', 'Done')}${btn('blocked', 'Blocked')}</div>`);
+  bits.push(`<textarea data-note="${esc(s.id)}" placeholder="What happened. The relay line, the outcome, anything that differed.">${esc(S(s.id).note)}</textarea>`);
+  bits.push(`<span class="saved" data-saved="${esc(s.id)}" hidden>saved in this browser</span>`);
+  return bits.join('');
+}
+
+function stepCard(s) {
+  const st = S(s.id);
+  const open = forceOpen || st.open;
+  const tags = [
+    s.gating ? '<span class="tag gate">gates commissioning</span>' : '',
+    s.carryBack ? '<span class="tag carry">carry a value back</span>' : '',
+    s.source ? `<span class="tag">${esc(s.source)}</span>` : '',
+  ].join('');
+  return `<article class="step" data-s="${esc(st.s)}" data-open="${open ? 1 : 0}" id="s-${esc(s.id)}">
+    <button class="st-h" data-toggle="${esc(s.id)}" aria-expanded="${!!open}">
+      <span class="st-id">${esc(s.id)}</span>
+      <span class="st-t"><strong>${md(s.title)}</strong>
+        <span class="st-meta">${s.showWho ? `<span>${esc(s.showWho)}</span>` : ''}${tags}</span></span>
+      <span class="chev" aria-hidden="true">›</span>
+    </button>
+    <div class="st-b"${open ? '' : ' hidden'}>${open ? stepBody(s) : ''}</div>
+  </article>`;
+}
+
+function renderPhases() {
+  $('phases').innerHTML = PLAN.phases.map((p) => {
+    const mine = inPhase(p.id).filter(visible);
+    let body;
+    if (!mine.length) {
+      body = `<p class="empty">Nothing here matches the filter.</p>`;
+    } else if (p.kind === 'register') {
+      body = p.tracks.map((t) => {
+        const ss = t.steps.filter(visible);
+        if (!ss.length) return '';
+        return `<div class="track"><div class="track-h"><h3>${esc(t.title)}</h3>
+          <span class="who">${esc(t.who)}</span></div>
+          ${ss.map((s) => stepCard({ ...s, phase: p.id, who: t.who, showWho: (s.actor && s.actor !== t.who) ? s.actor : '' })).join('')}</div>`;
+      }).join('');
+    } else {
+      body = mine.map((s) => stepCard({ ...s, showWho: s.actor || '' })).join('');
+    }
+    return `<section class="phase" id="p-${esc(p.id)}">
+      <div class="ph-h"><span class="ph-id">${esc(p.id)}</span>
+        <div class="ph-t"><h2>${esc(p.title)}</h2>
+          ${p.waits ? `<p class="ph-waits">${esc(p.waits)}</p>` : ''}</div></div>
+      ${p.why ? `<p class="ph-why">${md(p.why)}</p>` : ''}
+      ${p.document ? `<p class="ph-why mono">Steps are in ${esc(p.document)}</p>` : ''}
+      ${body}</section>`;
+  }).join('');
+}
+
+function render() { renderHead(); renderRail(); renderPhases(); }
+
+/* ── Events ─────────────────────────────────────────────────────────── */
+document.addEventListener('click', (e) => {
+  const go = e.target.closest('[data-go]');
+  if (go) {
+    document.getElementById(`p-${go.dataset.go}`)?.scrollIntoView({ block: 'start' });
+    for (const b of document.querySelectorAll('.pill')) b.setAttribute('aria-current', b === go);
+    return;
+  }
+  const tg = e.target.closest('[data-toggle]');
+  if (tg) {
+    const id = tg.dataset.toggle;
+    state[id] = { ...S(id), open: !S(id).open };
+    save(); render();
+    document.getElementById(`s-${id}`)?.scrollIntoView({ block: 'nearest' });
+    return;
+  }
+  const set = e.target.closest('[data-set]');
+  if (set) {
+    const id = set.dataset.set;
+    state[id] = { ...S(id), s: set.dataset.v, open: true };
+    save(); render();
+    return;
+  }
+  if (e.target.id === 'expand') {
+    forceOpen = !forceOpen;
+    e.target.textContent = forceOpen ? 'Collapse all' : 'Expand all';
+    render();
+    return;
+  }
+  if (e.target.id === 'theme') {
+    const now = document.documentElement.getAttribute('data-theme');
+    const next = now === 'dark' ? 'light' : now === 'light' ? null : 'dark';
+    if (next) document.documentElement.setAttribute('data-theme', next);
+    else document.documentElement.removeAttribute('data-theme');
+    return;
+  }
+  if (e.target.id === 'mkreport') {
+    const ta = $('report');
+    ta.hidden = false;
+    ta.value = report();
+    ta.select();
+  }
+});
+
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'q') { q = e.target.value.trim().toLowerCase(); render(); }
+  if (e.target.id === 'who') { who = e.target.value; render(); }
+});
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'hide') { hideDone = e.target.checked; render(); }
+});
+document.addEventListener('focusout', (e) => {
+  const note = e.target.closest?.('[data-note]');
+  if (!note) return;
+  const id = note.dataset.note;
+  state[id] = { ...S(id), note: note.value, open: true };
+  save();
+  const flag = document.querySelector(`[data-saved="${CSS.escape(id)}"]`);
+  if (flag) { flag.hidden = false; setTimeout(() => { flag.hidden = true; }, 2200); }
+});
+
+/* ── The report ─────────────────────────────────────────────────────────
+   Plain text, because it is going into an email or a ticket. The steps
+   with nothing recorded are listed too: a step with no outcome is
+   indistinguishable from one that was never run. */
+function report() {
+  const lines = [`Execution walkthrough — progress as of ${new Date().toISOString().slice(0, 16).replace('T', ' ')}Z`, ''];
+  const c = counts(STEPS);
+  lines.push(`${c.done} done · ${c.doing} in progress · ${c.blocked} blocked · ${c.todo} not started · ${STEPS.length} total`, '');
+  for (const p of PLAN.phases) {
+    const mine = inPhase(p.id);
+    lines.push(`── Phase ${p.id}: ${p.title} (${counts(mine).done}/${mine.length})`);
+    for (const s of mine) {
+      const st = S(s.id);
+      const mark = { done: '[x]', doing: '[~]', blocked: '[!]', todo: '[ ]' }[st.s] || '[ ]';
+      lines.push(`  ${mark} ${s.id} — ${s.title}`);
+      if (st.note) for (const l of st.note.split('\n')) lines.push(`        ${l}`);
+      if (s.carryBack && st.s === 'done') lines.push(`        CARRY BACK: ${s.carryBack}`);
+    }
+    lines.push('');
+  }
+  return lines.join('\n');
+}
+
+/* ── Boot ───────────────────────────────────────────────────────────── */
+const whos = [...new Set(STEPS.map((s) => s.who || s.actor).filter(Boolean))].sort();
+$('who').innerHTML = '<option value="">Anyone</option>'
+  + whos.map((w) => `<option value="${esc(w)}">${esc(w)}</option>`).join('');
+$('kick').textContent = `Guided walkthrough · ${STEPS.length} steps · ${PLAN.totals.open} items open`;
+$('prov').textContent = 'Generated by npm run pages from HOW-TO-USE-THIS-BUNDLE.md and '
+  + 'EXTERNAL_EXECUTION.json. The order of the phases is read out of the entry document, not '
+  + 'restated here. Your progress is kept in this browser only.';
+render();
+</script>

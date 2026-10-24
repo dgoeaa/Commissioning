@@ -1,0 +1,14 @@
+{
+  "release": "notification-remediation/1.0.0",
+  "state": "blocked",
+  "tenantApplied": false,
+  "criticalRowsClosed": 0,
+  "gates": [
+    "recipient correctness",
+    "service sender",
+    "regression protection",
+    "scheduled processing",
+    "live acceptance",
+    "rollback"
+  ]
+}
